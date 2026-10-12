@@ -1,6 +1,6 @@
 const assert=require('node:assert'),fs=require('node:fs'),path=require('node:path');
 const {ScoreStore}=require('../server/store.cjs');
-const {createAPI,identityUser,weekKey,definition}=require('../server/api.cjs');
+const {createAPI,identityUser,weekKey,definition,probeIdentity}=require('../server/api.cjs');
 class MemoryBlobs{
  constructor(){this.rows=new Map();this.serial=0;this.failBoard=false;this.conflicts=0;}
  async get(k){return this.rows.has(k)?structuredClone(this.rows.get(k).data):null;}
@@ -15,7 +15,7 @@ const userA={id:'11111111-1111-4111-8111-111111111111',email:'secret-a@example.t
 const userB={id:'22222222-2222-4222-8222-222222222222',email:'secret-b@example.test',user_metadata:{username:'Alex'}};
 const blobs=new MemoryBlobs(),store=new ScoreStore(blobs);let clock=Date.parse('2026-10-12T12:00:00Z');
 const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixture.json')));
-const api=createAPI({store,authenticate:async req=>req.headers.get('x-test-user')==='a'?userA:req.headers.get('x-test-user')==='b'?userB:null,now:()=>clock});
+const api=createAPI({store,authenticate:async req=>req.headers.get('x-test-user')==='a'?userA:req.headers.get('x-test-user')==='b'?userB:null,now:()=>clock,probe:async()=>({ready:true,status:401})});
 async function call(route,body,user){const headers={};if(user)headers['x-test-user']=user;if(body!==undefined)Object.assign(headers,{'Content-Type':'application/json','X-Utos-Request':'1',origin:'https://game.test'});const response=await api(new Request('https://game.test/api'+route,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify(body)}));assert.equal(response.headers.get('cache-control'),'no-store');return{status:response.status,data:await response.json()};}
 (async()=>{
  assert.equal((await call('/health')).data.ok,true);
@@ -46,7 +46,10 @@ async function call(route,body,user){const headers={};if(user)headers['x-test-us
  const second=await call('/leaderboard?kind=sprint&period=all',undefined,'b');assert.equal(second.data.rows.length,2);assert.equal(second.data.mine.place,2);
  const expired=(await call('/round/start',{kind:'daily'},'a')).data.ticket;clock+=481000;assert.equal((await call('/round/finish',{roundId:expired.id,ticks:5400,events:[]},'a')).status,410);
  assert.equal(weekKey('2026-10-18'),weekKey('2026-10-12'));assert.notEqual(definition('daily',new Date('2026-10-12')).board,definition('daily',new Date('2026-10-13')).board);
- const nativeFetch=global.fetch;global.fetch=async(url,opts)=>{assert(url.endsWith('/.netlify/identity/user'));assert.equal(opts.headers.Authorization,'Bearer valid-test-token');return new Response(JSON.stringify(userA),{status:200});};assert.equal((await identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer valid-test-token'}}))).id,userA.id);
- global.fetch=async()=>new Response('{}',{status:401});await assert.rejects(()=>identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer unsigned-fake-jwt'}})),/lejárt/);global.fetch=nativeFetch;
+ const nativeFetch=global.fetch,oldURL=process.env.URL;process.env.URL='https://obsolete-project.netlify.app';global.fetch=async(url,opts)=>{assert.equal(url,'https://game.test/.netlify/identity/user');assert.equal(opts.redirect,'error');assert.equal(opts.headers.Authorization,'Bearer valid-test-token');return new Response(JSON.stringify(userA),{status:200});};assert.equal((await identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer valid-test-token'}}))).id,userA.id);
+ global.fetch=async()=>new Response('{}',{status:401});await assert.rejects(()=>identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer unsigned-fake-jwt'}})),/lejárt/);const probe=await probeIdentity(new Request('https://game.test/api/health'));assert.deepEqual(probe,{ready:true,status:401});
+ global.fetch=async()=>new Response('{}',{status:404});await assert.rejects(()=>identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer valid-test-token'}})),/HTTP 404/);
+ global.fetch=async()=>{throw Error('offline')};await assert.rejects(()=>identityUser(new Request('https://game.test/api/me',{headers:{Authorization:'Bearer valid-test-token'}})),/nem tudott kapcsolódni/);
+ global.fetch=nativeFetch;if(oldURL===undefined)delete process.env.URL;else process.env.URL=oldURL;
  console.log('PASS: Identity verification, public/private profile, duplicate name, full server physics, empty/listed leaderboard, own placement, timing/expiry, one-time XP, CAS races, partial write repair, week/day keys, no-cache responses.');
 })().catch(e=>{console.error(e);process.exitCode=1});

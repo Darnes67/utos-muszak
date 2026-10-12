@@ -13,15 +13,25 @@ function definition(kind,date=new Date()){
   throw new HttpError(400,'Ismeretlen versenytípus.');
 }
 function bearer(req){const auth=req.headers.get('authorization');if(auth?.startsWith('Bearer '))return auth.slice(7);const cookie=(req.headers.get('cookie')||'').split(';').map(s=>s.trim()).find(s=>s.startsWith('nf_jwt='));if(!cookie)return null;try{return decodeURIComponent(cookie.slice(7));}catch(_){return null;}}
+function identityURL(req){return new URL('/.netlify/identity/user',req.url).href;}
+async function probeIdentity(req){
+  try{
+    const response=await fetch(identityURL(req),{headers:{Accept:'application/json'},redirect:'error',signal:AbortSignal.timeout(8000)});
+    return {ready:response.status===401,status:response.status};
+  }catch(_){return {ready:false,status:0};}
+}
 async function identityUser(req){
   const token=bearer(req);if(!token)return null;
   if(token.length>10000)throw new HttpError(401,'A munkamenet érvénytelen. Jelentkezz be újra!');
-  // Validate with the site's Identity service. Never trust a merely decoded JWT.
-  const origin=(process.env.URL||new URL(req.url).origin).replace(/\/$/,'');
-  const response=await fetch(origin+'/.netlify/identity/user',{headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(8000)});
-  if(response.status===401||response.status===403)throw new HttpError(401,'A munkamenet lejárt. Jelentkezz be újra!');
-  if(!response.ok)throw new HttpError(503,'A Netlify Identity nem érhető el. Ellenőrizd, hogy a webhelyen engedélyezve van-e.');
-  const user=await response.json();if(typeof user.id!=='string'||!/^[a-f0-9-]{36}$/i.test(user.id))throw new HttpError(401,'Érvénytelen játékosfiók.');return user;
+  // The browser and verifier must use the SAME project's service, including after a site move.
+  // Do not use a stale URL environment setting and never trust a decoded JWT.
+  let response;
+  try{response=await fetch(identityURL(req),{headers:{Authorization:'Bearer '+token,Accept:'application/json'},redirect:'error',signal:AbortSignal.timeout(8000)});}
+  catch(_){throw new HttpError(503,'A szerver nem tudott kapcsolódni a fiókszolgáltatáshoz. Próbáld újra!');}
+  if(response.status===401||response.status===403)throw new HttpError(401,'A munkamenet lejárt, vagy másik projekthez tartozik. Jelentkezz be újra ezen az oldalon!');
+  if(!response.ok)throw new HttpError(503,'A fiókszolgáltatás nem válaszolt megfelelően (HTTP '+response.status+'). Próbáld újra!');
+  let user;try{user=await response.json();}catch(_){throw new HttpError(503,'A fiókszolgáltatás hibás választ adott. Próbáld újra!');}
+  if(typeof user.id!=='string'||!/^[a-f0-9-]{36}$/i.test(user.id))throw new HttpError(401,'Érvénytelen játékosfiók.');return user;
 }
 async function ensureProfile(store,user){
   const key=profileKey(user.id),found=await store.get(key);if(found)return found;
@@ -43,7 +53,7 @@ async function indexResult(store,profile,round,result){
     });
   }
 }
-function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000}){
+function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000,probe=probeIdentity}){
  async function handle(req){
   let phase='request';
   try{
@@ -53,7 +63,7 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
-    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');return reply({ok:true,engine:ENGINE_VERSION,release:'ranking-fix-2'});}
+    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'ranking-fix-3',identity});}
     phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){
@@ -104,4 +114,4 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
  };
 }
 function compiledInputValid(input){try{require('./engine.cjs').validateEvents(input.events,input.ticks);return true;}catch(_){return false;}}
-module.exports={createAPI,identityUser,definition,weekKey,ensureProfile};
+module.exports={createAPI,identityUser,definition,weekKey,ensureProfile,identityURL,probeIdentity};

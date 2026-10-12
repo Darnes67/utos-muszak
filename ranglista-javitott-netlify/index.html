@@ -1625,7 +1625,7 @@ function renderAccount(){
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
   $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
   $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=onlineBusy||competition.active&&!competition.ending;
-  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · javítás 2':'Az online kapcsolat nem elérhető';
+  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · javítás 3':'Az online kapcsolat nem elérhető';
   for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=onlineBusy||competition.active&&!competition.ending;
 }
 function openAuth(){
