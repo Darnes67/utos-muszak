@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node build.cjs",
-    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs"
+    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs && node tests/shop.cjs && node tests/shop-client.cjs"
   },
   "engines": {
     "node": ">=22"
