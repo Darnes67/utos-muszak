@@ -25,9 +25,28 @@ Azonos, 45 másodperces egérnaplóval a korábbi rendszerben eszközönként 28
 
 A jutalomkeret csak aktív szimuláció közben töltődik, 0,75 csillag/másodperces alapsebességgel. A kombó lépcsőnként 0,02-vel növeli ezt, legfeljebb 0,83-ig. A keret legfeljebb egy csillagot tárol; önmagában nem fizet ki semmit. Figuratalálat legfeljebb egy, tárgytalálat legfeljebb 0,35 csillagnyi keretet használ fel. A törtrészek összegyűlnek. Ugyanaz a tárgy tíz másodpercen belül nem ad újabb jutalmat. Egy új lendítés egy találatot ér.
 
-A pontszám, erő, pálya, a bója eldőlése, a feladat teljesítése, a figurabehívás, a felállítás, szerkesztés, visszajátszás és újraindítás nem ad külön csillagot. Az eredmények megmaradnak trófeaként; nincs ismételhető pénzjutalmuk. Szünetben nem töltődik a keret.
+A pontszám, erő, pálya, a bója eldőlése, a feladat teljesítése, a figurabehívás, a felállítás, szerkesztés, visszajátszás és újraindítás nem ad külön csillagot. Az achievementek egyszeri, szerveroldali naplóval védett bónuszt adnak; nincs ismételhető pénzjutalmuk. Szünetben nem töltődik a keret.
 
-Vendégként a helyi játék jutalmaz, a mentés a böngészőben marad. Fiókos pénzhez a meglévő versenykörök vagy a bolt „Hiteles csillaggyűjtés · 45 mp” gombja használható. Ez utóbbi saját, feloldott felszerelést és eredeti pályát használ, szerver által rögzített fizikával, és nem kerül ranglistára. A szerver a naplóból újraszámolja a jutalmat, majd a körrel együtt egyszer írja jóvá, legfeljebb 38 csillagot. Egy új kör leállítja a korábbi befejezetlen kört; párhuzamos körök nem termelhetnek jutalmat.
+Vendégként a helyi játék jutalmaz, a mentés a böngészőben marad. Bejelentkezve a normál szabad játék, pontvadászat és feladatkihívás is automatikusan csillagot ad. A böngésző a valódi egér- és vezérlési bemeneteket három aktív másodpercenként küldi el. A szerver saját korábbi fizikai állapotából újrajátssza a szakaszt; nem fogad el beküldött csillagértéket, találatszámot vagy achievementet. A jóváírás és az új fizikai állapot egyetlen CAS művelet, sorszámos újrapróbálással. Az aktív idő nem előzheti meg a valós időt. Új munkamenet sem nullázza a jutalomkeretet. Szünet, szerkesztés és visszajátszás alatt nem gyűlik csillag.
+
+A versenyköröket továbbra is a szerver ellenőrzi; a normál gyűjtés előbb mentődik és lezárul. A 45 másodperces versenykör alapjutalma legfeljebb 38 ★. Az új achievementek ezen felül, egyszer járnak.
+
+### Egyszeri achievement-jutalmak
+
+| Eredmény | Bónusz |
+|---|---:|
+| Első találat | 5 ★ |
+| Ötös kombó | 10 ★ |
+| Ötven összesített találat | 20 ★ |
+| Mind a hat eszköz kipróbálása | 15 ★ |
+| Mindhárom pálya | 10 ★ |
+| Három bója feldöntése | 10 ★ |
+| Mind a hat feladat teljesítése | 25 ★ |
+| Új kihívásrekord | 20 ★ |
+
+Összesen 115 ★, egyszer, fiókonként. Újratöltés, újraindítás, ismételt ellenőrzés és párhuzamos kérések sem adják újra. A korábbi szerveren hitelesített körökből az értelmesen igazolható eredmények visszakerülnek. Ellenőrizetlen helyi jelvény nem fizethet fiókos pénzt. Vendégként a már régen jutalmazott badge-eket fizetettnek tekintjük; az előző csillagbolt-verzióban csak jelvényként kiosztott eredményekhez egy egyszeri pótlás jár.
+
+A figurabehívás, felállítás és tárgyvisszaállítás nem ad találati csillagot. A pályák/eszközök kipróbálásáért az egyszer teljesíthető achievement bónusza járhat.
 
 ## Mentés, migráció, vásárlás
 
@@ -40,3 +59,5 @@ A versenyek a szerver által kijelölt felszerelést kölcsönadják a körre. A
 ## Ellenőrzések
 
 `npm test`: szerveroldali egérnapló-ellenőrzés, ranglista, egyszeri körjutalom, három versenytípus, 10 802 eseményes gyors lendítés; 27 termék vásárlása és felszerelése; manipulált ár és egyenleg elutasítása; párhuzamos és ismételt vásárlás; elégtelen pénz; zárolt felszerelés; versenybeli kölcsön; kör megszakítása; régi kozmetikumok; tartós és hibás mentés; hálózati hiba és tranzakcióazonosítós újrapróbálás; minden előnézet és nyolc bokszkesztyűszög; az előnézet visszaállítja az élő állapotot; egy RAF-ciklus; 40–50 csillag/perces aktív jutalomkorlát. A tároló és fiókszolgáltatás az automatizált integrációs tesztekben helyettesített; a fizika a valódi játék motorja.
+
+Új tesztek: normál játék szerveres szakaszellenőrzése, tényleges UI/egéresemények és szerverállapot teljes egyezése, nyomott gombbal lendítés, automatikus felállás, kéz, szerkesztő, beállítások, hálózati/tárolási hiba és újrapróbálás, egyszeri achievement-jutalmak, migráció és versenyköröktől elkülönítés.

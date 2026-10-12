@@ -16,8 +16,19 @@ function checkEngine(){
     compiled=new vm.Script(`'use strict';(function(){
       const Math=globalThis.Math;
       ${code}
-      recordFrame=()=>{};saveProgress=()=>{};renderRewards=()=>{};checkAchievements=()=>{};notify=()=>{};
-      return {verify(ticket,inputEvents){
+      recordFrame=()=>{};saveProgress=()=>{};renderRewards=()=>{};checkAchievements=()=>{for(const a of achievementDefs)if(a.test())earning.badges.add(a.id);};notify=()=>{};
+      return {
+        initial(ticket){progress=defaultProgress();progress.tutorialSeen=true;prepareEarningGame(ticket);return JSON.stringify(earningSnapshot());},
+        segment(snapshot,events,ticks){
+          restoreEarningSnapshot(snapshot);const before=starMeter.credits,hitsBefore=progress.totalHits,conesBefore=progress.totalCones;
+          let cursor=0;
+          for(let tick=0;tick<ticks;tick++){
+            while(cursor<events.length&&events[cursor][0]===tick){const e=events[cursor++];applyEarningCommand(e[1],e[2]);}
+            if(playing()){simulate(STEP);if(challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-STEP);if(remaining<=0)endChallenge();}}
+          }
+          return JSON.stringify({snapshot:earningSnapshot(),hitStars:Math.floor(starMeter.credits+1e-7)-Math.floor(before+1e-7),
+            stats:{hits:progress.totalHits-hitsBefore,cones:progress.totalCones-conesBefore,tools:progress.tools,maps:progress.maps,badges:[...earning.badges]}});
+        },verify(ticket,inputEvents){
         prepareCompetitiveRound(ticket);
         let cursor=0;
         for(let tick=0;tick<5400;tick++){
@@ -55,4 +66,6 @@ function verifyRound(ticket,events,ticks){
   const result=vm.runInContext('engine.verify(ticket,inputEvents)',context,{timeout:22000});
   return JSON.parse(result);
 }
-module.exports={ENGINE_VERSION,createEngine,verifyRound,validateEvents,checkEngine};
+function initialEarnings(ticket){const c=createEngine();c.ticket=ticket;return JSON.parse(vm.runInContext('engine.initial(ticket)',c,{timeout:2000}));}
+function verifyEarnings(snapshot,events,ticks){const c=createEngine();Object.assign(c,{snapshot,events,ticks});return JSON.parse(vm.runInContext('engine.segment(snapshot,events,ticks)',c,{timeout:15000}));}
+module.exports={initialEarnings,verifyEarnings,ENGINE_VERSION,createEngine,verifyRound,validateEvents,checkEngine};

@@ -1,7 +1,7 @@
 'use strict';
 const economy=require('../economy.js'),{HttpError}=require('./store.cjs');
 function ensureWallet(profile){profile.wallet=economy.normalizeWallet(profile.wallet);return profile.wallet;}
-function publicWallet(profile){const w=ensureWallet(profile);return {version:w.version,stars:w.stars,owned:w.owned,equipped:w.equipped,legacyMigrated:w.legacyMigrated};}
+function publicWallet(profile){const w=ensureWallet(profile);return {version:w.version,stars:w.stars,owned:w.owned,equipped:w.equipped,legacyMigrated:w.legacyMigrated,achievements:profile.rewards?.paid||[]};}
 function activeRound(p,now){return Object.values(p.rounds||{}).some(r=>r.status==='active'&&Date.parse(r.expiresAt)>now);}
 function transaction(p,input,action,now){
  const w=ensureWallet(p),id=input.transactionId;

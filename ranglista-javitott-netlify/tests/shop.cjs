@@ -22,8 +22,8 @@ async function call(path,input,auth=true){const r=await api(new Request('https:/
  await call('/shop/legacy',{ids:['shirt-pink']});assert(!(await call('/me')).data.user.wallet.owned.includes('shirt-pink'));
  const round=(await call('/round/start',{kind:'practice',map:0,tool:0,character:0})).data.ticket;
  assert.equal((await call('/shop/equip',{itemId:'shirt-blue',transactionId:tx()})).status,409);
- clock+=46000;const finish=await call('/round/finish',{roundId:round.id,events:fixture.events,ticks:5400,stars:999999});assert.equal(finish.status,200);assert.equal(finish.data.result.stars,33);assert.equal(finish.data.user.wallet.stars,33);
- const repeated=await call('/round/finish',{roundId:round.id});assert.equal(repeated.data.user.wallet.stars,33);assert.equal((await call('/leaderboard?kind=sprint&period=all')).data.rows.length,0);
+ clock+=46000;const finish=await call('/round/finish',{roundId:round.id,events:fixture.events,ticks:5400,stars:999999});assert.equal(finish.status,200);assert.equal(finish.data.result.stars,33);assert.equal(finish.data.user.wallet.stars,68);
+ const repeated=await call('/round/finish',{roundId:round.id});assert.equal(repeated.data.user.wallet.stars,68);assert.equal((await call('/leaderboard?kind=sprint&period=all')).data.rows.length,0);
  const loan=(await call('/round/start',{kind:'combo'})).data.ticket;assert.equal(loan.tool,1);assert(!(await call('/me')).data.user.wallet.owned.includes('tool-1'));await call('/round/cancel',{roundId:loan.id});
  assert.equal((await call('/round/finish',{roundId:loan.id,events:fixture.events,ticks:5400})).status,409);
  await store.mutate(key,null,p=>{p.wallet.stars=100000;});

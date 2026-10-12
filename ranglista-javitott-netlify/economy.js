@@ -29,6 +29,16 @@ const products=[
  {id:'particle-spark',category:'particle',title:'Neonszikrák',description:'Élénk fénysugarak és szikrák.',price:700,value:'spark',color:'#65eed7'},
  {id:'particle-orbit',category:'particle',title:'Galaktikus bonk',description:'Mini bolygók gyűrűkkel és csillagokkal.',price:1400,value:'orbit',color:'#c09fff'}
 ];
+const achievements=[
+ {id:'first',name:'Első találat',reward:5},
+ {id:'combo5',name:'Ötös kombó',reward:10},
+ {id:'hits50',name:'Ötven találat',reward:20},
+ {id:'tools6',name:'Eszköztáros',reward:15},
+ {id:'maps3',name:'Világutazó',reward:10},
+ {id:'cones3',name:'Bójaborogató',reward:10},
+ {id:'perfect',name:'Mesterlövész',reward:25},
+ {id:'record',name:'Rekorder',reward:20}
+];
 const defaults={tool:'tool-0',character:'character-0',shirt:null,pattern:null,particle:null};
 const legacy=['shirt-blue','shirt-pink','pattern-stripes','pattern-dots','particle-heart','particle-confetti'];
 function freshWallet(){return {version:1,stars:0,owned:['tool-0','character-0'],equipped:{...defaults},transactions:{},legacyMigrated:false};}
@@ -38,7 +48,7 @@ function normalizeWallet(raw){
  if(Array.isArray(raw.owned))w.owned=[...new Set([...w.owned,...raw.owned.filter(id=>products.some(p=>p.id===id))])];
  for(const category of Object.keys(defaults)){const id=raw.equipped?.[category];if(id===null&&!['tool','character'].includes(category))w.equipped[category]=null;else if(w.owned.includes(id)&&products.some(p=>p.id===id&&p.category===category))w.equipped[category]=id;}
  if(raw.transactions&&typeof raw.transactions==='object'&&!Array.isArray(raw.transactions))w.transactions=raw.transactions;
- w.legacyMigrated=raw.legacyMigrated===true;return w;
+ w.legacyMigrated=raw.legacyMigrated===true;w.achievements=Array.isArray(raw.achievements)?[...new Set(raw.achievements.filter(id=>achievements.some(a=>a.id===id)))]:[];return w;
 }
 function product(id){return products.find(p=>p.id===id);}
 function meter(){return {tokens:0,clock:0,credits:0,roundCredits:0,cleanupAt:0,objects:{}};}
@@ -48,6 +58,6 @@ function hit(m,kind,objectId){
  const value=Math.min(m.tokens,kind==='body'?1:.35);m.tokens-=value;
  const before=Math.floor(m.credits+1e-7);m.credits+=value;m.roundCredits+=value;return Math.floor(m.credits+1e-7)-before;
 }
-const api={products,defaults,legacy,freshWallet,normalizeWallet,product,meter,advance,hit};
+const api={products,defaults,legacy,achievements,freshWallet,normalizeWallet,product,meter,advance,hit};
 if(typeof module==='object'&&module.exports)module.exports=api;else root.UTOS_ECONOMY=api;
 })(globalThis);

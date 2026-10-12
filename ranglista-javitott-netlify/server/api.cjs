@@ -2,7 +2,7 @@
 const {randomUUID,createHash}=require('node:crypto');
 const {HttpError,profileKey}=require('./store.cjs');
 const {ENGINE_VERSION,verifyRound,checkEngine}=require('./engine.cjs');
-const shop=require('./shop.cjs');
+const shop=require('./shop.cjs'),rewards=require('./rewards.cjs'),earnings=require('./earnings.cjs');
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const expose=p=>p?{id:p.id,username:p.username,xp:p.xp,games:p.games,wallet:shop.publicWallet(p)}:null;
 const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
@@ -35,7 +35,7 @@ async function identityUser(req){
   if(typeof user.id!=='string'||!/^[a-f0-9-]{36}$/i.test(user.id))throw new HttpError(401,'Érvénytelen játékosfiók.');return user;
 }
 async function ensureProfile(store,user){
-  const key=profileKey(user.id),found=await store.get(key);if(found){if(found.wallet?.version===1)return found;return store.mutate(key,found,p=>{shop.ensureWallet(p);return p;});}
+  const key=profileKey(user.id),found=await store.get(key);if(found){if(found.wallet?.version===1&&found.rewards?.version===1)return found;return store.mutate(key,found,p=>{shop.ensureWallet(p);rewards.award(p);return p;});}
   const requested=user.user_metadata?.username||user.user_metadata?.full_name||'',base=/^[A-Za-z0-9_]{3,18}$/.test(requested)?requested:'Jatekos_'+digest(user.id).slice(0,6);
   let username;
   for(let i=0;i<20;i++){
@@ -44,7 +44,7 @@ async function ensureProfile(store,user){
     if(claimed){username=candidate;break;}
   }
   if(!username)throw new HttpError(503,'A játékosnév most nem foglalható le. Próbáld újra!');
-  return store.mutate(key,{id:user.id,username,xp:0,games:0,rounds:{},starts:[],finishes:[]},p=>{shop.ensureWallet(p);return p;});
+  return store.mutate(key,{id:user.id,username,xp:0,games:0,rounds:{},starts:[],finishes:[]},p=>{shop.ensureWallet(p);rewards.award(p);return p;});
 }
 async function indexResult(store,profile,round,result){
   const row={user_id:profile.id,username:profile.username,points:result.points,accuracy:result.accuracy,best_streak:result.bestStreak,created_at:result.created_at};
@@ -64,7 +64,7 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
-    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'star-shop-1',identity});}
+    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'star-rewards-2',identity});}
     phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){
@@ -74,10 +74,20 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       const rows=Object.values(board.rows).sort((a,b)=>b.points-a.points||a.created_at.localeCompare(b.created_at)||a.user_id.localeCompare(b.user_id)).map((r,i)=>({...r,place:i+1}));
       return reply({rows:rows.slice(0,50),mine:profile?rows.find(r=>r.user_id===profile.id)||null:null,label:kind==='daily'?def.board.slice(6):period==='week'?weekKey(date)+' óta (UTC)':'összesített'});
     }
-    if(!['/round/start','/round/finish','/round/cancel','/shop/buy','/shop/equip','/shop/legacy'].includes(route)||req.method!=='POST')throw new HttpError(404,'Hiányzó API-végpont.');
+    if(!['/round/start','/round/finish','/round/cancel','/shop/buy','/shop/equip','/shop/legacy','/earnings/start','/earnings/claim'].includes(route)||req.method!=='POST')throw new HttpError(404,'Hiányzó API-végpont.');
     if(!profile)throw new HttpError(401,'A versenyhez jelentkezz be!');
     const text=await req.text();if(Buffer.byteLength(text)>600000)throw new HttpError(413,'Túl nagy bemeneti napló.');
     let input;try{input=JSON.parse(text);}catch(_){throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input!=='object'||Array.isArray(input))throw new HttpError(400,'Hibás kérés.');
+    if(route==='/earnings/start'){
+      phase='earnings-start';let ticket;
+      const current=await store.mutate(profileKey(profile.id),profile,p=>{ticket=earnings.publicTicket(earnings.start(p,input,now()));return p;});
+      return reply({ticket,user:expose(current),achievements:[]});
+    }
+    if(route==='/earnings/claim'){
+      phase='earnings-verification';const checked=earnings.verify(profile,input,now());let receipt;
+      phase='earnings-save';const current=await store.mutate(profileKey(profile.id),profile,p=>{receipt=earnings.commit(p,input,checked,now());return p;});
+      return reply({...receipt,user:expose(current)});
+    }
     if(route.startsWith('/shop/')){
       phase='shop';const current=await store.mutate(profileKey(profile.id),profile,p=>{
         if(route==='/shop/legacy')shop.migrateLegacy(p,input.ids,input.equipped);
@@ -91,7 +101,7 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
     if(route==='/round/start'){
       const date=new Date(now()),def=input.kind==='practice'?shop.practiceDefinition(input,profile):definition(input.kind,date),round={id:randomUUID(),...def,engine:ENGINE_VERSION,created_at:date.toISOString(),expiresAt:new Date(now()+480000).toISOString(),status:'active'};
       await store.mutate(profileKey(profile.id),profile,p=>{
-        p.starts=p.starts.filter(t=>t>now()-600000);if(p.starts.length>=16)throw new HttpError(429,'Túl sok új kör. Várj néhány percet.');p.starts.push(now());for(const r of Object.values(p.rounds))if(r.status==='active')r.status='cancelled';
+        p.starts=p.starts.filter(t=>t>now()-600000);if(p.starts.length>=16)throw new HttpError(429,'Túl sok új kör. Várj néhány percet.');p.starts.push(now());if(p.earning)p.earning.active=false;for(const r of Object.values(p.rounds))if(r.status==='active')r.status='cancelled';
         const entries=Object.entries(p.rounds).filter(([,r])=>r.status==='finished'||Date.parse(r.expiresAt)>now());
         p.rounds=Object.fromEntries(entries.sort((a,b)=>b[1].created_at.localeCompare(a[1].created_at)).slice(0,127));p.rounds[round.id]=round;
       });return reply({ticket:round});
@@ -114,7 +124,12 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       phase='save-result';current=await store.mutate(profileKey(profile.id),current,p=>{
         const ticket=p.rounds[input.roundId];if(!ticket)throw new HttpError(404,'A kör nem található.');
         if(ticket.status==='cancelled')throw new HttpError(409,'A kört már elhagytad.');
-        if(ticket.status!=='finished'){ticket.status='finished';ticket.result=result;p.xp+=result.xp;p.games++;shop.ensureWallet(p).stars+=result.stars;}return p;
+        if(ticket.status!=='finished'){ticket.status='finished';ticket.result=result;p.xp+=result.xp;p.games++;shop.ensureWallet(p).stars+=result.stars;
+          const old=p.rewards.records[round.board||'practice']||0,isRecord=!!round.board&&metrics.points>old;
+          if(isRecord)p.rewards.records[round.board]=metrics.points;
+          ticket.result.achievements=rewards.award(p,{hits:metrics.hits,cones:metrics.cones||0,maxCombo:metrics.maxCombo,
+            tools:metrics.hits+metrics.objectHits>0?[round.tool]:[],maps:metrics.hits+metrics.objectHits>0?[round.map]:[],badges:isRecord&&metrics.hits>0?['record']:[]});
+          ticket.result.achievementStars=ticket.result.achievements.reduce((n,a)=>n+a.stars,0);}return p;
       });round=current.rounds[input.roundId];
     }
     // Retry also repairs a partial leaderboard write, without granting XP again.

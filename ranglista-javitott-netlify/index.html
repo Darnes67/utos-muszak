@@ -110,7 +110,8 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 <div class="panel tool-panel"><button id="handTool" aria-pressed="false">✋ Kéz · csak szabad játék</button><label>ESZKÖZ · ERŐ / FORDULÁS</label><div class="choices tool-grid" id="tools"><button data-tool="0" class="active" aria-pressed="true">Baseballütő<em>1× / gyors</em></button><button data-tool="1" aria-pressed="false">Szivacsütő<em>0,48× / nagyon gyors</em></button><button data-tool="2" aria-pressed="false">Játék kalapács<em>1,55× / lassú</em></button><button data-tool="3" aria-pressed="false">Banán<em>0,6× / rugalmas</em></button><button data-tool="4" aria-pressed="false">Rugós kesztyű<em>1,15× / közepes</em></button><button data-tool="5" aria-pressed="false">Szivacskéz<em>0,4× / gyors</em></button></div></div>
 </div></details>
 <details class="loadout" id="editorPanel"><summary>Saját pálya szerkesztése <span id="editorCount">0 / 20 elem</span></summary><div class="editor-controls"><button id="editorToggle" class="active">✎ Szerkesztés indítása</button><span id="editorState"></span><div class="editor-row"><button data-add="box">＋ Doboz</button><button data-add="ball">＋ Labda</button><button data-add="cone">＋ Bója</button><button data-add="tramp">＋ Trambulin</button></div><div class="editor-row"><label>Forgatás <input type="range" id="editorRotation" min="-180" max="180" value="0" disabled></label><button id="editorDelete" disabled>⌫ Kijelölt törlése</button><button id="layoutSave">Saját elrendezés mentése</button><button id="layoutLoad">Betöltés</button><button id="layoutDefault">Alapértelmezett pálya</button></div><p class="rules">Kattints egy elemre, majd húzd a helyére. Szerkesztés közben áll a fizika. A mentés az aktuális pályához tartozik; kihívásban az eredeti elrendezés működik.</p></div></details>
-<details class="loadout" id="shopPanel"><summary>★ Műszakbolt <span id="wallet">★ 0 csillag</span></summary><div class="reward-section"><div class="shop-heading"><div><h2>Új cuccok. Saját stílus.</h2><p id="shopStorage" class="rules">Vendégbolt · helyi mentés</p></div><button id="earnStars" class="active" hidden>★ Hiteles csillaggyűjtés · 45 mp</button></div><p class="rules">Aktív figuratalálatokkal kb. 30–50 ★ / perc. A tárgyak kevesebbet adnak. A pontszám külön számít. Fiókos jutalmat a szerver ellenőriz; a vendégcsillagok ebben a böngészőben maradnak.</p><p id="shopMessage" class="shop-message" aria-live="polite"></p><div id="shopTabs" class="shop-tabs"><button data-shop-tab="tool" class="active">Eszközök</button><button data-shop-tab="character">Skinek és ruhák</button><button data-shop-tab="pattern">Eszközminták</button><button data-shop-tab="particle">Találati effektek</button><button id="resetAppearance">Alapmegjelenés</button></div><div id="shop" class="shop-grid"></div><h3 class="achievement-title">A műszak eredményei</h3><div id="achievements" class="achievement-grid"></div></div></details>
+<details class="loadout" id="shopPanel"><summary>★ Műszakbolt <span id="wallet">★ 0 csillag</span></summary><div class="reward-section"><div class="shop-heading"><div><h2>Új cuccok. Saját stílus.</h2><p id="shopStorage" class="rules">Vendégbolt · helyi mentés</p></div><button id="earnStars" class="active" hidden>★ Hiteles csillaggyűjtés · 45 mp</button></div><p class="rules">Aktív figuratalálatokkal kb. 30–50 ★ / perc. A normál játék is ad csillagokat; fiókkal automatikusan mentjük. A tárgyak kevesebbet adnak. Az achievementek egyszeri bónuszt adnak. A pontszám külön számít. Fiókos jutalmat a szerver ellenőriz; a vendégcsillagok ebben a böngészőben maradnak.</p><p id="shopMessage" class="shop-message" aria-live="polite"></p><div id="shopTabs" class="shop-tabs"><button data-shop-tab="tool" class="active">Eszközök</button><button data-shop-tab="character">Skinek és ruhák</button><button data-shop-tab="pattern">Eszközminták</button><button data-shop-tab="particle">Találati effektek</button><button id="resetAppearance">Alapmegjelenés</button></div><div id="shop" class="shop-grid"></div></div></details>
+<details class="loadout" id="achievementsPanel"><summary>🏆 Achievementek <span id="achievementCount">0 / 8</span></summary><div class="reward-section"><p class="rules">Egyszeri jutalmak: 5–25 ★. Újrakezdés és újratöltés után sem járnak újra. Fiókkal a szerveren ellenőrzött teljesítések számítanak.</p><div id="achievements" class="achievement-grid"></div></div></details>
 <div id="shopPreview" class="tutorial-overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="shopPreviewTitle"><div class="eyebrow">PRÓBAFÜLKE</div><h2 id="shopPreviewTitle"></h2><canvas id="shopPreviewCanvas" width="420" height="260"></canvas><p id="shopPreviewText"></p><button id="shopPreviewRotate">↻ Forgatás</button> <button id="shopPreviewClose" class="active">Vissza a boltba</button></div></div>
 <div class="actions"><div class="buttons"><button id="invite">＋ Ember behívása</button><button id="stand" disabled>↑ Talpra állítás</button><button id="objectsReset">▦ Pálya rendberakása</button><button id="reset">↻ Újrakezdés</button><button id="pause">Ⅱ Szünet</button><button id="replayButton" disabled>↶ Visszajátszás</button><button id="sound" aria-pressed="true">Hang: be</button><button id="fullscreen">⛶ Teljes képernyő</button><button id="tutorial">? Súgó</button></div><p class="help">Kattints az eszközre! Lendíts nyomott bal egérgombbal. Nem kell kattintgatni: tartsd nyomva, és lendíts oda-vissza! Szünet: szóköz.</p></div>
 <details class="loadout"><summary>Irányítás és beállítások <span>Érzékenység, gravitáció, effektek</span></summary><div class="preferences">
@@ -188,7 +189,7 @@ function abortCompetition(message){
   competition.active=competition.ending=false;restoreCompetitionPrefs();release(true);
   if(competition.returnLoadout){const p=competition.returnLoadout;selectedCharacter=p.avatar;selectedMap=p.map;selectedTool=p.tool;bodyParts=characterParts();competition.returnLoadout=null;setPressed('maps','map',selectedMap);setPressed('characters','character',selectedCharacter);setPressed('tools','tool',selectedTool);}
   if(typeof cancelOnlineRound==='function'&&competition.ticket)cancelOnlineRound(competition.ticket.id);
-  if(message)notify(message);updateHint();applyEquipment();
+  if(message)notify(message);updateHint();applyEquipment();if(typeof startEarnings==='function')Promise.resolve().then(()=>startEarnings());
 }
 function competitionFinished(){
   if(!competition.active||competition.ending)return;
@@ -274,12 +275,14 @@ const missionPool=[
   {id:'head3',kind:'target',tier:3,text:'Három találat a kijelölt fejen!',u:0,v:0,r:25,goal:3}
 ];
 let missionDefs=[];
+let missionSeed=740;
+function missionRandom(){missionSeed=(Math.imul(missionSeed,1664525)+1013904223)>>>0;return missionSeed/4294967296;}
 function makeMissionRound(){
   const round=[],used=new Set();
   for(const tier of [1,1,2,2,3,3]){
     let options=missionPool.filter(g=>g.tier===tier&&!used.has(g.id)&&g.kind!==round.at(-1)?.kind);
     if(!options.length)options=missionPool.filter(g=>g.tier===tier&&!used.has(g.id));
-    const goal={...options[Math.floor(Math.random()*options.length)]};round.push(goal);used.add(goal.id);
+    const goal={...options[Math.floor(missionRandom()*options.length)]};round.push(goal);used.add(goal.id);
   }
   return round;
 }
@@ -334,6 +337,7 @@ let rewardedMissions=new Set(),tippedCones=new Set();
 let hitStop=0,freeGravity=100,readyAnnounced=false;
 const cosmeticDefs=economy.products.filter(p=>['shirt','pattern','particle'].includes(p.category));
 let accountWallet=null,accountMode='guest',shopBusy=false,accountPending=false,shopTab='tool',shopKey='',previewEquipment=null,previewId=null,previewAngle=0;
+const earning={ready:false,applying:false,booting:false,id:null,seq:0,tick:0,events:[],pending:null,pendingStars:0,prefs:'',badges:new Set()};
 let starMeter=economy.meter();
 function wallet(){return accountWallet||progress.guestWallet;}
 function owns(id){return wallet().owned.includes(id);}
@@ -341,7 +345,7 @@ function equipped(category){return (previewEquipment||wallet().equipped)[categor
 function resetStarRound(full=false){starMeter.roundCredits=0;if(full)starMeter=economy.meter();}
 function creditHitStars(kind,id){
   const gained=economy.hit(starMeter,kind,id);
-  if(!competition.active&&!competitionArming){if(accountMode==='guest')addStars(gained);else if(gained)$('shopMessage').textContent='Fiókos csillagokhoz indíts hiteles csillaggyűjtést: a helyi játék nem módosítja a szerveregyenleget.';}
+  if(!competition.active&&!competitionArming){if(accountMode==='guest')addStars(gained);else if(gained&&earning.ready){earning.pendingStars+=gained;renderEarningStatus();}}
 }
 
 const achievementDefs=[
@@ -359,8 +363,8 @@ let objectHits=0, coneCount=0, attempts=0, misses=0, connectedSwings=0, bodySwin
 let streak=0, bestStreak=0, impactCompression=0, bananaFlex=0, bubble=null, toasts=[];
 let perfectRound=false,newRecordRound=false,tutorialIndex=0,tutorialWasPaused=false;
 let swing={eligible:false,peak:0,hit:false,body:false,origin:{x:0,y:0}};
-const tutorialSteps=[['Üdv az ötödik műszakban!','Az alapfigura és az alapütő ingyenes. A további figurákat és eszközöket csillagért vásárolhatod meg a boltban.'],['Vedd fel, majd lendíts!','Kattints az eszközre a jobb alsó sarokban. Nyomott bal egérgombbal lendíts. Tartsd nyomva, és lendíts oda-vissza. Egy mozdulat egy találatot ér.'],['A tárgyak is játszanak.','A dobozok és labdák mozgathatók, a bóják feldönthetők. A trambulin visszapattintja a figurát. Csillagokból eszközt, skint és effektet vásárolhatsz. Fiókos csillagokhoz indíts hiteles csillaggyűjtést a boltban.'],['Készen állsz!','Válassz kihívást, vedd fel az eszközt, és nyomd meg az Indítás gombot. Szóközzel szüneteltethetsz. Másik fülre váltva a játék automatikusan megáll.']];
-function defaultProgress(){return{stars:0,totalHits:0,totalCones:0,tools:[],maps:[],achievements:[],owned:[],equipped:{shirt:null,pattern:null,particle:null},guestWallet:economy.freshWallet(),records:{},legacyRecords:{},volume:.55,reduced:false,tutorialSeen:false,sensitivity:1,autoGetup:true,gravity:100,layouts:{},avatar:0};}
+const tutorialSteps=[['Üdv az ötödik műszakban!','Az alapfigura és az alapütő ingyenes. A további figurákat és eszközöket csillagért vásárolhatod meg a boltban.'],['Vedd fel, majd lendíts!','Kattints az eszközre a jobb alsó sarokban. Nyomott bal egérgombbal lendíts. Tartsd nyomva, és lendíts oda-vissza. Egy mozdulat egy találatot ér.'],['A tárgyak is játszanak.','A dobozok és labdák mozgathatók, a bóják feldönthetők. A trambulin visszapattintja a figurát. Csillagokból eszközt, skint és effektet vásárolhatsz. Fiókkal a normál játék is csillagokat ad; a jutalom néhány másodpercenként automatikusan mentődik.'],['Készen állsz!','Válassz kihívást, vedd fel az eszközt, és nyomd meg az Indítás gombot. Szóközzel szüneteltethetsz. Másik fülre váltva a játék automatikusan megáll.']];
+function defaultProgress(){return{stars:0,totalHits:0,totalCones:0,tools:[],maps:[],achievements:[],rewardedAchievements:[],owned:[],equipped:{shirt:null,pattern:null,particle:null},guestWallet:economy.freshWallet(),records:{},legacyRecords:{},volume:.55,reduced:false,tutorialSeen:false,sensitivity:1,autoGetup:true,gravity:100,layouts:{},avatar:0};}
 function loadProgress(){
   const p=defaultProgress();
   try{
@@ -371,6 +375,8 @@ function loadProgress(){
       for(const key of ['stars','totalHits','totalCones'])if(Number.isFinite(data[key]))p[key]=clamp(Math.floor(data[key]),0,1e9);
       for(const [key,max]of [['tools',6],['maps',3]])if(Array.isArray(data[key]))p[key]=[...new Set(data[key].filter(v=>Number.isInteger(v)&&v>=0&&v<max))];
       if(Array.isArray(data.owned))p.owned=[...new Set(data.owned.filter(id=>cosmeticDefs.some(c=>c.id===id)))];
+      if(Array.isArray(data.rewardedAchievements))p.rewardedAchievements=[...new Set(data.rewardedAchievements.filter(id=>economy.achievements.some(a=>a.id===id)))];
+      else if(!data.guestWallet&&Array.isArray(data.achievements))p.rewardedAchievements=data.achievements.filter(id=>economy.achievements.some(a=>a.id===id));
       if(Array.isArray(data.achievements))p.achievements=[...new Set(data.achievements.filter(id=>achievementDefs.some(c=>c.id===id)))];
       for(const category of ['shirt','pattern','particle']){const id=data.equipped?.[category];if(p.owned.includes(id)&&cosmeticDefs.some(c=>c.id===id&&c.category===category))p.equipped[category]=id;}
       if(data.records&&typeof data.records==='object')for(const [key,value]of Object.entries(data.records)){
@@ -398,12 +404,18 @@ function notify(text){toasts.push({text,age:0});toasts=toasts.slice(-3);renderTo
 function renderToasts(){$('toasts').replaceChildren(...toasts.map(t=>{const div=document.createElement('div');div.className='toast';div.textContent=t.text;return div;}));}
 function addStars(n){if(!n||competition.active||competitionArming||accountMode!=='guest')return;progress.guestWallet.stars+=n;progress.stars=progress.guestWallet.stars;sessionStars+=n;renderRewards();}
 function checkAchievements(){
+  if(accountMode!=='guest'||competition.active||competitionArming)return;
   let changed=false;
-  for(const a of achievementDefs)if(!progress.achievements.includes(a.id)&&a.test()){
-    progress.achievements.push(a.id);notify('🏆 '+a.name+' · Eredmény feloldva');changed=true;
+  for(const a of achievementDefs){
+    if(!progress.achievements.includes(a.id)&&a.test()){progress.achievements.push(a.id);changed=true;}
+    if(progress.achievements.includes(a.id)&&!progress.rewardedAchievements.includes(a.id)){
+      const reward=economy.achievements.find(d=>d.id===a.id).reward;
+      progress.rewardedAchievements.push(a.id);addStars(reward);notify('🏆 '+a.name+' · +'+reward+' ★');changed=true;
+    }
   }
   if(changed){saveProgress();renderRewards();}
 }
+function achievementIds(){return accountMode==='account'?(accountWallet?.achievements||[]):progress.achievements;}
 function updateShopLocks(){
   const locked=competition.active&&!competition.ending;
   for(const b of document.querySelectorAll('[data-tool], [data-character]')){
@@ -417,7 +429,7 @@ function renderRewards(){
   const w=wallet(),locked=replay.active||challengeState==='running'||competition.active&&!competition.ending||shopBusy||accountPending||accountMode==='loading';
   $('wallet').textContent='★ '+w.stars+' csillag';$('walletTop').textContent='★ '+w.stars;
   $('shopStorage').textContent=accountMode==='account'?'Fiókos bolt · szerverre mentve':accountMode==='loading'?'Fiók ellenőrzése…':'Vendégbolt · csak ezen a böngészőn';
-  $('earnStars').hidden=accountMode!=='account';$('earnStars').disabled=locked;
+  $('earnStars').hidden=accountMode!=='account';$('earnStars').disabled=shopBusy||accountPending||competition.active&&!competition.ending;
   const key=JSON.stringify([shopTab,w.owned,w.equipped,locked]);
   const list=economy.products.filter(p=>shopTab==='character'?['character','shirt'].includes(p.category):p.category===shopTab);
   if(key!==shopKey){shopKey=key;
@@ -431,12 +443,14 @@ function renderRewards(){
   }
   for(const b of document.querySelectorAll('[data-shop-tab]')){b.classList.toggle('active',b.dataset.shopTab===shopTab);b.setAttribute('aria-pressed',String(b.dataset.shopTab===shopTab));}
   $('resetAppearance').disabled=locked;
-  $('achievements').innerHTML=achievementDefs.map(a=>`<div class="achievement ${progress.achievements.includes(a.id)?'unlocked':''}">${progress.achievements.includes(a.id)?'✓':'○'} ${a.name}<small>${a.hint}</small></div>`).join('');
-  updateShopLocks();
+  const badges=achievementIds();$('achievementCount').textContent=badges.length+' / '+achievementDefs.length;
+  $('achievements').innerHTML=achievementDefs.map(a=>`<div class="achievement ${badges.includes(a.id)?'unlocked':''}">${badges.includes(a.id)?'✓':'○'} ${a.name}<b> · +${economy.achievements.find(d=>d.id===a.id).reward} ★</b><small>${a.hint} ${badges.includes(a.id)?'Jutalom már jóváírva.':'Egyszer teljesíthető.'}</small></div>`).join('');
+  updateShopLocks();renderEarningStatus();
 }
 function applyEquipment(){
   if(competition.active&&!competition.ending)return;
   const w=wallet(),tool=economy.product(w.equipped.tool).index,character=economy.product(w.equipped.character).index;
+  if(earning.ready&&(tool!==selectedTool||character!==selectedCharacter)){recordEarningCommand('equipment',{tool,character});applyEarningEquipment({tool,character});}
   if(selectedTool!==tool){release(true);dropGrab();handMode=false;held=false;selectedTool=tool;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];}
   if(selectedCharacter!==character){release(true);dropGrab();selectedCharacter=character;bodyParts=characterParts();messageBag=[];const existed=!!person;person=null;if(existed)callPerson();}
   if(accountMode==='guest'){progress.avatar=selectedCharacter;progress.equipped={...w.equipped};progress.owned=w.owned.slice();progress.stars=w.stars;saveProgress();}
@@ -812,7 +826,7 @@ function updateEditorUI(){
 function toggleEditor(){
   if(mode!=='free'||replay.active||challengeState==='ended')return;
   release(true);dropGrab();editorActive=!editorActive;editorDrag=null;lastFrame=null;
-  if(!editorActive){objects.forEach(wake);if(person){person.sleep=false;person.nodes.forEach(n=>{n.px=n.x;n.py=n.y;});}recordAccumulator=0;}
+  if(!editorActive){if(earning.ready){applyEarningLayout(sanitizeLayout({objects,tramps}));recordEarningCommand('layout',sanitizeLayout({objects,tramps}));}objects.forEach(wake);if(person){person.sleep=false;person.nodes.forEach(n=>{n.px=n.x;n.py=n.y;});}recordAccumulator=0;}
   clearReplay();updateEditorUI();updateHint();
 }
 function addSceneItem(kind){
@@ -856,7 +870,7 @@ function loadLayout(){
   if(mode!=='free'||replay.active)return false;
   const layout=sanitizeLayout(progress.layouts[selectedMap]);if(!layout)return false;
   release(true);dropGrab();objects=layout.objects.map(item=>{const o=newObject(item.kind,item.x,item.y,item.r);Object.assign(o,item);o.oldX=o.x;o.oldY=o.y;if(o.spring){o.homeX=o.x;o.homeY=o.y;}return o;});
-  tramps=layout.tramps.map(t=>({...t,id:'tramp-'+(++sceneId),energy:0}));customLayout=true;editorSelection=null;clearReplay();updateEditorUI();return true;
+  tramps=layout.tramps.map(t=>({...t,id:'tramp-'+(++sceneId),energy:0}));customLayout=true;editorSelection=null;if(earning.ready){applyEarningLayout(layout);recordEarningCommand('layout',layout);}clearReplay();updateEditorUI();return true;
 }
 function defaultLayout(){if(mode!=='free'||replay.active)return;release(true);dropGrab();presetTramps();spawnObjects();customLayout=false;editorSelection=null;clearReplay();updateEditorUI();}
 function chooseHand(){
@@ -966,7 +980,7 @@ function fillCapsule(x1,y1,x2,y2,r,color){
   ctx.lineTo(0,r);ctx.arc(0,0,r,Math.PI/2,Math.PI*1.5);ctx.closePath();ctx.fill();ctx.restore();
 }
 
-function playing() { return !paused&&!editorActive&&!replay.active&&challengeState!=='ended'; }
+function playing() { return !earning.booting&&!paused&&!editorActive&&!replay.active&&challengeState!=='ended'; }
 function updateHUD(){
   $('hits').textContent=hits;$('objectHits').textContent=objectHits;$('score').textContent=score;$('combo').textContent=combo+'×';
   best=progress.records[recordKey()]||0;$('best').textContent=best;$('bestLabel').textContent='REKORD · PÁLYA/ESZKÖZ';
@@ -1257,7 +1271,7 @@ function playSound(force) {
 }
 function eventPoint(e) {
   const rect=canvas.getBoundingClientRect(),p={x:clamp((e.clientX-rect.left)*W/rect.width,0,W),y:clamp((e.clientY-rect.top)*H/rect.height,0,H)};
-  if(competition.active){p.x=Math.round(p.x*10)/10;p.y=Math.round(p.y*10)/10;}return p;
+  if(competition.active||earning.ready){p.x=Math.round(p.x*10)/10;p.y=Math.round(p.y*10)/10;}return p;
 }
 function overTool(p) {
   return toolParts().some(([x1,y1,x2,y2,r])=>{const q=nearest(p,transform(REST,x1,y1),transform(REST,x2,y2));return Math.hypot(p.x-q.x,p.y-q.y)<r+12;});
@@ -1267,8 +1281,9 @@ canvas.addEventListener('pointerdown',e=>{
   const p=eventPoint(e);
   if(editorActive){editorPointerDown(e,p);e.preventDefault();return;}
   if(!playing())return;
-  if(handMode){if(grabPerson(p)){inputId=e.pointerId;canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';}e.preventDefault();return;}
+  if(handMode){recordEarningCommand('grab',p);if(grabPerson(p)){inputId=e.pointerId;canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';}e.preventDefault();return;}
   unlockAudio();
+  recordEarningCommand("down",p);
   if(!held){
     if(!overTool(p))return;
     held=true;bat.x=p.x;bat.y=p.y;constrainToolPose(bat);target={...p};previousTarget={...p};trails=[];
@@ -1282,8 +1297,8 @@ canvas.addEventListener('pointerdown',e=>{
 canvas.addEventListener('pointermove',e=>{
   if(!e.isPrimary||replay.active)return;const p=eventPoint(e);
   if(editorActive){editorPointerMove(p);return;}if(!playing())return;
-  if(handMode){target=p;canvas.style.cursor=grab?'grabbing':'grab';return;}
-  if(held){competitionInput(0,p);target=p;}else canvas.style.cursor=overTool(p)?'grab':'default';
+  if(handMode){recordEarningCommand('move',p);target=p;canvas.style.cursor=grab?'grabbing':'grab';return;}
+  if(held){recordEarningCommand('move',p);competitionInput(0,p);target=p;}else canvas.style.cursor=overTool(p)?'grab':'default';
 });
 canvas.addEventListener('pointerup',e=>{if(editorDrag){editorDrag=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);return;}release();});
 canvas.addEventListener('pointercancel',()=>release(true));
@@ -1293,9 +1308,10 @@ window.addEventListener('blur',()=>{if(!paused&&challengeState!=='ended')toggleP
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&!paused)togglePause(true,true);});
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&replay.active){stopReplay();return;}if(e.code==='Space'&&!['BUTTON','INPUT','SELECT','TEXTAREA','SUMMARY'].includes(document.activeElement?.tagName)) {e.preventDefault();if($('tutorialOverlay').hidden)togglePause();}});
 $('invite').addEventListener('click',()=>{if(playing()){unlockAudio();callPerson();}});
-$('stand').addEventListener('click',()=>{if(playing()&&!competition.active)beginGetup();});
+$('stand').addEventListener('click',()=>{if(playing()&&!competition.active){recordEarningCommand('stand');beginGetup();}});
 $('reset').addEventListener('click',()=>setMode(mode));
-$('objectsReset').addEventListener('click',()=>{if(!replay.active&&(mode==='free'||challengeState==='ready')){presetTramps();spawnObjects();particles=[];labels=[];trails=[];bubble=null;clearReplay();updateEditorUI();}});
+function resetSceneObjects(){if(!replay.active&&(mode==='free'||challengeState==='ready')){presetTramps();spawnObjects();particles=[];labels=[];trails=[];bubble=null;clearReplay();updateEditorUI();}}
+$('objectsReset').addEventListener('click',()=>resetSceneObjects());
 $('modeSelect').addEventListener('change',e=>setMode(e.target.value));
 $('start').addEventListener('click',()=>{if(playing())startChallenge();});
 $('finish').addEventListener('click',()=>{if(mode==='free'&&playing())endChallenge();});
@@ -1304,14 +1320,14 @@ $('backFree').addEventListener('click',()=>setMode('free'));
 $('pause').addEventListener('click',()=>{if(!editorActive&&!replay.active)togglePause();});
 $('resume').addEventListener('click',()=>{unlockAudio();togglePause(false);});
 $('sound').addEventListener('click',()=>{if(replay.active)return;muted=!muted;$('sound').textContent=muted?'Hang: ki':'Hang: be';$('sound').setAttribute('aria-pressed',String(!muted));if(!muted)unlockAudio();});
-$('handTool').addEventListener('click',chooseHand);
+$('handTool').addEventListener('click',()=>chooseHand());
 $('editorToggle').addEventListener('click',toggleEditor);
 $('editorPanel').addEventListener('click',e=>{const b=e.target.closest('button[data-add]');if(b)addSceneItem(b.dataset.add);});
 $('editorRotation').addEventListener('input',e=>{const item=sceneItem();if(!editorActive||!item)return;item.angle=Number(e.target.value)*Math.PI/180;clampSceneItem(item);customLayout=true;});
 $('editorDelete').addEventListener('click',deleteSceneItem);
 $('layoutSave').addEventListener('click',saveLayout);
 $('layoutLoad').addEventListener('click',loadLayout);
-$('layoutDefault').addEventListener('click',defaultLayout);
+$('layoutDefault').addEventListener('click',()=>defaultLayout());
 $('replayButton').addEventListener('click',beginReplay);
 $('replayExit').addEventListener('click',stopReplay);
 $('replayNormal').addEventListener('click',()=>{replay.speed=1;updateReplayUI();});
@@ -1335,7 +1351,7 @@ $('characters').addEventListener('click',e=>{if(replay.active)return;const b=e.t
 $('maps').addEventListener('click',e=>{if(replay.active)return;const b=e.target.closest('button[data-map]');if(b)setMap(Number(b.dataset.map));});
 $('tools').addEventListener('click',e=>{
   const b=e.target.closest('button[data-tool]');if(!b)return;
-  if(replay.active||competition.active&&!competition.ending)return;dropGrab();handMode=false;$('handTool').classList.remove('active');$('handTool').setAttribute('aria-pressed','false');
+  if(replay.active||competition.active&&!competition.ending)return;
   const index=Number(b.dataset.tool);if(!owns('tool-'+index)){showShop('tool');notify('Vásárold meg az eszközt a boltban.');return;}
   if(accountMode==='account'){shopAction('equip','tool-'+index);return;}wallet().equipped.tool='tool-'+index;selectedTool=index;saveProgress();setPressed('tools','tool',selectedTool);
   if(mode!=='free'){setMode(mode);return;}
@@ -1666,18 +1682,196 @@ function simulate(dt){
   const oldCount=toasts.length;toasts.forEach(t=>t.age+=dt);toasts=toasts.filter(t=>t.age<3.5);if(toasts.length!==oldCount)renderToasts();
 }
 function frame(timestamp){
+  if(typeof flushEarnings==='function'&&accountMode==='account'&&!earning.applying){
+    if(earning.ready&&(earning.pending||earning.tick>=360||(paused||challengeState==='ended')&&earning.tick>0))flushEarnings();
+    else if(!earning.ready&&!earning.booting&&!competition.active&&!pendingSubmission&&Date.now()>=earningRetryAt)startEarnings();
+  }
   const raw=lastFrame===null?0:Math.max(0,(timestamp-lastFrame)/1000);lastFrame=timestamp;
   if(replay.active){replay.cursor=Math.min(lastClip.length-1,replay.cursor+Math.min(raw,.1)*30*replay.speed);drawReplay();requestAnimationFrame(frame);return;}
   if(playing()){
-    if(!competition.active&&challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-raw);updateHUD();if(remaining<=0)endChallenge();}
-    if(playing()){accumulator+=Math.min(raw,.1);while(accumulator>=STEP&&playing()){simulate(STEP);competitionStepDone();accumulator-=STEP;}}
+    if(!earning.ready&&!competition.active&&challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-raw);updateHUD();if(remaining<=0)endChallenge();}
+    if(playing()){accumulator+=Math.min(raw,.1);while(accumulator>=STEP&&playing()){earningBeforeStep();simulate(STEP);competitionStepDone();earningAfterStep();accumulator-=STEP;}}
   }
   draw();requestAnimationFrame(frame);
 }
 $('sensitivity').value=String(progress.sensitivity);$('autoGetup').checked=progress.autoGetup;$('gravity').value=progress.gravity;$('gravityValue').textContent=progress.gravity+'%';
 $('volume').value=Math.round(progress.volume*100);$('reduced').checked=progress.reduced;
+// The same deterministic state and input interpreter run in the browser and verifier.
+function prepareEarningGame(ticket){
+  earning.applying=true;
+  try{
+    const c=ticket.config;selectedMap=c.map;selectedTool=c.tool;selectedCharacter=c.character;bodyParts=characterParts();
+    progress.sensitivity=c.sensitivity;progress.autoGetup=c.autoGetup;freeGravity=progress.gravity=c.gravity;
+    time=0;sceneId=0;missionSeed=ticket.seed;setMode(c.mode);resetStarRound(true);
+    if(ticket.meter)starMeter=JSON.parse(JSON.stringify(ticket.meter));
+    if(c.invite)callPerson();lastFrame=null;
+  }finally{earning.applying=false;}
+}
+function earningSnapshot(){
+  return {time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,bat:{...bat},
+    impactCompression,bananaFlex,slowTime,hitStop,held,down,swingHit,quietTime,previousTarget,target,
+    hits,score,combo,lastHit,best,maxCombo,mode,challengeState,remaining,paused,autoPaused,worldAccumulator,
+    freeGravity,readyAnnounced,swing,holdDirection,holdTurn,holdPath,lastRearmTime,handMode,grab,customLayout,
+    missionSeed,missionDefs,missionIndex,missionValue,missionStreak,missionsDone,pendingMission,missionLastHit,missionTargetId,
+    missionSeen:[...missionSeen],rewardedMissions:[...rewardedMissions],tippedCones:[...tippedCones],
+    objectHits,coneCount,attempts,misses,connectedSwings,bodySwings,strongest,sessionStars,streak,bestStreak,
+    perfectRound,newRecordRound,starMeter,progress,earningBadges:[...earning.badges]};
+}
+function restoreEarningSnapshot(s){
+  ({time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,impactCompression,bananaFlex,slowTime,hitStop,
+    held,down,swingHit,quietTime,previousTarget,target,hits,score,combo,lastHit,best,maxCombo,mode,challengeState,remaining,paused,autoPaused,worldAccumulator,
+    freeGravity,readyAnnounced,swing,holdDirection,holdTurn,holdPath,lastRearmTime,handMode,grab,customLayout,missionSeed,missionDefs,
+    missionIndex,missionValue,missionStreak,missionsDone,pendingMission,missionLastHit,missionTargetId,objectHits,coneCount,attempts,misses,
+    connectedSwings,bodySwings,strongest,sessionStars,streak,bestStreak,perfectRound,newRecordRound,starMeter,progress}=s);
+  Object.assign(bat,s.bat);bodyParts=characterParts();missionSeen=new Set(s.missionSeen);rewardedMissions=new Set(s.rewardedMissions);tippedCones=new Set(s.tippedCones);
+  earning.badges=new Set(s.earningBadges);particles=[];labels=[];trails=[];dust=[];bubble=null;editorActive=false;replay.active=false;
+}
+function applyEarningEquipment(c){
+  const before=earning.applying;earning.applying=true;
+  try{
+    const existed=!!person;release(true);dropGrab();handMode=false;held=false;
+    if(selectedCharacter!==c.character){selectedCharacter=c.character;bodyParts=characterParts();person=null;if(existed)callPerson();}
+    selectedTool=c.tool;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];
+  }finally{earning.applying=before;}
+}
+function applyEarningLayout(data){
+  const layout=sanitizeLayout(data);if(!layout)return;
+  const before=earning.applying;earning.applying=true;
+  try{
+    release(true);dropGrab();sceneId=100000;
+    objects=layout.objects.map(item=>{const o=newObject(item.kind,item.x,item.y,item.r);Object.assign(o,item);o.oldX=o.x;o.oldY=o.y;return o;});
+    tramps=layout.tramps.map((t,i)=>({...t,id:'layout-tramp-'+i,energy:0}));customLayout=true;
+    if(person){person.sleep=false;person.nodes.forEach(n=>{n.px=n.x;n.py=n.y;});}
+  }finally{earning.applying=before;}
+}
+function applyEarningCommand(name,value){
+  const before=earning.applying;earning.applying=true;
+  try{
+    if(name==='move'){target={...value};return;}
+    if(name==='down'){
+      if(handMode||!playing())return;
+      if(!held){if(!overTool(value))return;held=true;bat.x=value.x;bat.y=value.y;constrainToolPose(bat);target={...value};previousTarget={...value};trails=[];if(!progress.tools.includes(selectedTool))progress.tools.push(selectedTool);checkAchievements();}
+      finishSwing();swing={eligible:false,peak:0,hit:false,body:false,origin:{...value}};target={...value};down=true;swingHit=false;quietTime=0;resetHeldStroke();return;
+    }
+    if(name==='grab'){if(handMode)grabPerson(value);return;}
+    if(name==='release'){release(value===true);return;}
+    if(name==='invite'){callPerson();return;}
+    if(name==='stand'){beginGetup();return;}
+    if(name==='mode'){selectedMap=value.map;setMode(value.mode);return;}
+    if(name==='map'){setMap(value);return;}
+    if(name==='start'){startChallenge();return;}
+    if(name==='end'){endChallenge();return;}
+    if(name==='objects'){resetSceneObjects();return;}
+    if(name==='hand'){chooseHand();return;}
+    if(name==='equipment'){applyEarningEquipment(value);return;}
+    if(name==='layout'){applyEarningLayout(value);return;}
+    if(name==='pause'){togglePause(value);return;}
+    if(name==='prefs'){progress.sensitivity=value.sensitivity;progress.autoGetup=value.autoGetup;freeGravity=progress.gravity=value.gravity;objects.forEach(wake);return;}
+  }finally{earning.applying=before;}
+}
+function recordEarningCommand(name,value=null){
+  if(!earning.ready||earning.applying||competition.active||competitionArming)return;
+  const event=[earning.tick,name,value],last=earning.events.at(-1);
+  if(name==='move'&&last?.[0]===event[0]&&last[1]==='move')last[2]=value;
+  else earning.events.push(event);
+}
+function earningWrap(name,fn,values=args=>args[0]??null){
+  return function(...args){
+    recordEarningCommand(name,values(args));const before=earning.applying;earning.applying=true;
+    try{return fn.apply(this,args);}finally{earning.applying=before;}
+  };
+}
+function earningBeforeStep(){
+  if(!earning.ready||competition.active||competitionArming)return;
+  const settings={sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity},key=JSON.stringify(settings);
+  if(key!==earning.prefs){recordEarningCommand('prefs',settings);earning.prefs=key;}
+}
+function earningAfterStep(){
+  if(!earning.ready||competition.active||competitionArming)return;
+  earning.tick++;if(earning.tick>=7200||earning.events.length>=12000){togglePause(true);notify('A mentésre váró napló megtelt. Kapcsolódj újra, majd folytasd a játékot.');}
+  if(earning.tick%120===0&&typeof saveEarnings==='function')saveEarnings();
+  if(challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-STEP);if(remaining<=0)endChallenge();}
+  if(typeof flushEarnings==='function'&&earning.tick>=360)flushEarnings();
+}
+function renderEarningStatus(){
+  if(accountMode!=='account')return;
+  $('shopStorage').textContent='Fiókos bolt · szerverre mentve';
+  $('walletTop').textContent='★ '+wallet().stars+(earning.pendingStars?' · +'+earning.pendingStars+' mentés alatt':'');
+  if(earning.pendingStars)$('shopMessage').textContent='★ +'+earning.pendingStars+' csillag gyűlt · automatikus mentés…';
+}
+function installEarningHooks(){
+  callPerson=earningWrap('invite',callPerson,()=>null);
+  setMode=earningWrap('mode',setMode,args=>({mode:args[0],map:selectedMap}));setMap=earningWrap('map',setMap);
+  startChallenge=earningWrap('start',startChallenge,()=>null);endChallenge=earningWrap('end',endChallenge,()=>null);
+  release=earningWrap('release',release);chooseHand=earningWrap('hand',chooseHand,()=>null);
+  resetSceneObjects=earningWrap('objects',resetSceneObjects,()=>null);defaultLayout=earningWrap('objects',defaultLayout,()=>null);
+  togglePause=earningWrap('pause',togglePause,args=>args[0]===undefined?!paused:args[0]);
+}
+
 // ONLINE_CLIENT_BEGIN
 let onlineUser=null,onlineReady=false,onlineBusy=false,boardBusy=false,boardKind='sprint',boardPeriod='week',pendingSubmission=null,authResume=false,recoveryMode=false;
+const EARNING_KEY='utos-earning-session-v1';
+let earningRequest=false,earningRetryAt=0;
+function earningConfig(){return {mode,map:selectedMap,tool:selectedTool,character:selectedCharacter,sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity,invite:!!person};}
+function saveEarnings(){
+  try{if(earning.ready)sessionStorage.setItem(EARNING_KEY,JSON.stringify({userId:onlineUser?.id,id:earning.id,seq:earning.seq,pending:earning.pending,tail:{ticks:earning.tick,events:earning.events}}));else sessionStorage.removeItem(EARNING_KEY);}catch(_){}
+}
+async function startEarnings(){
+  if(!onlineUser||earning.ready||earningRequest||competition.active||competitionArming)return;
+  earningRequest=true;earning.booting=true;const accountId=onlineUser.id;
+  $('shopMessage').textContent='Csillagjutalmak bekapcsolása…';
+  try{
+    // A pending verified batch survives reload and is retried with the same sequence.
+    try{
+      const saved=JSON.parse(sessionStorage.getItem(EARNING_KEY)||'null');
+      if(saved?.userId===accountId){
+        let seq=saved.seq;
+        if(saved.pending){const restored=await api('/earnings/claim',{sessionId:saved.id,...saved.pending});acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq=saved.pending.seq+1;}
+        let ticks=saved.tail?.ticks||0,events=saved.tail?.events||[];
+        while(ticks>0){const n=Math.min(ticks,1200),restored=await api('/earnings/claim',{sessionId:saved.id,seq,ticks:n,events:events.filter(e=>e[0]<n)});acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq++;ticks-=n;events=events.filter(e=>e[0]>=n).map(e=>[e[0]-n,e[1],e[2]]);}
+      }
+    }catch(error){if(error.status!==404&&error.status!==410&&error.status!==409)throw error;}
+    const response=await api('/earnings/start',{requestId:transactionId(),config:earningConfig()});
+    if(onlineUser?.id!==accountId)return;
+    acceptAccount(response.user);earning.id=response.ticket.id;earning.seq=0;earning.tick=0;earning.events=[];earning.pending=null;earning.pendingStars=0;
+    const wasPaused=paused;prepareEarningGame(response.ticket);earning.prefs=JSON.stringify({sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity});earning.ready=true;if(wasPaused)togglePause(true);
+    $('shopMessage').textContent='★ A normál játék is ad csillagokat. A találatok jutalma automatikusan mentődik.';saveEarnings();showAchievementAwards(response.achievements);
+  }catch(error){$('shopMessage').textContent='A csillagok mentése most nem indul: '+error.message;earningRetryAt=Date.now()+10000;}
+  finally{earningRequest=false;earning.booting=false;lastFrame=null;}
+}
+function showAchievementAwards(awards=[]){
+  for(const award of awards){const a=economy.achievements.find(a=>a.id===award.id);if(a)notify('🏆 '+a.name+' · +'+a.reward+' ★');}
+}
+async function flushEarnings(force=false){
+  if(!earning.ready||earningRequest||(!force&&Date.now()<earningRetryAt))return;
+  if(!earning.pending){
+    if((force||!playing())&&earning.events.some(e=>e[0]===earning.tick))earning.tick++;
+    if(earning.tick===0)return;
+    const ticks=Math.min(earning.tick,1200),events=earning.events.filter(e=>e[0]<ticks);
+    earning.pending={seq:earning.seq,ticks,events};earning.events=earning.events.filter(e=>e[0]>=ticks).map(e=>[e[0]-ticks,e[1],e[2]]);earning.tick-=ticks;saveEarnings();
+  }
+  earningRequest=true;const sessionId=earning.id,accountId=onlineUser?.id,batch=earning.pending;
+  try{
+    const response=await api('/earnings/claim',{sessionId,...batch});
+    if(onlineUser?.id!==accountId||earning.id!==sessionId)return;
+    const before=accountWallet?.stars||0;acceptAccount(response.user);showAchievementAwards(response.achievements);
+    sessionStars+=response.stars;earning.pendingStars=Math.max(0,earning.pendingStars-response.hitStars);earning.pending=null;earning.seq++;saveEarnings();earningRetryAt=0;
+    $('shopMessage').textContent=response.stars?'✓ +'+response.stars+' ★ mentve · Egyenleg: '+accountWallet.stars+' ★':'★ Csillaggyűjtés aktív · lendíts a figurára!';
+    if(accountWallet.stars>before&&!progress.reduced){$('walletTop').classList.remove('wallet-pop');void $('walletTop').offsetWidth;$('walletTop').classList.add('wallet-pop');}
+    renderEarningStatus();
+  }catch(error){$('shopMessage').textContent='A csillagjutalom még nincs mentve. Automatikusan újrapróbáljuk: '+error.message;earningRetryAt=Date.now()+10000;saveEarnings();}
+  finally{earningRequest=false;}
+}
+async function stopEarnings(){
+  // Freeze the game at a chunk boundary; never discard already earned input.
+  earning.booting=true;
+  try{
+    if(earningRequest)throw Error('A csillagok mentése folyamatban van. Próbáld meg néhány másodperc múlva.');
+    while(earning.pending||earning.tick>0){await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat. A Mentés újrapróbálása gombbal folytathatod.');}
+    earning.ready=false;saveEarnings();
+  }finally{earning.booting=false;}
+}
+
 const onlineAPI='/api';const shopRequestIds=new Map();
 const onlineNoticeDefault=$('onlineNotice').textContent;
 const REQUEST_TIMEOUT=40000;
@@ -1721,6 +1915,7 @@ async function migrateOldCosmetics(){
 }
 function transactionId(){return typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);}
 async function accountShopAction(action,itemId,category){
+  if(earning.ready){if(earningRequest)throw Error('A csillagok mentése folyamatban van. Próbáld meg néhány másodperc múlva.');await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat.');}
   const key='utos-shop-transaction:'+onlineUser.id+':'+JSON.stringify([action,itemId,category||null]);let id=shopRequestIds.get(key);
   try{id=id||sessionStorage.getItem(key);}catch(_){}if(!id){id=transactionId();try{sessionStorage.setItem(key,id);}catch(_){}}
   shopRequestIds.set(key,id);const response=await api('/shop/'+action,{itemId,category,transactionId:id});acceptAccount(response.user);shopRequestIds.delete(key);try{sessionStorage.removeItem(key);}catch(_){}
@@ -1732,7 +1927,7 @@ function renderAccount(){
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
   $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
   $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=onlineBusy||competition.active&&!competition.ending;
-  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · csillagbolt 1':'Az online kapcsolat nem elérhető';
+  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · csillagjutalmak 2':'Az online kapcsolat nem elérhető';
   for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=onlineBusy||competition.active&&!competition.ending;
 }
 function openAuth(){
@@ -1751,14 +1946,14 @@ async function submitAuth(kind){
       await signup($('authEmail').value.trim(),$('authPassword').value,{username,full_name:username});
       if(!await getIdentityUser()){$('authPassword').value='';$('authError').textContent='Regisztráció elküldve! Erősítsd meg az e-mail-címed a kapott levélben, majd jelentkezz be.';return;}
     }else await login($('authEmail').value.trim(),$('authPassword').value);
-    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');restoreSubmission();await loadLeaderboard();
+    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();await startEarnings();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');restoreSubmission();await loadLeaderboard();
   }catch(error){$('authError').textContent=authMessage(error);}
   finally{onlineBusy=false;$('loginSubmit').disabled=$('registerSubmit').disabled=false;renderAccount();}
 }
 async function logoutOnline(){
   if(onlineBusy||competition.active&&!competition.ending)return;
   onlineBusy=true;renderAccount();
-  try{await logout();setRecoveryMode(false);onlineUser=null;accountWallet=null;accountMode='guest';applyEquipment();pendingSubmission=null;keepSubmission();renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');}catch(error){notify(authMessage(error));}
+  try{await stopEarnings();await logout();setRecoveryMode(false);onlineUser=null;accountWallet=null;accountMode='guest';applyEquipment();pendingSubmission=null;keepSubmission();renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');}catch(error){notify(authMessage(error));}
   finally{onlineBusy=false;renderAccount();}
 }
 function authMessage(error){
@@ -1787,7 +1982,7 @@ async function saveRecoveredPassword(){
   onlineBusy=true;$('resetPasswordSubmit').disabled=true;
   try{
     await updateUser({password:$('authPassword').value});setRecoveryMode(false);
-    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();notify('Az új jelszót elmentettük.');await loadLeaderboard();
+    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();await startEarnings();notify('Az új jelszót elmentettük.');await loadLeaderboard();
   }catch(error){$('authError').textContent=authMessage(error);}
   finally{onlineBusy=false;$('resetPasswordSubmit').disabled=false;}
 }
@@ -1796,6 +1991,7 @@ async function startCompetitive(kind){
   if(!onlineUser){openAuth();$('authError').textContent='A közös ranglistához jelentkezz be!';return;}
   onlineBusy=true;renderAccount();
   try{
+    await stopEarnings();
     const loadout=kind==='practice'?{map:selectedMap,tool:selectedTool,character:selectedCharacter}:{};
     const {ticket}=await api('/round/start',{kind,...loadout});pendingSubmission=null;keepSubmission();prepareCompetitiveRound(ticket);$('onlineNotice').textContent=competitiveDefs[kind].name+' · A kör végén a szerver ellenőrzi az egérmozdulatokat.';
     $('authOverlay').hidden=true;$('tutorialOverlay').hidden=true;if(kind!=='practice'){boardKind=kind;$('boardKind').value=kind;}renderAccount();
@@ -1814,7 +2010,7 @@ async function sendCompetitiveResult(){
     const result=await api('/round/finish',submission);acceptAccount(result.user);
     if(pendingSubmission!==submission)return;
     $('resultScore').textContent=result.result.points+(submission.kind==='practice'?' ellenőrzött pont':' hitelesített versenypont');
-    sessionStars=result.result.stars||0;const starStat=document.querySelector('[data-stat="stars"] b');if(starStat)starStat.textContent='+'+sessionStars;
+    showAchievementAwards(result.result.achievements);sessionStars=(result.result.stars||0)+(result.result.achievementStars||0);const starStat=document.querySelector('[data-stat="stars"] b');if(starStat)starStat.textContent='+'+sessionStars;
     $('resultOnline').textContent=(submission.kind==='practice'?'✓ Csillagjutalom mentve':'✓ Ranglistára mentve')+' · +'+sessionStars+' ★ · +'+result.result.xp+' XP · '+rankName(onlineUser.xp);pendingSubmission=null;keepSubmission();await loadLeaderboard();
   }catch(error){$('resultOnline').textContent=error.message+(submission.kind==='practice'?' A csillagjutalom még nincs jóváírva.':' A helyi eredmény még nincs a ranglistán.');$('submitAgain').hidden=false;}
   finally{onlineBusy=false;renderAccount();}
@@ -1840,7 +2036,7 @@ async function initOnline(){
     const callback=await handleAuthCallback();
     if(callback?.type==='recovery'){openAuth();setRecoveryMode(true);$('authError').textContent='Adj meg egy új, legalább 10 karakteres jelszót.';$('authPassword').focus();}
     else if(callback?.type==='confirmation')notify('Az e-mail-címed megerősítve. Sikeres bejelentkezés!');
-    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();restoreSubmission();await loadLeaderboard();
+    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();await startEarnings();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();restoreSubmission();await loadLeaderboard();
   }
   catch(error){onlineReady=false;$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();}
 }
@@ -1852,11 +2048,15 @@ window.addEventListener('keydown',e=>{if(e.code==='Escape'&&!$('authOverlay').hi
 $('competitivePanel').addEventListener('click',e=>{const b=e.target.closest('button[data-competitive]');if(b)startCompetitive(b.dataset.competitive);});
 $('boardKind').addEventListener('change',e=>{boardKind=e.target.value;loadLeaderboard();});$('boardPeriod').addEventListener('change',e=>{boardPeriod=e.target.value;loadLeaderboard();});$('boardRefresh').addEventListener('click',loadLeaderboard);
 $('submitAgain').addEventListener('click',sendCompetitiveResult);
-$('earnStars').addEventListener('click',()=>startCompetitive('practice'));
+$('earnStars').textContent='★ Mentés újrapróbálása';
+$('earnStars').addEventListener('click',()=>earning.ready?flushEarnings(true):startEarnings());
+window.addEventListener('pagehide',()=>{saveEarnings();});
+window.addEventListener('online',()=>{if(onlineUser){if(earning.ready)flushEarnings(true);else startEarnings();}});
 initOnline();
 // ONLINE_CLIENT_END
 
 document.body?.classList.toggle('quiet',progress.reduced);renderRewards();setPressed('characters','character',selectedCharacter);setMode('free');
+installEarningHooks();checkAchievements();
 if(!progress.tutorialSeen)showTutorial();
 // Exactly one animation loop; all resets and mode switches only update state.
 requestAnimationFrame(frame);
