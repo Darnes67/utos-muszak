@@ -11,7 +11,22 @@ function checkEngine(){
       const match=html.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/);if(!match)throw Error('Missing game engine');
       code=match[1].replace(/^import .* from ['"]\.\/auth\.js['"];\s*$/m,'').replace(/\/\/ ONLINE_CLIENT_BEGIN[\s\S]*?\/\/ ONLINE_CLIENT_END/,'');
     }
-    compiled=new vm.Script(code,{filename:'trusted-game-engine.js'});
+    // Keep hot physics variables in an ordinary function scope instead of VM-global bindings.
+    // Math belongs to this VM; borrowing host Math makes every physics operation cross contexts.
+    compiled=new vm.Script(`'use strict';(function(){
+      const Math=globalThis.Math;
+      ${code}
+      recordFrame=()=>{};saveProgress=()=>{};renderRewards=()=>{};checkAchievements=()=>{};notify=()=>{};
+      return {verify(ticket,inputEvents){
+        prepareCompetitiveRound(ticket);
+        let cursor=0;
+        for(let tick=0;tick<5400;tick++){
+          while(cursor<inputEvents.length&&inputEvents[cursor][0]===tick)applyCompetitiveInput(inputEvents[cursor++]);
+          simulate(STEP);competitionStepDone();
+        }
+        return JSON.stringify(competitiveMetrics());
+      }};
+    })()`,{filename:'trusted-game-engine.js'});
   }
   return true;
 }
@@ -23,9 +38,8 @@ function createEngine(){
   const drawing=new Proxy({measureText:()=>({width:50}),createLinearGradient:()=>gradient,createRadialGradient:()=>gradient},{get:(o,k)=>k in o?o[k]:noop,set:(o,k,v)=>(o[k]=v,true)});
   function el(){return{style:{},dataset:{},hidden:true,textContent:'',innerHTML:'',disabled:false,checked:false,value:'',classList:{toggle:noop,remove:noop,add:noop},setAttribute:noop,focus:noop,replaceChildren:noop,appendChild:noop,addEventListener:noop,getContext:()=>drawing,hasPointerCapture:()=>false,getBoundingClientRect:()=>({left:0,top:0,width:1000,height:560}),setPointerCapture:noop};}
   const doc={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll:()=>[],createElement:el,addEventListener:noop,hidden:false,activeElement:null};
-  const context=vm.createContext({document:doc,window:{addEventListener:noop},localStorage:{getItem:()=>'{"tutorialSeen":true}',setItem:noop},requestAnimationFrame:noop,console:{log:noop},Math});
-  compiled.runInContext(context,{timeout:1000});
-  vm.runInContext('recordFrame=()=>{};saveProgress=()=>{};renderRewards=()=>{};checkAchievements=()=>{};notify=()=>{};',context);
+  const context=vm.createContext({document:doc,window:{addEventListener:noop},localStorage:{getItem:()=>'{"tutorialSeen":true}',setItem:noop},requestAnimationFrame:noop,console:{log:noop}});
+  context.engine=compiled.runInContext(context,{timeout:1000});
   return context;
 }
 function validateEvents(events,ticks){
@@ -38,14 +52,7 @@ function validateEvents(events,ticks){
 }
 function verifyRound(ticket,events,ticks){
   validateEvents(events,ticks);const context=createEngine();context.ticket=ticket;context.inputEvents=events;
-  const result=vm.runInContext(`
-    prepareCompetitiveRound(ticket);
-    let cursor=0;
-    for(let tick=0;tick<5400;tick++){
-      while(cursor<inputEvents.length&&inputEvents[cursor][0]===tick)applyCompetitiveInput(inputEvents[cursor++]);
-      simulate(STEP);competitionStepDone();
-    }
-    JSON.stringify(competitiveMetrics());`,context,{timeout:9000});
+  const result=vm.runInContext('engine.verify(ticket,inputEvents)',context,{timeout:22000});
   return JSON.parse(result);
 }
 module.exports={ENGINE_VERSION,createEngine,verifyRound,validateEvents,checkEngine};
