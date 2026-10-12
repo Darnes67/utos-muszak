@@ -1,0 +1,23 @@
+[build]
+command = "npm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "22"
+
+[functions]
+directory = "netlify/functions"
+node_bundler = "esbuild"
+included_files = ["index.html"]
+
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/ranglista/:splat"
+status = 200
+force = true
+
+[[headers]]
+for = "/*"
+[headers.values]
+Referrer-Policy = "same-origin"
+X-Content-Type-Options = "nosniff"
