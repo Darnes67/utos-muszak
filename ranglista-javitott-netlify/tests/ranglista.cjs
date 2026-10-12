@@ -18,6 +18,9 @@ const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixture.json')));
 const api=createAPI({store,authenticate:async req=>req.headers.get('x-test-user')==='a'?userA:req.headers.get('x-test-user')==='b'?userB:null,now:()=>clock});
 async function call(route,body,user){const headers={};if(user)headers['x-test-user']=user;if(body!==undefined)Object.assign(headers,{'Content-Type':'application/json','X-Utos-Request':'1',origin:'https://game.test'});const response=await api(new Request('https://game.test/api'+route,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify(body)}));assert.equal(response.headers.get('cache-control'),'no-store');return{status:response.status,data:await response.json()};}
 (async()=>{
+ assert.equal((await call('/health')).data.ok,true);
+ const hanging=createAPI({store:{get:()=>new Promise(()=>{})},requestTimeout:20});
+ const stalled=await hanging(new Request('https://game.test/api/leaderboard'));assert.equal(stalled.status,503);assert.equal((await stalled.json()).code,'server-timeout');
  assert.equal((await call('/me')).data.user,null);
  assert.equal((await call('/round/start',{kind:'sprint'})).status,401);
  const a=(await call('/me',undefined,'a')).data.user,b=(await call('/me',undefined,'b')).data.user;assert.equal(a.username,'Alex');assert.notEqual(b.username,'Alex');assert(!JSON.stringify(a).includes('email'));

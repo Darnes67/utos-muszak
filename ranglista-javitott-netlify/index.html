@@ -1588,23 +1588,44 @@ $('volume').value=Math.round(progress.volume*100);$('reduced').checked=progress.
 let onlineUser=null,onlineReady=false,onlineBusy=false,boardBusy=false,boardKind='sprint',boardPeriod='week',pendingSubmission=null,authResume=false,recoveryMode=false;
 const onlineAPI='/api';
 const onlineNoticeDefault=$('onlineNotice').textContent;
+const REQUEST_TIMEOUT=40000;
+const PENDING_KEY='utos-pending-round-v1';
+function keepSubmission(){
+  try{if(pendingSubmission&&onlineUser)sessionStorage.setItem(PENDING_KEY,JSON.stringify({userId:onlineUser.id,submission:pendingSubmission,savedAt:Date.now()}));else sessionStorage.removeItem(PENDING_KEY);}catch(_){}
+}
+function restoreSubmission(){
+  try{const saved=JSON.parse(sessionStorage.getItem(PENDING_KEY)||'null');
+    if(saved?.userId===onlineUser?.id&&Date.now()-saved.savedAt<480000&&saved.submission?.roundId&&Array.isArray(saved.submission.events)){
+      pendingSubmission=saved.submission;$('resultTitle').textContent='Van egy beküldésre váró köröd';$('resultScore').textContent='Az eredmény ellenőrizhető';$('resultDetails').textContent='A korábbi kör egérnaplóját megőriztük.';$('resultStats').replaceChildren();$('resultOnline').textContent='Kattints a Beküldés újrapróbálása gombra!';$('submitAgain').hidden=false;$('resultOverlay').hidden=false;
+    }else if(saved)sessionStorage.removeItem(PENDING_KEY);
+  }catch(_){}
+}
 async function api(path,data){
-  const identity=await getIdentityUser(),headers={};
-  if(identity)headers.Authorization='Bearer '+await getAccessToken();
-  if(data!==undefined){headers['Content-Type']='application/json';headers['X-Utos-Request']='1';}
-  let response;
-  try{response=await fetch(onlineAPI+path,{method:data===undefined?'GET':'POST',credentials:'same-origin',headers,body:data===undefined?undefined:JSON.stringify(data)});}
-  catch(_){throw Error('Nincs kapcsolat a ranglistával. Ellenőrizd az internetkapcsolatot, majd próbáld újra!');}
-  if(!response.headers.get('content-type')?.includes('application/json'))throw Error('Hiányzik a ranglista API-ja. A teljes javítócsomagot telepítsd Netlifyra; az index.html önmagában nem elég.');
-  let payload;try{payload=await response.json();}catch(_){throw Error('Hibás választ küldött a ranglista. Próbáld újra!');}
-  if(!response.ok){const error=Error(payload.error||'A ranglista kérése sikertelen.');error.status=response.status;throw error;}return payload;
+  const controller=new AbortController();let timer;
+  const expired=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('A ranglista nem válaszolt 40 másodpercen belül. A köröd megmaradt; használd a Beküldés újrapróbálása gombot!'));},REQUEST_TIMEOUT);});
+  const work=(async()=>{
+    const identity=await getIdentityUser(),headers={};
+    if(identity)headers.Authorization='Bearer '+await getAccessToken();
+    if(data!==undefined){headers['Content-Type']='application/json';headers['X-Utos-Request']='1';}
+    if(controller.signal.aborted)throw Error('A kérés időkorlátja lejárt.');
+    let response;
+    try{response=await fetch(onlineAPI+path,{method:data===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,headers,body:data===undefined?undefined:JSON.stringify(data)});}
+    catch(_){throw Error('Nincs kapcsolat a ranglistával. Ellenőrizd az internetkapcsolatot, majd próbáld újra!');}
+    if(!response.headers.get('content-type')?.includes('application/json')){
+      if(response.status===502||response.status===504)throw Error('A ranglista szervere időtúllépés miatt leállt. A kör megmaradt, próbáld újra a beküldést!');
+      throw Error('Hiányzik a ranglista API-ja. A teljes javítócsomagot telepítsd Netlifyra; az index.html önmagában nem elég.');
+    }
+    let payload;try{payload=await response.json();}catch(_){throw Error('Hibás választ küldött a ranglista. Próbáld újra!');}
+    if(!response.ok){const error=Error((payload.error||'A ranglista kérése sikertelen.')+(payload.code?' ['+payload.code+']':''));error.status=response.status;throw error;}return payload;
+  })();
+  try{return await Promise.race([work,expired]);}finally{clearTimeout(timer);}
 }
 function rankName(xp){return xp>=8000?'Műszaklegenda':xp>=3000?'Bonk mester':xp>=1000?'Ütőspecialista':xp>=300?'Lendületes':'Újonc';}
 function renderAccount(){
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
   $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
   $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=onlineBusy||competition.active&&!competition.ending;
-  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online':'Az online kapcsolat nem elérhető';
+  $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · javítás 2':'Az online kapcsolat nem elérhető';
   for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=onlineBusy||competition.active&&!competition.ending;
 }
 function openAuth(){
@@ -1623,14 +1644,14 @@ async function submitAuth(kind){
       await signup($('authEmail').value.trim(),$('authPassword').value,{username,full_name:username});
       if(!await getIdentityUser()){$('authPassword').value='';$('authError').textContent='Regisztráció elküldve! Erősítsd meg az e-mail-címed a kapott levélben, majd jelentkezz be.';return;}
     }else await login($('authEmail').value.trim(),$('authPassword').value);
-    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');onlineUser=result.user;onlineReady=true;closeAuth();renderAccount();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');await loadLeaderboard();
+    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');onlineUser=result.user;onlineReady=true;closeAuth();renderAccount();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');restoreSubmission();await loadLeaderboard();
   }catch(error){$('authError').textContent=authMessage(error);}
   finally{onlineBusy=false;$('loginSubmit').disabled=$('registerSubmit').disabled=false;renderAccount();}
 }
 async function logoutOnline(){
   if(onlineBusy||competition.active&&!competition.ending)return;
   onlineBusy=true;renderAccount();
-  try{await logout();setRecoveryMode(false);onlineUser=null;pendingSubmission=null;renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');}catch(error){notify(authMessage(error));}
+  try{await logout();setRecoveryMode(false);onlineUser=null;pendingSubmission=null;keepSubmission();renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');}catch(error){notify(authMessage(error));}
   finally{onlineBusy=false;renderAccount();}
 }
 function authMessage(error){
@@ -1668,7 +1689,7 @@ async function startCompetitive(kind){
   if(!onlineUser){openAuth();$('authError').textContent='A közös ranglistához jelentkezz be!';return;}
   onlineBusy=true;renderAccount();
   try{
-    const {ticket}=await api('/round/start',{kind});pendingSubmission=null;prepareCompetitiveRound(ticket);$('onlineNotice').textContent=competitiveDefs[kind].name+' · A kör végén a szerver ellenőrzi az egérmozdulatokat.';
+    const {ticket}=await api('/round/start',{kind});pendingSubmission=null;keepSubmission();prepareCompetitiveRound(ticket);$('onlineNotice').textContent=competitiveDefs[kind].name+' · A kör végén a szerver ellenőrzi az egérmozdulatokat.';
     $('authOverlay').hidden=true;$('tutorialOverlay').hidden=true;boardKind=kind;$('boardKind').value=kind;renderAccount();
     canvas.scrollIntoView?.({block:'center',behavior:progress.reduced?'auto':'smooth'});
   }catch(error){notify(error.message);if(/jelentkezz/i.test(error.message)){onlineUser=null;renderAccount();}}
@@ -1676,7 +1697,7 @@ async function startCompetitive(kind){
 }
 async function onCompetitionFinished(metrics){
   pendingSubmission={roundId:competition.ticket.id,events:competition.events.map(e=>e.slice()),ticks:competition.tick};
-  await sendCompetitiveResult();
+  keepSubmission();await sendCompetitiveResult();
 }
 async function sendCompetitiveResult(){
   if(!pendingSubmission||onlineBusy)return;onlineBusy=true;renderAccount();$('resultOnline').textContent='Eredmény ellenőrzése a szerveren…';$('submitAgain').hidden=true;
@@ -1685,7 +1706,7 @@ async function sendCompetitiveResult(){
     const result=await api('/round/finish',submission);onlineUser=result.user;
     if(pendingSubmission!==submission)return;
     $('resultScore').textContent=result.result.points+' hitelesített versenypont';
-    $('resultOnline').textContent='✓ Ranglistára mentve · +'+result.result.xp+' XP · '+rankName(onlineUser.xp);pendingSubmission=null;await loadLeaderboard();
+    $('resultOnline').textContent='✓ Ranglistára mentve · +'+result.result.xp+' XP · '+rankName(onlineUser.xp);pendingSubmission=null;keepSubmission();await loadLeaderboard();
   }catch(error){$('resultOnline').textContent=error.message+' A helyi eredmény még nincs a ranglistán.';$('submitAgain').hidden=false;}
   finally{onlineBusy=false;renderAccount();}
 }
@@ -1709,7 +1730,7 @@ async function initOnline(){
     const callback=await handleAuthCallback();
     if(callback?.type==='recovery'){openAuth();setRecoveryMode(true);$('authError').textContent='Adj meg egy új, legalább 10 karakteres jelszót.';$('authPassword').focus();}
     else if(callback?.type==='confirmation')notify('Az e-mail-címed megerősítve. Sikeres bejelentkezés!');
-    const result=await api('/me');onlineUser=result.user;onlineReady=true;renderAccount();await loadLeaderboard();
+    const result=await api('/me');onlineUser=result.user;onlineReady=true;renderAccount();restoreSubmission();await loadLeaderboard();
   }
   catch(error){onlineReady=false;$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();}
 }

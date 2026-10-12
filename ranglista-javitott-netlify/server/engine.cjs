@@ -2,14 +2,21 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const ENGINE_VERSION='identity-ranglista-1';
 let compiled;
-function createEngine(){
+function checkEngine(){
   if(!compiled){
-    const candidates=[path.join(__dirname,'../index.html'),path.join(process.cwd(),'index.html')];
-    const html=fs.readFileSync(candidates.find(file=>fs.existsSync(file))||candidates[0],'utf8');
-    const match=html.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/);if(!match)throw Error('Missing game engine');
-    const code=match[1].replace(/^import .* from ['"]\.\/auth\.js['"];\s*$/m,'').replace(/\/\/ ONLINE_CLIENT_BEGIN[\s\S]*?\/\/ ONLINE_CLIENT_END/,'');
+    let code;
+    try{code=require('./game-source.cjs');}catch(error){
+      if(error.code!=='MODULE_NOT_FOUND')throw error;
+      const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+      const match=html.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/);if(!match)throw Error('Missing game engine');
+      code=match[1].replace(/^import .* from ['"]\.\/auth\.js['"];\s*$/m,'').replace(/\/\/ ONLINE_CLIENT_BEGIN[\s\S]*?\/\/ ONLINE_CLIENT_END/,'');
+    }
     compiled=new vm.Script(code,{filename:'trusted-game-engine.js'});
   }
+  return true;
+}
+function createEngine(){
+  checkEngine();
   const elements=new Map();
   const noop=()=>{};
   const gradient={addColorStop:noop};
@@ -41,4 +48,4 @@ function verifyRound(ticket,events,ticks){
     JSON.stringify(competitiveMetrics());`,context,{timeout:9000});
   return JSON.parse(result);
 }
-module.exports={ENGINE_VERSION,createEngine,verifyRound,validateEvents};
+module.exports={ENGINE_VERSION,createEngine,verifyRound,validateEvents,checkEngine};

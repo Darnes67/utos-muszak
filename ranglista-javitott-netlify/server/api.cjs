@@ -1,7 +1,7 @@
 'use strict';
 const {randomUUID,createHash}=require('node:crypto');
 const {HttpError,profileKey}=require('./store.cjs');
-const {ENGINE_VERSION,verifyRound}=require('./engine.cjs');
+const {ENGINE_VERSION,verifyRound,checkEngine}=require('./engine.cjs');
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const expose=p=>p?{id:p.id,username:p.username,xp:p.xp,games:p.games}:null;
 const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
@@ -43,8 +43,9 @@ async function indexResult(store,profile,round,result){
     });
   }
 }
-function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now()}){
- return async req=>{
+function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000}){
+ async function handle(req){
+  let phase='request';
   try{
     const url=new URL(req.url),route=url.pathname.replace(/^\/\.netlify\/functions\/ranglista/,'/api').replace(/^\/api/,'');
     if(!['GET','POST'].includes(req.method))throw new HttpError(405,'Nem támogatott kérés.');
@@ -52,12 +53,13 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
-    const identity=await authenticate(req),profile=identity?await ensureProfile(store,identity):null;
+    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');return reply({ok:true,engine:ENGINE_VERSION,release:'ranking-fix-2'});}
+    phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){
       const kind=url.searchParams.get('kind')||'sprint',period=url.searchParams.get('period')||'week';if(!['all','week'].includes(period))throw new HttpError(400,'Ismeretlen időszak.');
       const date=new Date(now()),def=definition(kind,date),suffix=period==='all'?'all':'week:'+weekKey(date);
-      const board=await store.get('board/'+def.board+'/'+suffix)||{rows:{}};
+      phase='leaderboard';const board=await store.get('board/'+def.board+'/'+suffix)||{rows:{}};
       const rows=Object.values(board.rows).sort((a,b)=>b.points-a.points||a.created_at.localeCompare(b.created_at)||a.user_id.localeCompare(b.user_id)).map((r,i)=>({...r,place:i+1}));
       return reply({rows:rows.slice(0,50),mine:profile?rows.find(r=>r.user_id===profile.id)||null:null,label:kind==='daily'?def.board.slice(6):period==='week'?weekKey(date)+' óta (UTC)':'összesített'});
     }
@@ -74,22 +76,32 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       });return reply({ticket:round});
     }
     if(typeof input.roundId!=='string'||!/^[a-f0-9-]{36}$/i.test(input.roundId))throw new HttpError(400,'Érvénytelen kör.');
-    let current=await store.get(profileKey(profile.id)),round=current.rounds[input.roundId];if(!round)throw new HttpError(404,'A kör nem található a fiókodban.');
+    phase='round-read';let current=await store.get(profileKey(profile.id)),round=current.rounds[input.roundId];if(!round)throw new HttpError(404,'A kör nem található a fiókodban.');
     if(round.status!=='finished'){
       if(round.engine!==ENGINE_VERSION)throw new HttpError(409,'A játék frissült. Töltsd újra az oldalt!');
       if(Date.parse(round.expiresAt)<now())throw new HttpError(410,'A kör beküldési ideje lejárt. Indíts új kört!');
       if(now()-Date.parse(round.created_at)<44000)throw new HttpError(400,'A 45 másodperces kör még nem fejeződhetett be.');
       await store.mutate(profileKey(profile.id),current,p=>{p.finishes=(p.finishes||[]).filter(t=>t>now()-600000);if(p.finishes.length>=15)throw new HttpError(429,'Túl sok beküldés. Várj néhány percet.');p.finishes.push(now());});
-      let metrics;try{metrics=verify(round,input.events,input.ticks);}catch(_){throw new HttpError(400,'Érvénytelen egérnapló. Indíts új kört!');}
+      phase='verification';let metrics;try{metrics=verify(round,input.events,input.ticks);}catch(error){
+        if(error.code==='ERR_SCRIPT_EXECUTION_TIMEOUT')throw new HttpError(503,'Az eredmény ellenőrzése túl sokáig tartott. Próbáld újra a beküldést!');
+        if(!compiledInputValid(input))throw new HttpError(400,'Érvénytelen egérnapló. Indíts új kört!');
+        console.error('Ranking verifier failed',error.code||error.name);throw new HttpError(503,'A szerveroldali játékmotor nem tudta ellenőrizni a kört. A napló megmaradt, próbáld újra!');
+      }
       const result={...metrics,xp:50+Math.floor(metrics.points/100),created_at:new Date(now()).toISOString()};
-      current=await store.mutate(profileKey(profile.id),current,p=>{
+      phase='save-result';current=await store.mutate(profileKey(profile.id),current,p=>{
         const ticket=p.rounds[input.roundId];if(!ticket)throw new HttpError(404,'A kör nem található.');
         if(ticket.status!=='finished'){ticket.status='finished';ticket.result=result;p.xp+=result.xp;p.games++;}return p;
       });round=current.rounds[input.roundId];
     }
     // Retry also repairs a partial leaderboard write, without granting XP again.
-    await indexResult(store,current,round,round.result);return reply({result:round.result,user:expose(current)});
-  }catch(error){return reply({error:error instanceof HttpError?error.message:'A ranglista-tároló nem érhető el. Ellenőrizd a Netlify Functions naplóját és a Blobs beállítását.'},error.status||503);}
+    phase='save-leaderboard';await indexResult(store,current,round,round.result);return reply({result:round.result,user:expose(current)});
+  }catch(error){if(!(error instanceof HttpError))console.error('Ranking request failed',phase,error.code||error.name);return reply({error:error instanceof HttpError?error.message:'A ranglista-tároló nem érhető el. Próbáld újra a beküldést!',code:phase},error.status||503);}
+ }
+ return async req=>{
+  let timer;
+  const expired=new Promise(resolve=>{timer=setTimeout(()=>resolve(reply({error:'A szerver nem fejezte be időben a mentést. A kör megmaradt, próbáld újra a beküldést!',code:'server-timeout'},503)),requestTimeout);});
+  try{return await Promise.race([handle(req),expired]);}finally{clearTimeout(timer);}
  };
 }
+function compiledInputValid(input){try{require('./engine.cjs').validateEvents(input.events,input.ticks);return true;}catch(_){return false;}}
 module.exports={createAPI,identityUser,definition,weekKey,ensureProfile};
