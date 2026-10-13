@@ -9,24 +9,24 @@ Az idők 40 csillag/perces aktív keresettel számolnak, és egy termék teljes 
 | Eszköz | Ár | Becsült idő (40 ★/perc) |
 |---|---:|---:|
 | Fa baseballütő | 0 ★ | azonnal |
-| Szivacsütő | 140 ★ | 3 perc 30 mp |
-| Játék kalapács | 855 ★ | 21 perc 23 mp |
-| Felfújható banán | 380 ★ | 9 perc 30 mp |
-| Rugós bokszkesztyű | 620 ★ | 15 perc 30 mp |
-| Óriási szivacskéz | 1140 ★ | 28 perc 30 mp |
-| Gumicsirke | 250 ★ | 6 perc 15 mp |
-| Serpenyő | 550 ★ | 13 perc 45 mp |
-| Seprű | 350 ★ | 8 perc 45 mp |
-| Óriási villáskulcs | 800 ★ | 20 perc 0 mp |
-| WC-pumpa | 450 ★ | 11 perc 15 mp |
-| Rocksztár gitár | 1000 ★ | 25 perc 0 mp |
-| Pisztoly | 1800 ★ | 45 perc 0 mp |
-| Sörétes puska | 2400 ★ | 60 perc 0 mp |
-| Gépfegyver | 3200 ★ | 80 perc 0 mp |
+| Szivacsütő | 130 ★ | 3 perc 15 mp |
+| Játék kalapács | 790 ★ | 19 perc 45 mp |
+| Felfújható banán | 350 ★ | 8 perc 45 mp |
+| Rugós bokszkesztyű | 570 ★ | 14 perc 15 mp |
+| Óriási szivacskéz | 1050 ★ | 26 perc 15 mp |
+| Gumicsirke | 230 ★ | 5 perc 45 mp |
+| Serpenyő | 510 ★ | 12 perc 45 mp |
+| Seprű | 320 ★ | 8 perc 0 mp |
+| Óriási villáskulcs | 740 ★ | 18 perc 30 mp |
+| WC-pumpa | 415 ★ | 10 perc 23 mp |
+| Rocksztár gitár | 920 ★ | 23 perc 0 mp |
+| Pisztoly | 1660 ★ | 41 perc 30 mp |
+| Sörétes puska | 2210 ★ | 55 perc 15 mp |
+| Gépfegyver | 2940 ★ | 73 perc 30 mp |
 
-Skinek: Alex 0 ★, Mira 285 ★, Béla 330 ★, Cartman 760 ★, Kenny 665 ★, Stan 710 ★, Kyle 810 ★, Homer 1140 ★, SpongyaBob 1425 ★, Peter Griffin 800 ★, Lois Griffin 700 ★, Stewie Griffin 850 ★, Brian Griffin 800 ★, Meg Griffin 600 ★, Chris Griffin 650 ★, Glenn Quagmire 850 ★, Cleveland Brown 700 ★, Csillag Patrik 950 ★, Tunyacsáp 900 ★, Rák úr 1100 ★, Szandi 1050 ★, Bart Simpson 750 ★, Lisa Simpson 800 ★, Marge Simpson 950 ★, Rick Sanchez 1200 ★, Morty Smith 750 ★, Finn 850 ★, Jake 900 ★, Shrek 1300 ★.
+Skinek: Alex 0 ★, Mira 260 ★, Béla 305 ★, Cartman 700 ★, Kenny 610 ★, Stan 650 ★, Kyle 750 ★, Homer 1050 ★, SpongyaBob 1310 ★, Peter Griffin 740 ★, Lois Griffin 640 ★, Stewie Griffin 780 ★, Brian Griffin 740 ★, Meg Griffin 550 ★, Chris Griffin 600 ★, Glenn Quagmire 780 ★, Cleveland Brown 640 ★, Csillag Patrik 870 ★, Tunyacsáp 830 ★, Rák úr 1010 ★, Szandi 970 ★, Bart Simpson 690 ★, Lisa Simpson 740 ★, Marge Simpson 870 ★, Rick Sanchez 1100 ★, Morty Smith 690 ★, Finn 780 ★, Jake 830 ★, Shrek 1200 ★.
 
-Ruhák: Óceánkék ruha 140 ★, Rágógumi ruha 170 ★, Neon műszak 430 ★, Csillagkapitány 855 ★. Minták: Csíkos eszköz 140 ★, Pöttyös eszköz 140 ★, Képregénynyomat 380 ★, Arany műszak 760 ★. Effektek: Szívecskék 285 ★, Konfettieső 330 ★, Neonszikrák 665 ★, Galaktikus bonk 1330 ★. Az árak egyetlen közös katalógusból származnak: `economy.js`.
+Ruhák: Óceánkék ruha 130 ★, Rágógumi ruha 155 ★, Neon műszak 395 ★, Csillagkapitány 790 ★. Minták: Csíkos eszköz 130 ★, Pöttyös eszköz 130 ★, Képregénynyomat 350 ★, Arany műszak 700 ★. Effektek: Szívecskék 260 ★, Konfettieső 305 ★, Neonszikrák 610 ★, Galaktikus bonk 1220 ★. A közös, szerveroldalon is használt árlista az `economy.js`.
 
 ## Mérés és jutalmak
 
@@ -80,3 +80,15 @@ A lőfegyverek külön, legfeljebb 24 elemes lövedéklistát használnak. Nyomv
 A lövedék repülési sebessége és átadott lökése külön adat. Mindhárom fegyver teljesítheti a közepes erőt kérő feladatot. A gépfegyver gyorsabb, de kis lökésű; a sörétes erősebb, lassan fordul és ritkábban tüzel. A jutalomkeret változatlan: a több lövedék nem ad több csillagot a keretnél. A hivatalos ranglista összeállításai maradnak a korábbi eszközöknél és figuráknál; megvett fegyver nem ad ranglistaelőnyt.
 
 Ellenőrzés: `npm test`, beleértve az új `tests/expansion.cjs` tesztet. Az összes új eszköz mindhárom pályán ugyanazt az állapotot adja a valódi UI-eseményekből és a szerver újrajátszásában. Lefedett: gyors lövedék, egy lövedék/egy találat, folyamatos tüzelés, felvétel jutalom nélkül, szünet/elengedés/újrakezdés, visszajátszás állapotmegőrzése, 15 eszköz 8 forgási szögben a képernyő szélein, 20 új figura fizikája, régi fizikai snapshotok és vásárlások betöltése.
+
+## Részletes megjelenés – polish-5
+
+Minden fizetős termék további körülbelül 8%-kal olcsóbb. 500 csillag alatt az ár 5-re, fölötte 10-re kerekített. Megmaradt az összes termékazonosító és vásárlás. A csillagkereset és a hivatalos versenyfizika/pontozás változatlan.
+
+A figurák testén és végtagjain anyagárnyékolás, szabottabb körvonal, ruharedők, zsebek, gallérok, varrások és cipőrészletek láthatók. A karakterek személyes díszei (Patrik nadrágvirágai, Peter öve/ingzsebe, Szandi vezérlőpanelje, Rick köpenye stb.) részletesebbek. Az arcok pupillafényt, szemhéjat, egyedi szemarányt, szemöldököt, szédült spirált, meglepett szájat és rövid izzadtságcseppet kaptak. A testrészek és ütközési geometriák változatlanok.
+
+Találatkor eszközfüggő, irányított impulzusgyűrű jelenik meg; a lövések saját procedurális, rétegzett Web Audio-hangot, rövid füstöt és kihulló hüvelyeket kapnak. A Beállítások „Rajzfilmes vérhatás” kapcsolója opcionális piros cseppeket ad; alapállapotban kikapcsolt, a választás helyben mentődik. A padlófoltok 5 másodperc alatt eltűnnek. Nincs részletes seb vagy csonkolás.
+
+Az új effektek kizárólag rajzolási állapotok: nem adnak pontot/csillagot és nem változtatják meg az ízületeket. Korlátok: 20 impulzus, 64 csepp, 24 folt, 20 füst és 24 hüvely. A csökkentett effektek eltüntetik a füstöt/hüvelyeket és az impulzusgyűrűt, a vércseppek számát kettőre korlátozzák. Szünetben az effektidő is áll. Visszajátszás a tárolt rajzolási állapotot mutatja, majd ugyanazt az élő állapotot állítja vissza. Újrakezdés/módváltás/pályaváltás törli az effekteket. A szerver nem futtatja a kizárólag látványt szolgáló effektszimulációt.
+
+Ellenőrzések: teljes `npm test`, korábbi golden versenyeredmény és szerver/UI állapotegyezés, `tests/polish.cjs` a vérkapcsoló mentésére, régi mentések alapállapotára, egyszeri jutalmak/árak megőrzésére, effektkorlátokra, foltok eltűnésére, replay/újrakezdés/csökkentett effektek viselkedésére, valamint mind a 29 figura arcreakcióinak véges Canvas-koordinátáira.

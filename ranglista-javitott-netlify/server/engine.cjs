@@ -19,7 +19,7 @@ function checkEngine(){
       ${code}
       recordFrame=()=>{};markReplayHit=()=>{};saveProgress=()=>{};renderRewards=()=>{};
       updateHUD=()=>{};updateHint=()=>{};updateEditorUI=()=>{};updateReplayUI=()=>{};renderToasts=()=>{};
-      playSound=()=>{};randomMessage=()=>{};groundPuff=()=>{};burst=()=>{};checkAchievements=()=>{for(const a of achievementDefs)if(a.test())earning.badges.add(a.id);};notify=()=>{};
+      visualImpact=()=>{};updateVisualEffects=()=>{};emitShot=()=>{};playGunshot=()=>{};playSound=()=>{};randomMessage=()=>{};groundPuff=()=>{};burst=()=>{};checkAchievements=()=>{for(const a of achievementDefs)if(a.test())earning.badges.add(a.id);};notify=()=>{};
       return {
         initial(ticket){progress=defaultProgress();progress.tutorialSeen=true;prepareEarningGame(ticket);return JSON.stringify(earningSnapshot());},
         segment(snapshot,events,ticks){
