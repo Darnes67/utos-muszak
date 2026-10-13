@@ -41,9 +41,10 @@ const achievements=[
 ];
 const defaults={tool:'tool-0',character:'character-0',shirt:null,pattern:null,particle:null};
 const legacy=['shirt-blue','shirt-pink','pattern-stripes','pattern-dots','particle-heart','particle-confetti'];
-function freshWallet(){return {version:1,stars:0,owned:['tool-0','character-0'],equipped:{...defaults},transactions:{},legacyMigrated:false};}
+function freshWallet(){return {version:1,revision:0,stars:0,owned:['tool-0','character-0'],equipped:{...defaults},transactions:{},legacyMigrated:false};}
 function normalizeWallet(raw){
  const w=freshWallet();if(!raw||typeof raw!=='object')return w;
+ if(Number.isSafeInteger(raw.revision)&&raw.revision>=0)w.revision=raw.revision;
  if(Number.isFinite(raw.stars))w.stars=Math.max(0,Math.min(1e9,Math.floor(raw.stars)));
  if(Array.isArray(raw.owned))w.owned=[...new Set([...w.owned,...raw.owned.filter(id=>products.some(p=>p.id===id))])];
  for(const category of Object.keys(defaults)){const id=raw.equipped?.[category];if(id===null&&!['tool','character'].includes(category))w.equipped[category]=null;else if(w.owned.includes(id)&&products.some(p=>p.id===id&&p.category===category))w.equipped[category]=id;}

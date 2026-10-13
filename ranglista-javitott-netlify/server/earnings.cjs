@@ -4,6 +4,7 @@ function config(input,p){
  const c=input.config,w=p.wallet;
  if(!c||!['free','score','tasks'].includes(c.mode)||!Number.isInteger(c.map)||c.map<0||c.map>2||!Number.isInteger(c.tool)||c.tool<0||c.tool>5||!Number.isInteger(c.character)||c.character<0||c.character>8||![.75,1,1.35].includes(c.sensitivity)||typeof c.autoGetup!=='boolean'||!Number.isFinite(c.gravity)||c.gravity<20||c.gravity>180||typeof c.invite!=='boolean')throw new HttpError(400,'Hibás játékbeállítás.');
  if(!w.owned.includes('tool-'+c.tool)||!w.owned.includes('character-'+c.character))throw new HttpError(403,'A csillaggyűjtéshez saját felszerelés szükséges.');
+ if(c.ready!==undefined&&typeof c.ready!=='boolean'||c.held!==undefined&&typeof c.held!=='boolean'||c.pose!==undefined&&(!point(c.pose)||!Number.isFinite(c.pose.angle)||Math.abs(c.pose.angle)>Math.PI+1e-6))throw new HttpError(400,'Hibás kezdő póz.');
  return {...c};
 }
 function start(p,input,now){
@@ -41,7 +42,7 @@ function verify(p,input,now){
  if(session.engine!==ENGINE_VERSION||now>session.expiresAt)throw new HttpError(410,'A csillaggyűjtési munkamenet lejárt.');
  if(input.seq!==session.seq)throw new HttpError(409,'A jutalomnapló sorrendje eltér.');
  validate(input.events,input.ticks,p);
- if(session.totalTicks+input.ticks>(now-session.startedAt+250)*.12)throw new HttpError(400,'A játékidő gyorsabban nőtt a valós időnél.');
+ if(session.totalTicks+input.ticks>(now-session.startedAt+10000)*.12)throw new HttpError(400,'A játékidő gyorsabban nőtt a valós időnél.');
  const verified=verifyEarnings(session.snapshot,input.events,input.ticks);
  return {verified,sessionId:session.id,seq:session.seq};
 }
@@ -52,9 +53,11 @@ function commit(p,input,checked,now){
  if(!session.active||session.seq!==checked.seq)throw new HttpError(409,'A jutalomnapló sorrendje megváltozott.');
  const {snapshot,hitStars,stats}=checked.verified;
  // Derived entirely from replayed physics, not submitted score/balance/achievement IDs.
- p.wallet.stars+=hitStars;const achievements=rewards.award(p,stats),bonus=achievements.reduce((sum,a)=>sum+a.stars,0);
+ const budget=p.earningBudget||{tokens:1,at:session.startedAt};budget.tokens=Math.min(50,budget.tokens+Math.max(0,now-budget.at)*.00083);budget.at=now;
+ const paidStars=Math.min(hitStars,Math.floor(budget.tokens+1e-7));budget.tokens-=paidStars;p.earningBudget=budget;
+ p.wallet.stars+=paidStars;if(paidStars)p.wallet.revision++;const achievements=rewards.award(p,stats),bonus=achievements.reduce((sum,a)=>sum+a.stars,0);
  session.snapshot=snapshot;session.seq++;session.totalTicks+=input.ticks;session.expiresAt=now+86400000;p.earningMeter=snapshot.starMeter;
- session.receipt={seq:input.seq,hitStars,stars:hitStars+bonus,achievements};return session.receipt;
+ session.receipt={seq:input.seq,hitStars,stars:paidStars+bonus,achievements};return session.receipt;
 }
 function publicTicket(session){return {id:session.id,seed:session.seed,config:session.config,meter:session.meter};}
 module.exports={start,verify,commit,validate,publicTicket};

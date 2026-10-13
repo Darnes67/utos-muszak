@@ -17,7 +17,7 @@ function freeEvents(){return [[0,'down',{x:870,y:418}],...fixture.events.map(([t
   const events=ev.filter(e=>e[0]>=from&&e[0]<from+900).map(e=>[e[0]-from,e[1],e[2]]),ticks=900;
   const part=verifyEarnings(snapshot,events,ticks);snapshot=part.snapshot;expectedHits+=part.stats.hits;
   const payload={sessionId:ticket.id,seq,ticks,events,stars:100000,achievements:['tools6']};
-  if(seq===0){assert.equal((await call('/earnings/claim',payload)).status,400);}
+  if(seq===0){const copy=await store.get(key);copy.earning.totalTicks=1200;assert.throws(()=>require('../server/earnings.cjs').verify(copy,{...payload,ticks:1,events:[]},clock),/gyorsabban/);}
   clock+=7500;
   const res=await call('/earnings/claim',payload);assert.equal(res.status,200,JSON.stringify(res.data));paid+=res.data.stars;
   assert.equal(res.data.hitStars,part.hitStars);assert.equal(res.data.user.wallet.stars,paid);assert(res.data.hitStars<=7);

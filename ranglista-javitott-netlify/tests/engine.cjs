@@ -2,8 +2,10 @@ const assert=require('node:assert');
 const {verifyRound}=require('../server/engine.cjs'),fixture=require('./fixture.json');
 const ticket={kind:'sprint',map:0,tool:0,character:0,seed:740};
 const started=performance.now();
-assert.deepStrictEqual(verifyRound(ticket,fixture.events,5400),fixture.metrics);
-assert.deepStrictEqual(verifyRound(ticket,fixture.events,5400),fixture.metrics);
+const first=verifyRound(ticket,fixture.events,5400);assert.deepStrictEqual(first,fixture.metrics);
+const uncachedMs=performance.now()-started,cacheStart=performance.now();const second=verifyRound(ticket,fixture.events,5400);const cachedMs=performance.now()-cacheStart;assert.deepStrictEqual(second,fixture.metrics);
+first.points=-1;assert.deepStrictEqual(verifyRound(ticket,fixture.events,5400),fixture.metrics);
+console.log('Verifier reference round: '+Math.round(uncachedMs)+' ms; identical replay cache: '+cachedMs.toFixed(2)+' ms.');
 for(const variant of [{kind:'combo',map:0,tool:1,character:1,seed:741},{kind:'daily',map:2,tool:4,character:5,seed:742}]){
  const result=verifyRound(variant,fixture.events,5400);assert(Number.isFinite(result.points));assert(result.hits>0);
 }

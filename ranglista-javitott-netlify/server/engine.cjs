@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const ENGINE_VERSION='identity-ranglista-1';
-let compiled;
+let compiled;const resultCache=new Map();
 function checkEngine(){
   if(!compiled){
     let code;
@@ -11,12 +11,15 @@ function checkEngine(){
       const match=html.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/);if(!match)throw Error('Missing game engine');
       code=match[1].replace(/^import [^\n]*;\s*$/gm,'').replace(/\/\/ ONLINE_CLIENT_BEGIN[\s\S]*?\/\/ ONLINE_CLIENT_END/,'');
     }
+    let economyCode;try{economyCode=require('./economy-source.cjs');}catch(error){if(error.code!=='MODULE_NOT_FOUND')throw error;economyCode=fs.readFileSync(path.join(__dirname,'../economy.js'),'utf8');}
     // Keep hot physics variables in an ordinary function scope instead of VM-global bindings.
     // Math belongs to this VM; borrowing host Math makes every physics operation cross contexts.
-    compiled=new vm.Script(`'use strict';(function(){
+    compiled=new vm.Script(`${economyCode}\n'use strict';(function(){
       const Math=globalThis.Math;
       ${code}
-      recordFrame=()=>{};saveProgress=()=>{};renderRewards=()=>{};checkAchievements=()=>{for(const a of achievementDefs)if(a.test())earning.badges.add(a.id);};notify=()=>{};
+      recordFrame=()=>{};markReplayHit=()=>{};saveProgress=()=>{};renderRewards=()=>{};
+      updateHUD=()=>{};updateHint=()=>{};updateEditorUI=()=>{};updateReplayUI=()=>{};renderToasts=()=>{};
+      playSound=()=>{};randomMessage=()=>{};groundPuff=()=>{};burst=()=>{};checkAchievements=()=>{for(const a of achievementDefs)if(a.test())earning.badges.add(a.id);};notify=()=>{};
       return {
         initial(ticket){progress=defaultProgress();progress.tutorialSeen=true;prepareEarningGame(ticket);return JSON.stringify(earningSnapshot());},
         segment(snapshot,events,ticks){
@@ -49,7 +52,7 @@ function createEngine(){
   const drawing=new Proxy({measureText:()=>({width:50}),createLinearGradient:()=>gradient,createRadialGradient:()=>gradient},{get:(o,k)=>k in o?o[k]:noop,set:(o,k,v)=>(o[k]=v,true)});
   function el(){return{style:{},dataset:{},hidden:true,textContent:'',innerHTML:'',disabled:false,checked:false,value:'',classList:{toggle:noop,remove:noop,add:noop},setAttribute:noop,focus:noop,replaceChildren:noop,appendChild:noop,addEventListener:noop,getContext:()=>drawing,hasPointerCapture:()=>false,getBoundingClientRect:()=>({left:0,top:0,width:1000,height:560}),setPointerCapture:noop};}
   const doc={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll:()=>[],createElement:el,addEventListener:noop,hidden:false,activeElement:null};
-  const context=vm.createContext({UTOS_ECONOMY:require('../economy.js'),document:doc,window:{addEventListener:noop},localStorage:{getItem:()=>'{"tutorialSeen":true}',setItem:noop},requestAnimationFrame:noop,console:{log:noop}});
+  const context=vm.createContext({document:doc,window:{addEventListener:noop},localStorage:{getItem:()=>'{"tutorialSeen":true}',setItem:noop},requestAnimationFrame:noop,console:{log:noop}});
   context.engine=compiled.runInContext(context,{timeout:1000});
   return context;
 }
@@ -62,9 +65,11 @@ function validateEvents(events,ticks){
   }
 }
 function verifyRound(ticket,events,ticks){
-  validateEvents(events,ticks);const context=createEngine();context.ticket=ticket;context.inputEvents=events;
+  validateEvents(events,ticks);const cacheKey=require('node:crypto').createHash('sha256').update(JSON.stringify([ticket.kind,ticket.map,ticket.tool,ticket.character,ticket.seed,events])).digest('hex');
+  if(resultCache.has(cacheKey))return {...resultCache.get(cacheKey)};
+  const context=createEngine();context.ticket=ticket;context.inputEvents=events;
   const result=vm.runInContext('engine.verify(ticket,inputEvents)',context,{timeout:22000});
-  return JSON.parse(result);
+  const metrics=JSON.parse(result);resultCache.set(cacheKey,{...metrics});if(resultCache.size>8)resultCache.delete(resultCache.keys().next().value);return metrics;
 }
 function initialEarnings(ticket){const c=createEngine();c.ticket=ticket;return JSON.parse(vm.runInContext('engine.initial(ticket)',c,{timeout:2000}));}
 function verifyEarnings(snapshot,events,ticks){const c=createEngine();Object.assign(c,{snapshot,events,ticks});return JSON.parse(vm.runInContext('engine.segment(snapshot,events,ticks)',c,{timeout:15000}));}

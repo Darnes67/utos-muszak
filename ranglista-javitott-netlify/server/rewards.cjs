@@ -19,6 +19,6 @@ function award(profile,stats={}){
  if(s.maxCombo>=5)eligible.add('combo5');if(s.tools.length>=6)eligible.add('tools6');if(s.maps.length>=3)eligible.add('maps3');
  const unlocked=[];
  for(const a of economy.achievements){if(eligible.has(a.id)&&!s.paid.includes(a.id)){s.paid.push(a.id);profile.wallet.stars+=a.reward;unlocked.push({id:a.id,stars:a.reward});}}
- return unlocked;
+ if(unlocked.length)profile.wallet.revision++;return unlocked;
 }
 module.exports={ensure,award};

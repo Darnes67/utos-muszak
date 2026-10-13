@@ -92,7 +92,7 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 <header><div><div class="eyebrow">RONGYBABA JÁTSZÓTÉR / VERSENYMŰSZAK</div><h1>Ütős <span>műszak.</span></h1><p class="subtitle">A fizika komoly. A többi egészen kevésbé.</p></div><div class="header-wallet"><strong id="walletTop">★ 0</strong><button id="shopOpen">★ Bolt</button></div></header>
 <section class="online-panel" id="competitivePanel" aria-label="Online verseny">
 <div class="account-row"><div><div class="eyebrow">KÖZÖS RANGLISTA</div><strong id="accountName">Vendég</strong><small id="accountDetails">A szabad játékhoz nem kell fiók.</small></div><div><span class="online-tag" id="onlineStatus">Kapcsolódás…</span> <button id="authOpen">Bejelentkezés / Regisztráció</button><button id="logout" hidden>Kijelentkezés</button></div></div>
-<div class="competitive-grid"><article class="competitive-card"><h3>⚡ Pontverseny</h3><p>45 másodperc. Alex, labor és baseballütő. Gyűjts több pontot, mint a többiek!</p><button class="active" data-competitive="sprint">Versenykör indítása</button></article><article class="competitive-card"><h3>🔥 Kombókupa</h3><p>Mira és szivacsütő. A hosszú, megszakítás nélküli figuratalálat-sorozat a legértékesebb.</p><button data-competitive="combo">Kombókupa indítása</button></article><article class="competitive-card"><h3>★ Napi kihívás</h3><p>Naponta új összeállítás. Mindenki ugyanazon a pályán, ugyanazzal az eszközzel versenyez.</p><button data-competitive="daily">Mai kihívás indítása</button></article></div><p class="online-note" id="onlineNotice">A pontszám a kör végén szerveroldali ellenőrzéssel kerül a ranglistára. A szünet alatt az időzítő is megáll; egy kör legfeljebb 8 percig küldhető be.</p></section>
+<div class="competitive-grid"><article class="competitive-card"><h3>⚡ Pontverseny</h3><p>45 másodperc. Alex, labor és baseballütő. Gyűjts több pontot, mint a többiek!</p><button class="active" data-competitive="sprint">Versenykör indítása</button></article><article class="competitive-card"><h3>🔥 Kombókupa</h3><p>Mira és szivacsütő. A hosszú, megszakítás nélküli figuratalálat-sorozat a legértékesebb.</p><button data-competitive="combo">Kombókupa indítása</button></article><article class="competitive-card"><h3>★ Napi kihívás</h3><p>Naponta új összeállítás. Mindenki ugyanazon a pályán, ugyanazzal az eszközzel versenyez.</p><button data-competitive="daily">Mai kihívás indítása</button></article></div><p class="online-note" id="onlineNotice">A pontszám a kör végén szerveroldali ellenőrzéssel kerül a ranglistára. A szünet alatt az időzítő is megáll; egy kör legfeljebb 8 percig küldhető be.</p><button id="retryPending" hidden>↻ Korábbi kör beküldése</button></section>
 <div class="topbar"><div class="mode-control"><select id="modeSelect" aria-label="Játékmód"><option value="free">∞ Szabad játék</option><option value="score">◷ Pontvadászat · 45 mp</option><option value="tasks">◎ Feladatkihívás</option></select><button id="start" class="active" hidden>▶ Indítás</button><button id="finish">✓ Kör lezárása</button></div><div class="clock" id="clock"></div></div>
 <p id="modeRules" class="rules"></p>
 <div class="stage" id="stage">
@@ -139,7 +139,7 @@ const lerp = (a,b,t) => a+(b-a)*t;
 const ease = t => { t=clamp(t,0,1); return t*t*(3-2*t); };
 const angleDifference = (a,b) => Math.atan2(Math.sin(a-b),Math.cos(a-b));
 const competition={active:false,ending:false,tick:0,events:[],ticket:null,savedPrefs:null,returnLoadout:null,lastKind:'sprint'};
-let competitionArming=false,competitionApplying=false;
+let competitionArming=false,competitionApplying=false,gameGeneration=0,shownRoundId=null,renderFault=false;
 const competitiveDefs={
   practice:{name:'Csillaggyűjtő műszak',description:'45 mp · saját feloldott felszerelés · eredeti pálya és rögzített fizika · ellenőrzött csillagjutalom, ranglistapont nélkül.'},
   sprint:{name:'Pontverseny',description:'45 mp · labor, Alex, baseballütő · a szerver ellenőrzi a figurák és tárgyak után járó pontokat.'},
@@ -186,9 +186,9 @@ function restoreCompetitionPrefs(){
 }
 function abortCompetition(message){
   if(!competition.active&&!competition.ending)return;
-  competition.active=competition.ending=false;restoreCompetitionPrefs();release(true);
+  const wasEnding=competition.ending;competition.active=competition.ending=false;restoreCompetitionPrefs();release(true);
   if(competition.returnLoadout){const p=competition.returnLoadout;selectedCharacter=p.avatar;selectedMap=p.map;selectedTool=p.tool;bodyParts=characterParts();competition.returnLoadout=null;setPressed('maps','map',selectedMap);setPressed('characters','character',selectedCharacter);setPressed('tools','tool',selectedTool);}
-  if(typeof cancelOnlineRound==='function'&&competition.ticket)cancelOnlineRound(competition.ticket.id);
+  if(!wasEnding&&typeof cancelOnlineRound==='function'&&competition.ticket)cancelOnlineRound(competition.ticket.id);
   if(message)notify(message);updateHint();applyEquipment();if(typeof startEarnings==='function')Promise.resolve().then(()=>startEarnings());
 }
 function competitionFinished(){
@@ -337,7 +337,7 @@ let rewardedMissions=new Set(),tippedCones=new Set();
 let hitStop=0,freeGravity=100,readyAnnounced=false;
 const cosmeticDefs=economy.products.filter(p=>['shirt','pattern','particle'].includes(p.category));
 let accountWallet=null,accountMode='guest',shopBusy=false,accountPending=false,shopTab='tool',shopKey='',previewEquipment=null,previewId=null,previewAngle=0;
-const earning={ready:false,applying:false,booting:false,id:null,seq:0,tick:0,events:[],pending:null,pendingStars:0,prefs:'',badges:new Set()};
+const earning={ready:false,applying:false,booting:false,id:null,seq:0,tick:0,events:[],pending:null,pendingStars:0,starEvents:[],starting:false,startToken:0,prefs:'',badges:new Set()};
 let starMeter=economy.meter();
 function wallet(){return accountWallet||progress.guestWallet;}
 function owns(id){return wallet().owned.includes(id);}
@@ -345,7 +345,7 @@ function equipped(category){return (previewEquipment||wallet().equipped)[categor
 function resetStarRound(full=false){starMeter.roundCredits=0;if(full)starMeter=economy.meter();}
 function creditHitStars(kind,id){
   const gained=economy.hit(starMeter,kind,id);
-  if(!competition.active&&!competitionArming){if(accountMode==='guest')addStars(gained);else if(gained&&earning.ready){earning.pendingStars+=gained;renderEarningStatus();}}
+  if(!competition.active&&!competitionArming){if(accountMode==='guest')addStars(gained);else if(gained&&earning.ready){earning.pendingStars+=gained;earning.starEvents.push([earning.tick,gained]);renderEarningStatus();}}
 }
 
 const achievementDefs=[
@@ -535,13 +535,15 @@ function toolParts(index=selectedTool){
   return tools[index].parts;
 }
 function wake(o){o.sleep=false;o.sleepTime=0;}
+const vertexCache=new WeakMap();
 function objectVertices(o){
+  const old=vertexCache.get(o);if(old&&old.x===o.x&&old.y===o.y&&old.angle===o.angle&&old.r===o.r&&old.kind===o.kind)return old.points;
   const points=o.kind==='cone'?[[-19,25],[19,25],[0,-28]]:[[-o.r,-o.r],[o.r,-o.r],[o.r,o.r],[-o.r,o.r]];
-  return points.map(([x,y])=>transform(o,x,y));
+  const vertices=points.map(([x,y])=>transform(o,x,y));vertexCache.set(o,{x:o.x,y:o.y,angle:o.angle,r:o.r,kind:o.kind,points:vertices});return vertices;
 }
 function spawnObjects(){
-  sceneId++;objects=[];
-  const make=(kind,x,y,r)=>({id:sceneId+'-'+objects.length,kind,x,y,angle:0,vx:0,vy:0,w:0,r,mass:kind==='box'?2.3:kind==='cone'?.85:1,oldX:x,oldY:y,sleep:false,sleepTime:0,knocked:false,touched:false,cooldown:0});
+  sceneId++;objects=[];let objectSerial=0;
+  const make=(kind,x,y,r)=>({id:sceneId+'-'+objectSerial++,kind,x,y,angle:0,vx:0,vy:0,w:0,r,mass:kind==='box'?2.3:kind==='cone'?.85:1,oldX:x,oldY:y,sleep:false,sleepTime:0,knocked:false,touched:false,cooldown:0});
   objects.push(make('box',135,FLOOR-24,24),make('box',190,FLOOR-21,21),make('ball',285,FLOOR-21,21),make('ball',765,FLOOR-24,24));
   for(const x of [345,690,930])objects.push(make('cone',x,FLOOR-25,28));
   if(selectedMap===1)for(const x of [315,838]){
@@ -555,6 +557,8 @@ function spawnObjects(){
 }
 function insidePolygon(p,vertices){let sign=0;for(let i=0;i<vertices.length;i++){const a=vertices[i],b=vertices[(i+1)%vertices.length],cross=(b.x-a.x)*(p.y-a.y)-(b.y-a.y)*(p.x-a.x);if(Math.abs(cross)<1e-8)continue;const current=Math.sign(cross);if(sign&&current!==sign)return false;sign=current;}return true;}
 function circleObject(x,y,r,o){
+  const bound=o.kind==='cone'?32:o.kind==='ball'?o.r:o.r*Math.SQRT2;
+  if(Math.abs(x-o.x)>bound+r+1e-6||Math.abs(y-o.y)>bound+r+1e-6)return null;
   if(o.kind==='ball'){
     const dx=o.x-x,dy=o.y-y,d=Math.hypot(dx,dy)||.001,depth=r+o.r-d;
     return depth>0?{nx:dx/d,ny:dy/d,depth,x:x+dx/d*r,y:y+dy/d*r}:null;
@@ -568,6 +572,8 @@ function circleObject(x,y,r,o){
   return{nx:dx/length,ny:dy/length,depth:inside?r+dist:r-dist,x:q.x,y:q.y};
 }
 function capsuleObject(a,b,r,o){
+  const bound=o.kind==='cone'?32:o.kind==='ball'?o.r:o.r*Math.SQRT2;
+  if(Math.min(a.x,b.x)>o.x+bound+r+1e-6||Math.max(a.x,b.x)<o.x-bound-r-1e-6||Math.min(a.y,b.y)>o.y+bound+r+1e-6||Math.max(a.y,b.y)<o.y-bound-r-1e-6)return null;
   if(o.kind==='ball'){const q=nearest(o,a,b),d=Math.hypot(q.x-o.x,q.y-o.y);return d<=r+o.r?{distance:d,x:o.x,y:o.y,toolT:q.t}:null;}
   const vertices=objectVertices(o);let best=null;
   for(let i=0;i<vertices.length;i++){const contact=segmentDistance(a,b,vertices[i],vertices[(i+1)%vertices.length]);if(!best||contact.distance<best.distance)best=contact;}
@@ -1002,8 +1008,8 @@ function updateHint(){
   $('handTool').hidden=mode!=='free';$('handTool').disabled=editorActive||replay.active;
   $('gravityControl').hidden=mode!=='free';$('gravity').disabled=mode!=='free';canvas.style.cursor=editorActive?'move':handMode?(grab?'grabbing':'grab'):held?'none':'default';
   $('editorToggle').disabled=replay.active||challengeState==='ended';$('layoutSave').disabled=replay.active;$('layoutDefault').disabled=replay.active;
-  for(const id of ['invite','stand','reset','pause','finish','start','objectsReset'])if(editorActive||replay.active)$(id).disabled=true;
-  $('reset').disabled=editorActive||replay.active;$('modeSelect').disabled=replay.active;
+  for(const id of ['invite','stand','pause','finish','start','objectsReset'])if(editorActive||replay.active)$(id).disabled=true;
+  $('reset').disabled=false;$('modeSelect').disabled=false;
   for(const id of ['sensitivity','autoGetup','volume','reduced','sound','tutorial'])$(id).disabled=replay.active;
   $('gravity').disabled=mode!=='free'||replay.active;
   for(const b of document.querySelectorAll('#maps button, #characters button, #tools button'))b.disabled=replay.active;
@@ -1024,7 +1030,7 @@ function setPressed(container,attribute,value) {
 function release(cancel=false) {
   if(competition.active&&!competition.ending&&!competitionApplying){competitionInput(cancel===true?3:2);if(cancel===true){worldAccumulator=0;target={x:bat.x,y:bat.y};previousTarget={...target};}}
   dropGrab();editorDrag=null;finishSwing(cancel===true);down=false;quietTime=0;resetHeldStroke();
-  if(inputId!==null&&canvas.hasPointerCapture(inputId))canvas.releasePointerCapture(inputId);inputId=null;
+  const capturedId=inputId;inputId=null;if(capturedId!==null&&canvas.hasPointerCapture(capturedId))canvas.releasePointerCapture(capturedId);
 }
 function resetSession(){
   stopReplay();editorActive=false;editorSelection=editorDrag=null;dropGrab();handMode=false;$('handTool').classList.remove('active');$('handTool').setAttribute('aria-pressed','false');
@@ -1039,12 +1045,13 @@ function resetSession(){
   $('hitInfo').textContent='KÉSZEN A MŰSZAKRA';$('resultOverlay').hidden=true;updateHUD();updateHint();
 }
 function setMode(next) {
+  gameGeneration++;shownRoundId=null;renderFault=false;const shouldInvite=!!person;
   if(!competitionArming)abortCompetition();
   if(!modeDefs[next])next='free';mode=next;paused=autoPaused=false;$('pauseOverlay').hidden=true;$('pause').textContent='Ⅱ Szünet';
   challengeState=next==='free'?'off':'ready';remaining=modeDefs[next].duration;
   resetSession();$('modeSelect').value=next;$('modeRules').textContent=modeDefs[next].rules;
   if(!progress.maps.includes(selectedMap)){progress.maps.push(selectedMap);checkAchievements();saveProgress();}
-  if(next!=='free')callPerson();
+  if(next!=='free'||shouldInvite)callPerson();
   lastFrame=null;updateHint();
 }
 function startChallenge() {
@@ -1055,7 +1062,7 @@ function startChallenge() {
 }
 function endChallenge(){
   if(challengeState==='ended')return;
-  finishSwing();challengeState='ended';release(true);
+  finishSwing();challengeState='ended';release(true);shownRoundId=competition.active?competition.ticket?.id:null;
   const key=recordKey(),old=progress.records[key]||0,record=mode!=='free'&&score>old;
   if(record){progress.records[key]=score;newRecordRound=true;}
   perfectRound=mode==='tasks'&&missionsDone===missionDefs.length;
@@ -1199,13 +1206,15 @@ function hitTestSweep(oldPose,newPose,dt) {
   if(handMode||!down||swingHit||!playing()||(mode!=='free'&&challengeState!=='running'))return;
   const tool=tools[selectedTool],da=angleDifference(newPose.angle,oldPose.angle);
   const travel=Math.hypot(newPose.x-oldPose.x,newPose.y-oldPose.y)+Math.abs(da)*tool.length;
-  const steps=Math.max(1,Math.ceil(travel/4));
+  const steps=Math.max(1,Math.ceil(travel/4)),parts=toolParts();
   for(let i=0;i<=steps;i++){
     const t=i/steps,pose={x:lerp(oldPose.x,newPose.x,t),y:lerp(oldPose.y,newPose.y,t),angle:oldPose.angle+da*t};
-    for(const [x1,y1,x2,y2,radius]of toolParts()){
+    for(const [x1,y1,x2,y2,radius]of parts){
       const a=transform(pose,x1,y1),b=transform(pose,x2,y2);
       const candidates=[];
-      if(person)for(const [u,v,r,name]of bodyParts){const contact=segmentDistance(a,b,person.nodes[u],person.nodes[v]);if(contact.distance<=radius+r)candidates.push({contact,u,v,name});}
+      if(person)for(const [u,v,r,name]of bodyParts){const c=person.nodes[u],d=person.nodes[v],margin=radius+r+1e-6;
+        if(Math.min(a.x,b.x)>Math.max(c.x,d.x)+margin||Math.max(a.x,b.x)<Math.min(c.x,d.x)-margin||Math.min(a.y,b.y)>Math.max(c.y,d.y)+margin||Math.max(a.y,b.y)<Math.min(c.y,d.y)-margin)continue;
+        const contact=segmentDistance(a,b,c,d);if(contact.distance<=radius+r)candidates.push({contact,u,v,name});}
       for(const object of objects){const contact=capsuleObject(a,b,radius,object);if(contact)candidates.push({contact,object});}
       candidates.sort((a,b)=>a.contact.distance-b.contact.distance);
       for(const candidate of candidates){
@@ -1270,7 +1279,7 @@ function playSound(force) {
   osc.connect(gain);gain.connect(audio.destination);osc.start(t);osc.stop(t+.19);
 }
 function eventPoint(e) {
-  const rect=canvas.getBoundingClientRect(),p={x:clamp((e.clientX-rect.left)*W/rect.width,0,W),y:clamp((e.clientY-rect.top)*H/rect.height,0,H)};
+  const rect=canvas.getBoundingClientRect();if(rect.width<=0||rect.height<=0||!Number.isFinite(e.clientX)||!Number.isFinite(e.clientY))return {...target};const p={x:clamp((e.clientX-rect.left)*W/rect.width,0,W),y:clamp((e.clientY-rect.top)*H/rect.height,0,H)};
   if(competition.active||earning.ready){p.x=Math.round(p.x*10)/10;p.y=Math.round(p.y*10)/10;}return p;
 }
 function overTool(p) {
@@ -1315,7 +1324,7 @@ $('objectsReset').addEventListener('click',()=>resetSceneObjects());
 $('modeSelect').addEventListener('change',e=>setMode(e.target.value));
 $('start').addEventListener('click',()=>{if(playing())startChallenge();});
 $('finish').addEventListener('click',()=>{if(mode==='free'&&playing())endChallenge();});
-$('retry').addEventListener('click',()=>{if(onlineBusy)return;if(competition.active&&competition.ending){startCompetitive(competition.lastKind);}else setMode(mode);});
+$('retry').addEventListener('click',()=>{if(competition.active&&competition.ending){startCompetitive(competition.lastKind);}else{setMode(mode);if(!person)callPerson();}});
 $('backFree').addEventListener('click',()=>setMode('free'));
 $('pause').addEventListener('click',()=>{if(!editorActive&&!replay.active)togglePause();});
 $('resume').addEventListener('click',()=>{unlockAudio();togglePause(false);});
@@ -1682,17 +1691,25 @@ function simulate(dt){
   const oldCount=toasts.length;toasts.forEach(t=>t.age+=dt);toasts=toasts.filter(t=>t.age<3.5);if(toasts.length!==oldCount)renderToasts();
 }
 function frame(timestamp){
+  try{runFrame(timestamp);}catch(error){
+    console.error?.('Game frame failed',error);renderFault=true;paused=true;lastFrame=null;accumulator=worldAccumulator=0;
+    try{release(true);$('hitInfo').textContent='A játék megállt — az Újrakezdés gombbal folytathatod.';updateHint();}catch(_){}
+  }finally{requestAnimationFrame(frame);}
+}
+function runFrame(timestamp){
+  if(renderFault&&paused)return;
+  if(typeof updateSubmissionStatus==='function')updateSubmissionStatus();
   if(typeof flushEarnings==='function'&&accountMode==='account'&&!earning.applying){
     if(earning.ready&&(earning.pending||earning.tick>=360||(paused||challengeState==='ended')&&earning.tick>0))flushEarnings();
-    else if(!earning.ready&&!earning.booting&&!competition.active&&!pendingSubmission&&Date.now()>=earningRetryAt)startEarnings();
+    else if(!earning.ready&&!earning.booting&&!competition.active&&['off','ready'].includes(challengeState)&&!editorActive&&!replay.active&&!down&&!grab&&!customLayout&&Date.now()>=earningRetryAt)startEarnings();
   }
   const raw=lastFrame===null?0:Math.max(0,(timestamp-lastFrame)/1000);lastFrame=timestamp;
-  if(replay.active){replay.cursor=Math.min(lastClip.length-1,replay.cursor+Math.min(raw,.1)*30*replay.speed);drawReplay();requestAnimationFrame(frame);return;}
+  if(replay.active){replay.cursor=Math.min(lastClip.length-1,replay.cursor+Math.min(raw,.1)*30*replay.speed);drawReplay();return;}
   if(playing()){
     if(!earning.ready&&!competition.active&&challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-raw);updateHUD();if(remaining<=0)endChallenge();}
     if(playing()){accumulator+=Math.min(raw,.1);while(accumulator>=STEP&&playing()){earningBeforeStep();simulate(STEP);competitionStepDone();earningAfterStep();accumulator-=STEP;}}
   }
-  draw();requestAnimationFrame(frame);
+  draw();
 }
 $('sensitivity').value=String(progress.sensitivity);$('autoGetup').checked=progress.autoGetup;$('gravity').value=progress.gravity;$('gravityValue').textContent=progress.gravity+'%';
 $('volume').value=Math.round(progress.volume*100);$('reduced').checked=progress.reduced;
@@ -1700,11 +1717,14 @@ $('volume').value=Math.round(progress.volume*100);$('reduced').checked=progress.
 function prepareEarningGame(ticket){
   earning.applying=true;
   try{
-    const c=ticket.config;selectedMap=c.map;selectedTool=c.tool;selectedCharacter=c.character;bodyParts=characterParts();
+    const c=ticket.config;person=null;selectedMap=c.map;selectedTool=c.tool;selectedCharacter=c.character;bodyParts=characterParts();
     progress.sensitivity=c.sensitivity;progress.autoGetup=c.autoGetup;freeGravity=progress.gravity=c.gravity;
     time=0;sceneId=0;missionSeed=ticket.seed;setMode(c.mode);resetStarRound(true);
     if(ticket.meter)starMeter=JSON.parse(JSON.stringify(ticket.meter));
-    if(c.invite)callPerson();lastFrame=null;
+    if(c.invite)callPerson();
+    if(c.ready&&person){for(let i=0;i<900;i++)simulate(STEP);person.mode='idle';person.safeTime=0;time=0;worldAccumulator=accumulator=0;resetStarRound(true);if(ticket.meter)starMeter=JSON.parse(JSON.stringify(ticket.meter));}
+    if(c.held){held=true;Object.assign(bat,c.pose||REST);constrainToolPose(bat);target={x:bat.x,y:bat.y};previousTarget={...target};}
+    lastFrame=null;
   }finally{earning.applying=false;}
 }
 function earningSnapshot(){
@@ -1788,7 +1808,7 @@ function earningBeforeStep(){
 }
 function earningAfterStep(){
   if(!earning.ready||competition.active||competitionArming)return;
-  earning.tick++;if(earning.tick>=7200||earning.events.length>=12000){togglePause(true);notify('A mentésre váró napló megtelt. Kapcsolódj újra, majd folytasd a játékot.');}
+  earning.tick++;if(earning.tick>=7200||earning.events.length>=12000){if(typeof saveEarnings==='function')saveEarnings();earning.ready=false;earning.pendingStars=0;notify('A csillagmentés naplója megtelt. A játék folytatható; a jutalom mentése később újrapróbálható.');return;}
   if(earning.tick%120===0&&typeof saveEarnings==='function')saveEarnings();
   if(challengeState==='running'&&modeDefs[mode].duration){remaining=Math.max(0,remaining-STEP);if(remaining<=0)endChallenge();}
   if(typeof flushEarnings==='function'&&earning.tick>=360)flushEarnings();
@@ -1811,63 +1831,69 @@ function installEarningHooks(){
 // ONLINE_CLIENT_BEGIN
 let onlineUser=null,onlineReady=false,onlineBusy=false,boardBusy=false,boardKind='sprint',boardPeriod='week',pendingSubmission=null,authResume=false,recoveryMode=false;
 const EARNING_KEY='utos-earning-session-v1';
-let earningRequest=false,earningRetryAt=0;
-function earningConfig(){return {mode,map:selectedMap,tool:selectedTool,character:selectedCharacter,sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity,invite:!!person};}
+let earningRequest=false,earningRetryAt=0,earningInFlight=null;
+function earningConfig(){return {mode,map:selectedMap,tool:selectedTool,character:selectedCharacter,sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity,invite:!!person,ready:!!person,held,pose:{x:bat.x,y:bat.y,angle:Math.atan2(Math.sin(bat.angle),Math.cos(bat.angle))}};}
 function saveEarnings(){
-  try{if(earning.ready)sessionStorage.setItem(EARNING_KEY,JSON.stringify({userId:onlineUser?.id,id:earning.id,seq:earning.seq,pending:earning.pending,tail:{ticks:earning.tick,events:earning.events}}));else sessionStorage.removeItem(EARNING_KEY);}catch(_){}
+  try{if(earning.ready&&earning.id)sessionStorage.setItem(EARNING_KEY,JSON.stringify({userId:onlineUser?.id,id:earning.id,seq:earning.seq,pending:earning.pending,tail:{ticks:earning.tick,events:earning.events}}));else sessionStorage.removeItem(EARNING_KEY);}catch(_){}
 }
 async function startEarnings(){
-  if(!onlineUser||earning.ready||earningRequest||competition.active||competitionArming)return;
-  earningRequest=true;earning.booting=true;const accountId=onlineUser.id;
-  $('shopMessage').textContent='Csillagjutalmak bekapcsolása…';
+  if(!onlineUser||earning.ready||earningRequest||competition.active||competitionArming||!['off','ready'].includes(challengeState)||editorActive||replay.active||down||grab||customLayout)return;
+  earningRequest=true;earning.starting=true;const accountId=onlineUser.id,token=++earning.startToken;
+  $('shopMessage').textContent='Csillagjutalmak bekapcsolása… A játék közben használható.';
   try{
-    // A pending verified batch survives reload and is retried with the same sequence.
     try{
       const saved=JSON.parse(sessionStorage.getItem(EARNING_KEY)||'null');
       if(saved?.userId===accountId){
         let seq=saved.seq;
-        if(saved.pending){const restored=await api('/earnings/claim',{sessionId:saved.id,...saved.pending});acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq=saved.pending.seq+1;}
+        if(saved.pending){earningInFlight=api('/earnings/claim',{sessionId:saved.id,...saved.pending});const restored=await earningInFlight;acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq=saved.pending.seq+1;}
         let ticks=saved.tail?.ticks||0,events=saved.tail?.events||[];
-        while(ticks>0){const n=Math.min(ticks,1200),restored=await api('/earnings/claim',{sessionId:saved.id,seq,ticks:n,events:events.filter(e=>e[0]<n)});acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq++;ticks-=n;events=events.filter(e=>e[0]>=n).map(e=>[e[0]-n,e[1],e[2]]);}
+        while(ticks>0){const n=Math.min(ticks,1200);earningInFlight=api('/earnings/claim',{sessionId:saved.id,seq,ticks:n,events:events.filter(e=>e[0]<n)});const restored=await earningInFlight;acceptAccount(restored.user);showAchievementAwards(restored.achievements);seq++;ticks-=n;events=events.filter(e=>e[0]>=n).map(e=>[e[0]-n,e[1],e[2]]);}
       }
-    }catch(error){if(error.status!==404&&error.status!==410&&error.status!==409)throw error;}
-    const response=await api('/earnings/start',{requestId:transactionId(),config:earningConfig()});
-    if(onlineUser?.id!==accountId)return;
-    acceptAccount(response.user);earning.id=response.ticket.id;earning.seq=0;earning.tick=0;earning.events=[];earning.pending=null;earning.pendingStars=0;
-    const wasPaused=paused;prepareEarningGame(response.ticket);earning.prefs=JSON.stringify({sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity});earning.ready=true;if(wasPaused)togglePause(true);
-    $('shopMessage').textContent='★ A normál játék is ad csillagokat. A találatok jutalma automatikusan mentődik.';saveEarnings();showAchievementAwards(response.achievements);
-  }catch(error){$('shopMessage').textContent='A csillagok mentése most nem indul: '+error.message;earningRetryAt=Date.now()+10000;}
-  finally{earningRequest=false;earning.booting=false;lastFrame=null;}
+    }catch(error){if(![400,404,409,410].includes(error.status))throw error;}
+    if(onlineUser?.id!==accountId||token!==earning.startToken||competition.active||!['off','ready'].includes(challengeState))return;
+    const config=earningConfig(),wasPaused=paused,meter=JSON.parse(JSON.stringify(starMeter));
+    earning.id=null;earning.seq=0;earning.tick=0;earning.events=[];earning.pending=null;earning.pendingStars=0;earning.starEvents=[];
+    prepareEarningGame({config,seed:740,meter});earning.prefs=JSON.stringify({sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity});earning.ready=true;if(wasPaused)togglePause(true);
+    earningInFlight=api('/earnings/start',{requestId:transactionId(),config});const response=await earningInFlight;
+    if(onlineUser?.id!==accountId||token!==earning.startToken)return;
+    acceptAccount(response.user);earning.id=response.ticket.id;
+    $('shopMessage').textContent='★ A találatok jutalma automatikusan mentődik.';saveEarnings();showAchievementAwards(response.achievements);
+  }catch(error){
+    if(token===earning.startToken){earning.ready=false;earning.id=null;earning.pendingStars=0;earning.starEvents=[];$('shopMessage').textContent='A játék működik, a csillagmentés újrapróbálható: '+error.message;earningRetryAt=Date.now()+15000;}
+  }finally{earningRequest=false;earning.starting=false;earningInFlight=null;updateHint();}
 }
 function showAchievementAwards(awards=[]){
   for(const award of awards){const a=economy.achievements.find(a=>a.id===award.id);if(a)notify('🏆 '+a.name+' · +'+a.reward+' ★');}
 }
 async function flushEarnings(force=false){
-  if(!earning.ready||earningRequest||(!force&&Date.now()<earningRetryAt))return;
+  if(!earning.ready||!earning.id||earningRequest||(!force&&Date.now()<earningRetryAt))return;
   if(!earning.pending){
     if((force||!playing())&&earning.events.some(e=>e[0]===earning.tick))earning.tick++;
     if(earning.tick===0)return;
     const ticks=Math.min(earning.tick,1200),events=earning.events.filter(e=>e[0]<ticks);
-    earning.pending={seq:earning.seq,ticks,events};earning.events=earning.events.filter(e=>e[0]>=ticks).map(e=>[e[0]-ticks,e[1],e[2]]);earning.tick-=ticks;saveEarnings();
+    const localStars=earning.starEvents.filter(e=>e[0]<ticks).reduce((n,e)=>n+e[1],0);earning.starEvents=earning.starEvents.filter(e=>e[0]>=ticks).map(e=>[e[0]-ticks,e[1]]);
+    earning.pending={seq:earning.seq,ticks,events,localStars,generation:gameGeneration};earning.events=earning.events.filter(e=>e[0]>=ticks).map(e=>[e[0]-ticks,e[1],e[2]]);earning.tick-=ticks;saveEarnings();
   }
   earningRequest=true;const sessionId=earning.id,accountId=onlineUser?.id,batch=earning.pending;
   try{
-    const response=await api('/earnings/claim',{sessionId,...batch});
+    earningInFlight=api('/earnings/claim',{sessionId,...batch});const response=await earningInFlight;
     if(onlineUser?.id!==accountId||earning.id!==sessionId)return;
     const before=accountWallet?.stars||0;acceptAccount(response.user);showAchievementAwards(response.achievements);
-    sessionStars+=response.stars;earning.pendingStars=Math.max(0,earning.pendingStars-response.hitStars);earning.pending=null;earning.seq++;saveEarnings();earningRetryAt=0;
+    if(batch.generation===gameGeneration)sessionStars+=response.stars;earning.pendingStars=Math.max(0,earning.pendingStars-(batch.localStars??response.hitStars));earning.pending=null;earning.seq++;saveEarnings();earningRetryAt=0;
     $('shopMessage').textContent=response.stars?'✓ +'+response.stars+' ★ mentve · Egyenleg: '+accountWallet.stars+' ★':'★ Csillaggyűjtés aktív · lendíts a figurára!';
     if(accountWallet.stars>before&&!progress.reduced){$('walletTop').classList.remove('wallet-pop');void $('walletTop').offsetWidth;$('walletTop').classList.add('wallet-pop');}
     renderEarningStatus();
   }catch(error){$('shopMessage').textContent='A csillagjutalom még nincs mentve. Automatikusan újrapróbáljuk: '+error.message;earningRetryAt=Date.now()+10000;saveEarnings();}
-  finally{earningRequest=false;}
+  finally{earningRequest=false;earningInFlight=null;}
 }
 async function stopEarnings(){
   // Freeze the game at a chunk boundary; never discard already earned input.
   earning.booting=true;
   try{
-    if(earningRequest)throw Error('A csillagok mentése folyamatban van. Próbáld meg néhány másodperc múlva.');
-    while(earning.pending||earning.tick>0){await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat. A Mentés újrapróbálása gombbal folytathatod.');}
+    if(earningRequest&&earningInFlight){try{await earningInFlight;}catch(_){}await Promise.resolve();}
+    if(!earning.ready&&(!earning.id||!earning.pending&&earning.tick===0&&earning.events.length===0))return;
+    earning.ready=true;
+    while(earning.pending||earning.tick>0||earning.events.length>0){await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat. A Mentés újrapróbálása gombbal folytathatod.');}
     earning.ready=false;saveEarnings();
   }finally{earning.booting=false;}
 }
@@ -1876,19 +1902,20 @@ const onlineAPI='/api';const shopRequestIds=new Map();
 const onlineNoticeDefault=$('onlineNotice').textContent;
 const REQUEST_TIMEOUT=40000;
 const PENDING_KEY='utos-pending-round-v1';
+let submissionQueue=[],submissionBusy=false,submissionTask=null,submissionStartedAt=0,submissionLastLabel=-1;
 function keepSubmission(){
-  try{if(pendingSubmission&&onlineUser)sessionStorage.setItem(PENDING_KEY,JSON.stringify({userId:onlineUser.id,submission:pendingSubmission,savedAt:Date.now()}));else sessionStorage.removeItem(PENDING_KEY);}catch(_){}
+  try{if(pendingSubmission&&onlineUser)sessionStorage.setItem(PENDING_KEY,JSON.stringify({userId:onlineUser.id,submission:pendingSubmission,queue:submissionQueue,savedAt:Date.now()}));else sessionStorage.removeItem(PENDING_KEY);}catch(_){}
 }
 function restoreSubmission(){
   try{const saved=JSON.parse(sessionStorage.getItem(PENDING_KEY)||'null');
     if(saved?.userId===onlineUser?.id&&Date.now()-saved.savedAt<480000&&saved.submission?.roundId&&Array.isArray(saved.submission.events)){
-      pendingSubmission=saved.submission;competition.lastKind=saved.submission.kind||'sprint';if(saved.submission.kind&&saved.submission.kind!=='practice'){boardKind=saved.submission.kind;$('boardKind').value=boardKind;}$('resultTitle').textContent='Van egy beküldésre váró köröd';$('resultScore').textContent='Az eredmény ellenőrizhető';$('resultDetails').textContent='A korábbi kör egérnaplóját megőriztük.';$('resultStats').replaceChildren();$('resultOnline').textContent='Kattints a Beküldés újrapróbálása gombra!';$('submitAgain').hidden=false;$('resultOverlay').hidden=false;
+      submissionQueue=Array.isArray(saved.queue)?saved.queue.filter(s=>s?.roundId&&Array.isArray(s.events)).slice(-8):[saved.submission];pendingSubmission=submissionQueue[0]||saved.submission;shownRoundId=pendingSubmission.roundId;competition.lastKind=saved.submission.kind||'sprint';if(saved.submission.kind&&saved.submission.kind!=='practice'){boardKind=saved.submission.kind;$('boardKind').value=boardKind;}$('resultTitle').textContent='Van egy beküldésre váró köröd';$('resultScore').textContent='Az eredmény ellenőrizhető';$('resultDetails').textContent='A korábbi kör egérnaplóját megőriztük.';$('resultStats').replaceChildren();$('resultOnline').textContent='Kattints a Beküldés újrapróbálása gombra!';$('submitAgain').hidden=false;$('resultOverlay').hidden=false;
     }else if(saved)sessionStorage.removeItem(PENDING_KEY);
   }catch(_){}
 }
 async function api(path,data){
-  const controller=new AbortController();let timer;
-  const expired=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('A ranglista nem válaszolt 40 másodpercen belül. A köröd megmaradt; használd a Beküldés újrapróbálása gombot!'));},REQUEST_TIMEOUT);});
+  const controller=new AbortController(),timeout=path.startsWith('/earnings/')?12000:REQUEST_TIMEOUT;let timer;
+  const expired=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('A szerver nem válaszolt '+(timeout/1000)+' másodpercen belül. A mentés megmaradt; próbáld újra a beküldést!'));},timeout);});
   const work=(async()=>{
     const identity=await getIdentityUser(),headers={};
     if(identity)headers.Authorization='Bearer '+await getAccessToken();
@@ -1906,8 +1933,11 @@ async function api(path,data){
   })();
   try{return await Promise.race([work,expired]);}finally{clearTimeout(timer);}
 }
-function acceptAccount(user){
-  onlineUser=user;accountWallet=economy.normalizeWallet(user.wallet);accountMode='account';applyEquipment();
+function acceptAccount(user,changeEquipment=false){
+  const first=onlineUser?.id!==user.id||accountMode!=='account',incoming=economy.normalizeWallet(user.wallet);
+  if(!first&&incoming.revision<(accountWallet?.revision||0))return;
+  onlineUser=user;accountWallet=incoming;accountMode='account';
+  if(first||changeEquipment)applyEquipment();else renderRewards();
 }
 async function migrateOldCosmetics(){
   const ids=progress.guestWallet.owned.filter(id=>economy.legacy.includes(id));
@@ -1915,10 +1945,11 @@ async function migrateOldCosmetics(){
 }
 function transactionId(){return typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);}
 async function accountShopAction(action,itemId,category){
-  if(earning.ready){if(earningRequest)throw Error('A csillagok mentése folyamatban van. Próbáld meg néhány másodperc múlva.');await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat.');}
+  if(earning.ready){if(earningRequest&&earningInFlight){try{await earningInFlight;}catch(_){}await Promise.resolve();}
+    if(earning.ready)await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő csillagjutalmat.');}
   const key='utos-shop-transaction:'+onlineUser.id+':'+JSON.stringify([action,itemId,category||null]);let id=shopRequestIds.get(key);
   try{id=id||sessionStorage.getItem(key);}catch(_){}if(!id){id=transactionId();try{sessionStorage.setItem(key,id);}catch(_){}}
-  shopRequestIds.set(key,id);const response=await api('/shop/'+action,{itemId,category,transactionId:id});acceptAccount(response.user);shopRequestIds.delete(key);try{sessionStorage.removeItem(key);}catch(_){}
+  shopRequestIds.set(key,id);const response=await api('/shop/'+action,{itemId,category,transactionId:id});acceptAccount(response.user,action==='equip');shopRequestIds.delete(key);try{sessionStorage.removeItem(key);}catch(_){}
 }
 async function cancelOnlineRound(roundId){try{await api('/round/cancel',{roundId});}catch(error){$('shopMessage').textContent='A kör lezárása nem sikerült: '+error.message;}}
 function rankName(xp){return xp>=8000?'Műszaklegenda':xp>=3000?'Bonk mester':xp>=1000?'Ütőspecialista':xp>=300?'Lendületes':'Újonc';}
@@ -1927,6 +1958,8 @@ function renderAccount(){
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
   $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
   $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=onlineBusy||competition.active&&!competition.ending;
+  $('retryPending').hidden=!pendingSubmission;$('retryPending').disabled=submissionBusy;
+  if(pendingSubmission&&!submissionBusy)$('onlineNotice').textContent='Van egy mentésre váró korábbi köröd. A Beküldés újrapróbálása gombbal mentheted.';
   $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · csillagjutalmak 2':'Az online kapcsolat nem elérhető';
   for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=onlineBusy||competition.active&&!competition.ending;
 }
@@ -1989,31 +2022,55 @@ async function saveRecoveredPassword(){
 async function startCompetitive(kind){
   if(onlineBusy||competition.active&&!competition.ending)return;
   if(!onlineUser){openAuth();$('authError').textContent='A közös ranglistához jelentkezz be!';return;}
-  onlineBusy=true;renderAccount();
+  const generation=gameGeneration,previousRoundId=competition.ending?competition.ticket?.id:shownRoundId;
+  onlineBusy=true;renderAccount();$('resultOverlay').hidden=true;$('hitInfo').textContent='Új versenykör előkészítése…';
   try{
     await stopEarnings();
     const loadout=kind==='practice'?{map:selectedMap,tool:selectedTool,character:selectedCharacter}:{};
-    const {ticket}=await api('/round/start',{kind,...loadout});pendingSubmission=null;keepSubmission();prepareCompetitiveRound(ticket);$('onlineNotice').textContent=competitiveDefs[kind].name+' · A kör végén a szerver ellenőrzi az egérmozdulatokat.';
+    const {ticket}=await api('/round/start',{kind,...loadout,previousRoundId});
+    if(gameGeneration!==generation){cancelOnlineRound(ticket.id);return;}
+    prepareCompetitiveRound(ticket);$('onlineNotice').textContent=competitiveDefs[kind].name+' · A kör végén a szerver ellenőrzi az egérmozdulatokat.';
     $('authOverlay').hidden=true;$('tutorialOverlay').hidden=true;if(kind!=='practice'){boardKind=kind;$('boardKind').value=kind;}renderAccount();
     canvas.scrollIntoView?.({block:'center',behavior:progress.reduced?'auto':'smooth'});
-  }catch(error){notify(error.message);if(/jelentkezz/i.test(error.message)){onlineUser=null;renderAccount();}}
+  }catch(error){if(gameGeneration===generation&&challengeState==='ended')$('resultOverlay').hidden=false;notify(error.message);if(/jelentkezz/i.test(error.message)){onlineUser=null;renderAccount();}}
   finally{onlineBusy=false;renderAccount();}
 }
 async function onCompetitionFinished(metrics){
-  pendingSubmission={roundId:competition.ticket.id,events:competition.events.map(e=>e.slice()),ticks:competition.tick,kind:competition.ticket.kind};
-  keepSubmission();await sendCompetitiveResult();
+  const submission={roundId:competition.ticket.id,events:competition.events.map(e=>e.slice()),ticks:competition.tick,kind:competition.ticket.kind,savedAt:Date.now()};
+  submissionQueue=submissionQueue.filter(s=>s.roundId!==submission.roundId);submissionQueue.push(submission);submissionQueue=submissionQueue.slice(-8);
+  pendingSubmission=submission;keepSubmission();await sendCompetitiveResult();
 }
 async function sendCompetitiveResult(){
-  if(!pendingSubmission||onlineBusy)return;onlineBusy=true;renderAccount();$('resultOnline').textContent='Eredmény ellenőrzése a szerveren…';$('submitAgain').hidden=true;
-  const submission=pendingSubmission;
+  if(!pendingSubmission||submissionBusy)return;
+  const submission=pendingSubmission,ownerId=onlineUser?.id;submission.failed=false;submissionBusy=true;submissionStartedAt=Date.now();submissionLastLabel=-1;
+  const visible=()=>typeof shownRoundId==='undefined'||shownRoundId===submission.roundId;
+  if(visible()){$('resultOnline').textContent='Eredmény ellenőrzése a szerveren… Közben újra játszhatsz.';$('submitAgain').hidden=true;}
   try{
-    const result=await api('/round/finish',submission);acceptAccount(result.user);
-    if(pendingSubmission!==submission)return;
-    $('resultScore').textContent=result.result.points+(submission.kind==='practice'?' ellenőrzött pont':' hitelesített versenypont');
-    showAchievementAwards(result.result.achievements);sessionStars=(result.result.stars||0)+(result.result.achievementStars||0);const starStat=document.querySelector('[data-stat="stars"] b');if(starStat)starStat.textContent='+'+sessionStars;
-    $('resultOnline').textContent=(submission.kind==='practice'?'✓ Csillagjutalom mentve':'✓ Ranglistára mentve')+' · +'+sessionStars+' ★ · +'+result.result.xp+' XP · '+rankName(onlineUser.xp);pendingSubmission=null;keepSubmission();await loadLeaderboard();
-  }catch(error){$('resultOnline').textContent=error.message+(submission.kind==='practice'?' A csillagjutalom még nincs jóváírva.':' A helyi eredmény még nincs a ranglistán.');$('submitAgain').hidden=false;}
-  finally{onlineBusy=false;renderAccount();}
+    submissionTask=api('/round/finish',submission);const result=await submissionTask;
+    if(onlineUser?.id!==ownerId)return;
+    acceptAccount(result.user);showAchievementAwards(result.result.achievements);
+    const stars=(result.result.stars||0)+(result.result.achievementStars||0);
+    if(visible()){
+      $('resultScore').textContent=result.result.points+(submission.kind==='practice'?' ellenőrzött pont':' hitelesített versenypont');
+      sessionStars=stars;const starStat=document.querySelector('[data-stat="stars"] b');if(starStat)starStat.textContent='+'+stars;
+      $('resultOnline').textContent=(submission.kind==='practice'?'✓ Csillagjutalom mentve':'✓ Ranglistára mentve')+' · +'+stars+' ★ · +'+result.result.xp+' XP · '+rankName(onlineUser.xp);
+    }else notify('✓ Korábbi kör mentve · +'+stars+' ★');
+    submissionQueue=submissionQueue.filter(s=>s.roundId!==submission.roundId);
+    if(pendingSubmission?.roundId===submission.roundId)pendingSubmission=submissionQueue.find(s=>!s.failed)||submissionQueue[0]||null;
+    keepSubmission();loadLeaderboard();
+  }catch(error){
+    submission.failed=true;keepSubmission();
+    if(visible()){$('resultOnline').textContent=error.message+' Az egérnapló megmaradt; közben újra játszhatsz.';$('submitAgain').hidden=false;}
+    else notify('A korábbi kör mentése újrapróbálható a ranglistánál.');
+  }finally{
+    submissionBusy=false;submissionTask=null;renderAccount();
+    const next=submissionQueue.find(s=>!s.failed);if(next&&onlineUser?.id===ownerId){pendingSubmission=next;Promise.resolve().then(()=>sendCompetitiveResult());}
+  }
+}
+function updateSubmissionStatus(){
+  if(!submissionBusy||shownRoundId!==pendingSubmission?.roundId)return;
+  const seconds=Math.floor((Date.now()-submissionStartedAt)/1000);if(seconds===submissionLastLabel)return;submissionLastLabel=seconds;
+  $('resultOnline').textContent='Ellenőrzés és mentés · '+seconds+' mp · Az Újra játszom gomb már használható.';
 }
 async function loadLeaderboard(){
   if(boardBusy)return;boardBusy=true;$('boardMessage').textContent='Ranglista betöltése…';$('boardRefresh').disabled=true;
@@ -2024,7 +2081,7 @@ async function loadLeaderboard(){
     for(const row of data.rows){const tr=document.createElement('tr');if(row.user_id===onlineUser?.id)tr.className='my-row';
       for(const value of [row.place,row.username,row.points+' pont',row.accuracy+'%',row.best_streak]){const td=document.createElement('td');td.textContent=String(value);tr.appendChild(td);}root.appendChild(tr);}
     $('boardMessage').textContent=data.rows.length?'Játékosonként a legjobb kör · '+(data.label||''):'Még nincs eredmény. Legyél az első!';
-    $('myPlace').textContent=data.mine?'Saját helyezés: #'+data.mine.place+' · '+data.mine.points+' pont':onlineUser?'Ebben a listában még nincs eredményed.':'Jelentkezz be a saját helyezésedhez.';onlineReady=true;if(!competition.active)$('onlineNotice').textContent=onlineNoticeDefault;
+    $('myPlace').textContent=data.mine?'Saját helyezés: #'+data.mine.place+' · '+data.mine.points+' pont':onlineUser?'Ebben a listában még nincs eredményed.':'Jelentkezz be a saját helyezésedhez.';onlineReady=true;if(!competition.active&&!pendingSubmission)$('onlineNotice').textContent=onlineNoticeDefault;
   }catch(error){onlineReady=false;$('boardRows').replaceChildren();if(error.status===401)onlineUser=null;$('boardMessage').textContent=error.message;$('myPlace').textContent='A ranglista most nem tölthető be. A Frissítés gombbal újrapróbálhatod.';}
   finally{boardBusy=false;$('boardRefresh').disabled=false;renderAccount();if(requestedKind!==boardKind||requestedPeriod!==boardPeriod)loadLeaderboard();}
 }
@@ -2036,9 +2093,9 @@ async function initOnline(){
     const callback=await handleAuthCallback();
     if(callback?.type==='recovery'){openAuth();setRecoveryMode(true);$('authError').textContent='Adj meg egy új, legalább 10 karakteres jelszót.';$('authPassword').focus();}
     else if(callback?.type==='confirmation')notify('Az e-mail-címed megerősítve. Sikeres bejelentkezés!');
-    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();await startEarnings();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();restoreSubmission();await loadLeaderboard();
+    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();restoreSubmission();if(pendingSubmission)sendCompetitiveResult();else await startEarnings();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();await loadLeaderboard();
   }
-  catch(error){onlineReady=false;$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();}
+  catch(error){onlineReady=false;if(accountMode==='loading'){accountMode='guest';accountWallet=null;onlineUser=null;applyEquipment();}$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();}
 }
 $('authOpen').addEventListener('click',openAuth);$('authClose').addEventListener('click',closeAuth);
 $('loginSubmit').addEventListener('click',()=>submitAuth('login'));$('registerSubmit').addEventListener('click',()=>submitAuth('register'));
@@ -2047,7 +2104,8 @@ $('authForm').addEventListener('submit',e=>{e.preventDefault();submitAuth('login
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&!$('authOverlay').hidden)closeAuth();});
 $('competitivePanel').addEventListener('click',e=>{const b=e.target.closest('button[data-competitive]');if(b)startCompetitive(b.dataset.competitive);});
 $('boardKind').addEventListener('change',e=>{boardKind=e.target.value;loadLeaderboard();});$('boardPeriod').addEventListener('change',e=>{boardPeriod=e.target.value;loadLeaderboard();});$('boardRefresh').addEventListener('click',loadLeaderboard);
-$('submitAgain').addEventListener('click',sendCompetitiveResult);
+$('submitAgain').addEventListener('click',()=>sendCompetitiveResult());
+$('retryPending').addEventListener('click',()=>sendCompetitiveResult());
 $('earnStars').textContent='★ Mentés újrapróbálása';
 $('earnStars').addEventListener('click',()=>earning.ready?flushEarnings(true):startEarnings());
 window.addEventListener('pagehide',()=>{saveEarnings();});

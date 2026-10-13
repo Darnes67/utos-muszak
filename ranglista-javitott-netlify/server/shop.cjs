@@ -1,7 +1,7 @@
 'use strict';
 const economy=require('../economy.js'),{HttpError}=require('./store.cjs');
 function ensureWallet(profile){profile.wallet=economy.normalizeWallet(profile.wallet);return profile.wallet;}
-function publicWallet(profile){const w=ensureWallet(profile);return {version:w.version,stars:w.stars,owned:w.owned,equipped:w.equipped,legacyMigrated:w.legacyMigrated,achievements:profile.rewards?.paid||[]};}
+function publicWallet(profile){const w=ensureWallet(profile);return {version:w.version,revision:w.revision,stars:w.stars,owned:w.owned,equipped:w.equipped,legacyMigrated:w.legacyMigrated,achievements:profile.rewards?.paid||[]};}
 function activeRound(p,now){return Object.values(p.rounds||{}).some(r=>r.status==='active'&&Date.parse(r.expiresAt)>now);}
 function transaction(p,input,action,now){
  const w=ensureWallet(p),id=input.transactionId;
@@ -19,7 +19,7 @@ function transaction(p,input,action,now){
   if(input.itemId===null&&!['tool','character'].includes(category))w.equipped[category]=null;
   else{if(!item||item.category!==category||!w.owned.includes(item.id))throw new HttpError(403,'Ezt a tartalmat előbb vásárold meg.');w.equipped[category]=item.id;}
  }
- w.transactions[id]={signature,at:now};
+ w.revision++;w.transactions[id]={signature,at:now};
  const entries=Object.entries(w.transactions);if(entries.length>256)w.transactions=Object.fromEntries(entries.sort((a,b)=>b[1].at-a[1].at).slice(0,256));
  return w;
 }
@@ -29,7 +29,7 @@ function migrateLegacy(p,ids,equipped){
  // Grandfather ONLY the six old local cosmetics, never a balance, weapon or new skin.
  w.owned=[...new Set([...w.owned,...ids])];
  for(const category of ['shirt','pattern','particle']){const id=equipped?.[category];if(!w.equipped[category]&&ids.includes(id)&&economy.product(id)?.category===category)w.equipped[category]=id;}
- w.legacyMigrated=true;return w;
+ w.revision++;w.legacyMigrated=true;return w;
 }
 function practiceDefinition(input,p){
  const map=input.map,tool=input.tool,character=input.character,w=ensureWallet(p);
