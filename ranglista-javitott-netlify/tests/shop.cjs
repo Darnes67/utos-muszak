@@ -28,15 +28,15 @@ async function call(path,input,auth=true){const r=await api(new Request('https:/
  assert.equal((await call('/round/finish',{roundId:loan.id,events:fixture.events,ticks:5400})).status,409);
  await store.mutate(key,null,p=>{p.wallet.stars=100000;});
  const transactionId=tx(),before=(await call('/me')).data.user.wallet.stars;
- const race=await Promise.all([call('/shop/buy',{itemId:'tool-1',transactionId,price:0}),call('/shop/buy',{itemId:'tool-1',transactionId,price:0})]);assert(race.every(r=>r.status===200));assert.equal((await call('/me')).data.user.wallet.stars,before-150);
+ const race=await Promise.all([call('/shop/buy',{itemId:'tool-1',transactionId,price:0}),call('/shop/buy',{itemId:'tool-1',transactionId,price:0})]);assert(race.every(r=>r.status===200));assert.equal((await call('/me')).data.user.wallet.stars,before-economy.product("tool-1").price);
  assert.equal((await call('/shop/buy',{itemId:'tool-2',transactionId})).status,409);
  for(const product of economy.products){
   const bought=await call('/shop/buy',{itemId:product.id,transactionId:tx()});assert.equal(bought.status,200,product.id);assert(bought.data.user.wallet.owned.includes(product.id));
   const equipped=await call('/shop/equip',{itemId:product.id,transactionId:tx()});assert.equal(equipped.status,200,product.id);assert.equal(equipped.data.user.wallet.equipped[product.category],product.id);
  }
  assert.equal((await call('/shop/equip',{itemId:null,category:'__proto__',transactionId:tx()})).status,400);
- const saved=await call('/me');assert.equal(saved.data.user.wallet.equipped.tool,'tool-5');assert(!JSON.stringify(saved.data).includes('transactions'));
- blobs.fail=true;assert.equal((await call('/shop/equip',{itemId:'tool-0',transactionId:tx()})).status,503);blobs.fail=false;assert.equal((await call('/me')).data.user.wallet.equipped.tool,'tool-5');
+ const saved=await call('/me');assert.equal(saved.data.user.wallet.equipped.tool,economy.products.filter(p=>p.category==='tool').at(-1).id);assert(!JSON.stringify(saved.data).includes('transactions'));
+ blobs.fail=true;assert.equal((await call('/shop/equip',{itemId:'tool-0',transactionId:tx()})).status,503);blobs.fail=false;assert.equal((await call('/me')).data.user.wallet.equipped.tool,economy.products.filter(p=>p.category==='tool').at(-1).id);
  for(const category of ['shirt','pattern','particle'])assert.equal((await call('/shop/equip',{itemId:null,category,transactionId:tx()})).data.user.wallet.equipped[category],null);
  // Existing server purchases and balances survive schema normalization.
  const preserved=economy.normalizeWallet({stars:123,owned:['tool-4','shirt-pink'],equipped:{tool:'tool-4',shirt:'shirt-pink'}});assert.equal(preserved.stars,123);assert.equal(preserved.equipped.tool,'tool-4');
@@ -45,5 +45,5 @@ async function call(path,input,auth=true){const r=await api(new Request('https:/
  const beforeMigration=(await call('/me')).data.user.wallet;await store.mutate(key,null,p=>{delete p.wallet.revision;});const oldWallet=(await call('/me')).data.user.wallet;assert.equal(oldWallet.stars,beforeMigration.stars);assert.deepEqual(oldWallet.owned,beforeMigration.owned);assert(Number.isSafeInteger((await store.get(key)).wallet.revision));
  const idle=economy.meter();economy.advance(idle,1000,5);assert.equal(idle.credits,0);assert.equal(economy.hit(idle,'object','same'),0); // fractional object credit, no integer payout
  assert.equal(economy.hit(idle,'object','same'),0);
- console.log('PASS: verified star income, no duplicate round reward, all 27 product purchases/equipment, server prices, atomic concurrent purchase, missing balance, unowned rejection, challenge loan, cancellation, legacy cosmetics, server-state persistence, storage failure, 40–50 stars/minute cap.');
+ console.log('PASS: verified star income, no duplicate round reward, all catalog product purchases/equipment, server prices, atomic concurrent purchase, missing balance, unowned rejection, challenge loan, cancellation, legacy cosmetics, server-state persistence, storage failure, 40–50 stars/minute cap.');
 })().catch(e=>{console.error(e);process.exitCode=1});

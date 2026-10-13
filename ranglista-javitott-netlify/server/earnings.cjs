@@ -2,7 +2,7 @@
 const {randomUUID}=require('node:crypto'),economy=require('../economy.js'),{HttpError}=require('./store.cjs'),{initialEarnings,verifyEarnings,ENGINE_VERSION}=require('./engine.cjs'),rewards=require('./rewards.cjs');
 function config(input,p){
  const c=input.config,w=p.wallet;
- if(!c||!['free','score','tasks'].includes(c.mode)||!Number.isInteger(c.map)||c.map<0||c.map>2||!Number.isInteger(c.tool)||c.tool<0||c.tool>5||!Number.isInteger(c.character)||c.character<0||c.character>8||![.75,1,1.35].includes(c.sensitivity)||typeof c.autoGetup!=='boolean'||!Number.isFinite(c.gravity)||c.gravity<20||c.gravity>180||typeof c.invite!=='boolean')throw new HttpError(400,'Hibás játékbeállítás.');
+ if(!c||!['free','score','tasks'].includes(c.mode)||!Number.isInteger(c.map)||c.map<0||c.map>2||!Number.isInteger(c.tool)||!economy.product("tool-"+c.tool)||!Number.isInteger(c.character)||!economy.product("character-"+c.character)||![.75,1,1.35].includes(c.sensitivity)||typeof c.autoGetup!=='boolean'||!Number.isFinite(c.gravity)||c.gravity<20||c.gravity>180||typeof c.invite!=='boolean')throw new HttpError(400,'Hibás játékbeállítás.');
  if(!w.owned.includes('tool-'+c.tool)||!w.owned.includes('character-'+c.character))throw new HttpError(403,'A csillaggyűjtéshez saját felszerelés szükséges.');
  if(c.ready!==undefined&&typeof c.ready!=='boolean'||c.held!==undefined&&typeof c.held!=='boolean'||c.pose!==undefined&&(!point(c.pose)||!Number.isFinite(c.pose.angle)||Math.abs(c.pose.angle)>Math.PI+1e-6))throw new HttpError(400,'Hibás kezdő póz.');
  return {...c};

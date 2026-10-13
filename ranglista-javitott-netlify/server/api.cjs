@@ -64,7 +64,7 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
-    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'stability-3',identity});}
+    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'cartoons-4',identity});}
     phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){

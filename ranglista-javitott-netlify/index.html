@@ -85,6 +85,7 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 @media(max-width:720px){.competitive-grid{grid-template-columns:1fr}.competitive-card p{min-height:0}.online-panel{padding:12px}.competitive-card{padding:12px}.account-row strong{font-size:16px}}
 .auth-modal{max-height:calc(100dvh - 32px);overflow-y:auto}.auth-modal button{margin-bottom:8px}.auth-fields input:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 .header-wallet{display:flex;align-items:center;gap:10px}.header-wallet strong{font-size:19px;color:var(--lime);white-space:nowrap}.shop-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.shop-heading h2{font-size:22px;letter-spacing:-.5px;margin:12px 0 5px}.shop-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.shop-message{font-size:12px;color:#c7eda8;min-height:20px;line-height:1.6}.shop-card{display:flex;flex-direction:column;padding:12px;background:linear-gradient(140deg,#1d2d45,#142036)}.shop-card canvas{aspect-ratio:280/170;border-radius:9px;margin-bottom:12px;width:100%}.shop-card h3{font-size:15px}.shop-card p{line-height:1.6;min-height:45px}.shop-card button{margin-top:auto}.shop-card .preview-button{margin-top:6px;background:transparent;color:#aabdd8;font-size:10px}.shop-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:9px;color:#9fb695}.shop-meta b{font-size:13px;color:#cdf5a2}.shop-locked::after{content:' 🔒';font-size:10px}.achievement-title{font-size:12px;margin:22px 0 8px;color:#9bb1ce}#shopPreview .modal{width:min(500px,94vw)}#shopPreviewCanvas{width:100%;aspect-ratio:420/260;border-radius:12px}@keyframes wallet-pop{50%{transform:scale(1.2);color:#fff3b6}}.wallet-pop{animation:wallet-pop .3s ease}.quiet .wallet-pop{animation:none}@media(max-width:720px){.header-wallet{flex-direction:column;gap:5px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-card p{min-height:65px}.shop-card button{padding:9px 5px;font-size:10px}.shop-heading h2{font-size:19px}}@media(max-width:420px){.shop-grid{grid-template-columns:1fr}}
+.character-grid,.tool-grid{max-height:340px;overflow:auto;overscroll-behavior:contain;padding-right:5px}.shop-grid{max-height:760px;overflow:auto;overscroll-behavior:contain} @media(max-width:650px){.character-grid,.tool-grid{max-height:260px}.shop-grid{max-height:650px}}
 </style>
 </head>
 <body>
@@ -106,14 +107,14 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 <details class="loadout" id="leaderboardPanel"><summary>🏆 Ranglista <span id="myPlace">Még nincs versenyeredmény</span></summary><div class="leader-controls"><select id="boardKind" aria-label="Versenytípus"><option value="sprint">Pontverseny</option><option value="combo">Kombókupa</option><option value="daily">Napi kihívás</option></select><select id="boardPeriod" aria-label="Időszak"><option value="week">Aktuális hét (UTC)</option><option value="all">Összesített</option></select><button id="boardRefresh">↻ Frissítés</button></div><p class="rules" id="boardMessage">Kapcsolódás…</p><div class="board-scroll"><table class="leader-table"><thead><tr><th>HELY</th><th>JÁTÉKOS</th><th>PONT</th><th>PONTOSSÁG</th><th>SOROZAT</th></tr></thead><tbody id="boardRows"></tbody></table></div></details>
 <details class="loadout"><summary>Pálya, figura és eszköz <span>Saját felszerelés · feloldás a boltban</span></summary><div class="settings">
 <div class="panel"><label>PÁLYA</label><div class="choices" id="maps"><button data-map="0" class="active" aria-pressed="true">Labor<em>Normál gravitáció</em></button><button data-map="1" aria-pressed="false">Edzőterem<em>Matracok, rugók</em></button><button data-map="2" aria-pressed="false">Űrállomás<em>Kisebb gravitáció</em></button></div></div>
-<div class="panel"><label>FIGURA</label><div class="choices character-grid" id="characters"><button data-character="0" class="active" aria-pressed="true">Alex<em>Zöld póló</em></button><button data-character="1" aria-pressed="false">Mira<em>Lila pulóver</em></button><button data-character="2" aria-pressed="false">Béla<em>Melósruha</em></button><button data-character="3" aria-pressed="false">Cartman<em>South Park</em></button><button data-character="4" aria-pressed="false">Kenny<em>South Park</em></button><button data-character="5" aria-pressed="false">Stan<em>South Park</em></button><button data-character="6" aria-pressed="false">Kyle<em>South Park</em></button><button data-character="7" aria-pressed="false">Homer<em>A Simpson család</em></button><button data-character="8" aria-pressed="false">SpongyaBob<em>Szivacs a műszakban</em></button></div></div>
-<div class="panel tool-panel"><button id="handTool" aria-pressed="false">✋ Kéz · csak szabad játék</button><label>ESZKÖZ · ERŐ / FORDULÁS</label><div class="choices tool-grid" id="tools"><button data-tool="0" class="active" aria-pressed="true">Baseballütő<em>1× / gyors</em></button><button data-tool="1" aria-pressed="false">Szivacsütő<em>0,48× / nagyon gyors</em></button><button data-tool="2" aria-pressed="false">Játék kalapács<em>1,55× / lassú</em></button><button data-tool="3" aria-pressed="false">Banán<em>0,6× / rugalmas</em></button><button data-tool="4" aria-pressed="false">Rugós kesztyű<em>1,15× / közepes</em></button><button data-tool="5" aria-pressed="false">Szivacskéz<em>0,4× / gyors</em></button></div></div>
+<div class="panel"><label>FIGURA</label><div class="choices character-grid" id="characters"><button data-character="0" class="active" aria-pressed="true">Alex<em>Zöld póló</em></button><button data-character="1" aria-pressed="false">Mira<em>Lila pulóver</em></button><button data-character="2" aria-pressed="false">Béla<em>Melósruha</em></button><button data-character="3" aria-pressed="false">Cartman<em>South Park</em></button><button data-character="4" aria-pressed="false">Kenny<em>South Park</em></button><button data-character="5" aria-pressed="false">Stan<em>South Park</em></button><button data-character="6" aria-pressed="false">Kyle<em>South Park</em></button><button data-character="7" aria-pressed="false">Homer<em>A Simpson család</em></button><button data-character="8" aria-pressed="false">SpongyaBob<em>Szivacs a műszakban</em></button><button data-character="9" aria-pressed="false">Peter Griffin<em>Family Guy</em></button><button data-character="10" aria-pressed="false">Lois Griffin<em>Family Guy</em></button><button data-character="11" aria-pressed="false">Stewie Griffin<em>Family Guy</em></button><button data-character="12" aria-pressed="false">Brian Griffin<em>Family Guy</em></button><button data-character="13" aria-pressed="false">Meg Griffin<em>Family Guy</em></button><button data-character="14" aria-pressed="false">Chris Griffin<em>Family Guy</em></button><button data-character="15" aria-pressed="false">Glenn Quagmire<em>Family Guy</em></button><button data-character="16" aria-pressed="false">Cleveland Brown<em>Family Guy</em></button><button data-character="17" aria-pressed="false">Csillag Patrik<em>SpongyaBob</em></button><button data-character="18" aria-pressed="false">Tunyacsáp<em>SpongyaBob</em></button><button data-character="19" aria-pressed="false">Rák úr<em>SpongyaBob</em></button><button data-character="20" aria-pressed="false">Szandi<em>SpongyaBob</em></button><button data-character="21" aria-pressed="false">Bart Simpson<em>A Simpson család</em></button><button data-character="22" aria-pressed="false">Lisa Simpson<em>A Simpson család</em></button><button data-character="23" aria-pressed="false">Marge Simpson<em>A Simpson család</em></button><button data-character="24" aria-pressed="false">Rick Sanchez<em>Rick és Morty</em></button><button data-character="25" aria-pressed="false">Morty Smith<em>Rick és Morty</em></button><button data-character="26" aria-pressed="false">Finn<em>Kalandra fel!</em></button><button data-character="27" aria-pressed="false">Jake<em>Kalandra fel!</em></button><button data-character="28" aria-pressed="false">Shrek<em>Shrek</em></button></div></div>
+<div class="panel tool-panel"><button id="handTool" aria-pressed="false">✋ Kéz · csak szabad játék</button><label>ESZKÖZ · ERŐ / FORDULÁS</label><div class="choices tool-grid" id="tools"><button data-tool="0" class="active" aria-pressed="true">Baseballütő<em>1× / gyors</em></button><button data-tool="1" aria-pressed="false">Szivacsütő<em>0,48× / nagyon gyors</em></button><button data-tool="2" aria-pressed="false">Játék kalapács<em>1,55× / lassú</em></button><button data-tool="3" aria-pressed="false">Banán<em>0,6× / rugalmas</em></button><button data-tool="4" aria-pressed="false">Rugós kesztyű<em>1,15× / közepes</em></button><button data-tool="5" aria-pressed="false">Szivacskéz<em>0,4× / gyors</em></button><button data-tool="6" aria-pressed="false">Gumicsirke<em>0.5× / lendítés</em></button><button data-tool="7" aria-pressed="false">Serpenyő<em>1.25× / lendítés</em></button><button data-tool="8" aria-pressed="false">Seprű<em>0.62× / lendítés</em></button><button data-tool="9" aria-pressed="false">Óriási villáskulcs<em>1.3× / lendítés</em></button><button data-tool="10" aria-pressed="false">WC-pumpa<em>0.7× / lendítés</em></button><button data-tool="11" aria-pressed="false">Rocksztár gitár<em>1.05× / lendítés</em></button><button data-tool="12" aria-pressed="false">Pisztoly<em>Tüzelés · 0.72× / lövés</em></button><button data-tool="13" aria-pressed="false">Sörétes puska<em>Tüzelés · 1.3× / lövés</em></button><button data-tool="14" aria-pressed="false">Gépfegyver<em>Tüzelés · 0.42× / automata</em></button></div></div>
 </div></details>
 <details class="loadout" id="editorPanel"><summary>Saját pálya szerkesztése <span id="editorCount">0 / 20 elem</span></summary><div class="editor-controls"><button id="editorToggle" class="active">✎ Szerkesztés indítása</button><span id="editorState"></span><div class="editor-row"><button data-add="box">＋ Doboz</button><button data-add="ball">＋ Labda</button><button data-add="cone">＋ Bója</button><button data-add="tramp">＋ Trambulin</button></div><div class="editor-row"><label>Forgatás <input type="range" id="editorRotation" min="-180" max="180" value="0" disabled></label><button id="editorDelete" disabled>⌫ Kijelölt törlése</button><button id="layoutSave">Saját elrendezés mentése</button><button id="layoutLoad">Betöltés</button><button id="layoutDefault">Alapértelmezett pálya</button></div><p class="rules">Kattints egy elemre, majd húzd a helyére. Szerkesztés közben áll a fizika. A mentés az aktuális pályához tartozik; kihívásban az eredeti elrendezés működik.</p></div></details>
 <details class="loadout" id="shopPanel"><summary>★ Műszakbolt <span id="wallet">★ 0 csillag</span></summary><div class="reward-section"><div class="shop-heading"><div><h2>Új cuccok. Saját stílus.</h2><p id="shopStorage" class="rules">Vendégbolt · helyi mentés</p></div><button id="earnStars" class="active" hidden>★ Hiteles csillaggyűjtés · 45 mp</button></div><p class="rules">Aktív figuratalálatokkal kb. 30–50 ★ / perc. A normál játék is ad csillagokat; fiókkal automatikusan mentjük. A tárgyak kevesebbet adnak. Az achievementek egyszeri bónuszt adnak. A pontszám külön számít. Fiókos jutalmat a szerver ellenőriz; a vendégcsillagok ebben a böngészőben maradnak.</p><p id="shopMessage" class="shop-message" aria-live="polite"></p><div id="shopTabs" class="shop-tabs"><button data-shop-tab="tool" class="active">Eszközök</button><button data-shop-tab="character">Skinek és ruhák</button><button data-shop-tab="pattern">Eszközminták</button><button data-shop-tab="particle">Találati effektek</button><button id="resetAppearance">Alapmegjelenés</button></div><div id="shop" class="shop-grid"></div></div></details>
 <details class="loadout" id="achievementsPanel"><summary>🏆 Achievementek <span id="achievementCount">0 / 8</span></summary><div class="reward-section"><p class="rules">Egyszeri jutalmak: 5–25 ★. Újrakezdés és újratöltés után sem járnak újra. Fiókkal a szerveren ellenőrzött teljesítések számítanak.</p><div id="achievements" class="achievement-grid"></div></div></details>
 <div id="shopPreview" class="tutorial-overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="shopPreviewTitle"><div class="eyebrow">PRÓBAFÜLKE</div><h2 id="shopPreviewTitle"></h2><canvas id="shopPreviewCanvas" width="420" height="260"></canvas><p id="shopPreviewText"></p><button id="shopPreviewRotate">↻ Forgatás</button> <button id="shopPreviewClose" class="active">Vissza a boltba</button></div></div>
-<div class="actions"><div class="buttons"><button id="invite">＋ Ember behívása</button><button id="stand" disabled>↑ Talpra állítás</button><button id="objectsReset">▦ Pálya rendberakása</button><button id="reset">↻ Újrakezdés</button><button id="pause">Ⅱ Szünet</button><button id="replayButton" disabled>↶ Visszajátszás</button><button id="sound" aria-pressed="true">Hang: be</button><button id="fullscreen">⛶ Teljes képernyő</button><button id="tutorial">? Súgó</button></div><p class="help">Kattints az eszközre! Lendíts nyomott bal egérgombbal. Nem kell kattintgatni: tartsd nyomva, és lendíts oda-vissza! Szünet: szóköz.</p></div>
+<div class="actions"><div class="buttons"><button id="invite">＋ Ember behívása</button><button id="stand" disabled>↑ Talpra állítás</button><button id="objectsReset">▦ Pálya rendberakása</button><button id="reset">↻ Újrakezdés</button><button id="pause">Ⅱ Szünet</button><button id="replayButton" disabled>↶ Visszajátszás</button><button id="sound" aria-pressed="true">Hang: be</button><button id="fullscreen">⛶ Teljes képernyő</button><button id="tutorial">? Súgó</button></div><p class="help">Kattints az eszközre! Lendíts nyomott bal egérgombbal. Nem kell kattintgatni: tartsd nyomva, és lendíts oda-vissza! Lőfegyver: célozz a kurzorral, a nyomva tartott klikk tüzel. Szünet: szóköz.</p></div>
 <details class="loadout"><summary>Irányítás és beállítások <span>Érzékenység, gravitáció, effektek</span></summary><div class="preferences">
 <label>Érzékenység <select id="sensitivity"><option value="0.75">Finom</option><option value="1">Normál</option><option value="1.35">Gyors</option></select></label>
 <label><input id="autoGetup" type="checkbox" checked> Automatikus felállás</label>
@@ -214,7 +215,27 @@ const profiles=[
   {name:'Stan',type:'stan',shirt:'#996845',sleeve:'#996845',pants:'#4b72a6',skin:'#f4c5a1',mitten:'#d74e55',height:.74,spread:1,headR:33,bodyR:24},
   {name:'Kyle',type:'kyle',shirt:'#e59343',sleeve:'#e59343',pants:'#528151',skin:'#f7c79f',mitten:'#72ba4e',height:.74,spread:1,headR:34,bodyR:24},
   {name:'Homer',type:'homer',shirt:'#f1f2e9',sleeve:'#f1f2e9',pants:'#6b98c4',skin:'#f6d357',height:1.02,spread:1.08,headR:33,bodyR:28,weight:1.1},
-  {name:'SpongyaBob',type:'sponge',shirt:'#f4df57',sleeve:'#f5f2e8',pants:'#9b713f',skin:'#f4dc51',height:.70,spread:1.06,headR:38,bodyR:32,weight:.85}
+  {name:'SpongyaBob',type:'sponge',shirt:'#f4df57',sleeve:'#f5f2e8',pants:'#9b713f',skin:'#f4dc51',height:.70,spread:1.06,headR:38,bodyR:32,weight:.85},
+{"name": "Peter Griffin", "type": "peter", "shirt": "#f4f0df", "sleeve": "#f4f0df", "pants": "#477b54", "skin": "#f3c8a4", "hair": "#7c4a31", "height": 0.97, "spread": 1.18, "headR": 32, "bodyR": 36},
+{"name": "Lois Griffin", "type": "lois", "shirt": "#66b6b0", "sleeve": "#66b6b0", "pants": "#ddbf83", "skin": "#f4c5a6", "hair": "#e16b37", "height": 0.96, "spread": 1, "headR": 29, "bodyR": 24},
+{"name": "Stewie Griffin", "type": "stewie", "shirt": "#f1df70", "sleeve": "#f1df70", "pants": "#d7464b", "skin": "#f7cdaa", "hair": "#6f432b", "height": 0.61, "spread": 1.02, "headR": 38, "bodyR": 23},
+{"name": "Brian Griffin", "type": "brian", "shirt": "#f4f1e9", "sleeve": "#f4f1e9", "pants": "#f4f1e9", "skin": "#f4f1e9", "hair": "#eeeeea", "height": 0.84, "spread": 1, "headR": 32, "bodyR": 25},
+{"name": "Meg Griffin", "type": "meg", "shirt": "#d9658e", "sleeve": "#d9658e", "pants": "#6783aa", "skin": "#f4c5a5", "hair": "#75482d", "height": 0.83, "spread": 1.04, "headR": 29, "bodyR": 26},
+{"name": "Chris Griffin", "type": "chris", "shirt": "#487bbd", "sleeve": "#487bbd", "pants": "#3a3e47", "skin": "#f1c5a0", "hair": "#f0d354", "height": 0.88, "spread": 1.15, "headR": 32, "bodyR": 32},
+{"name": "Glenn Quagmire", "type": "quagmire", "shirt": "#cf4a45", "sleeve": "#cf4a45", "pants": "#e2c790", "skin": "#f2c19d", "hair": "#302a29", "height": 0.99, "spread": 1.05, "headR": 30, "bodyR": 27},
+{"name": "Cleveland Brown", "type": "cleveland", "shirt": "#e7bd55", "sleeve": "#e7bd55", "pants": "#687cb0", "skin": "#a8754f", "hair": "#352b27", "height": 0.97, "spread": 1.12, "headR": 30, "bodyR": 30},
+{"name": "Csillag Patrik", "type": "patrick", "shirt": "#f09bad", "sleeve": "#f09bad", "pants": "#a4d35c", "skin": "#f09bad", "hair": "#f09bad", "height": 0.78, "spread": 1.28, "headR": 34, "bodyR": 36},
+{"name": "Tunyacsáp", "type": "squidward", "shirt": "#b28b57", "sleeve": "#b28b57", "pants": "#86c8c2", "skin": "#86c8c2", "hair": "#86c8c2", "height": 0.99, "spread": 0.96, "headR": 35, "bodyR": 24},
+{"name": "Rák úr", "type": "krabs", "shirt": "#9cbcdf", "sleeve": "#9cbcdf", "pants": "#8879aa", "skin": "#db5752", "hair": "#db5752", "height": 0.79, "spread": 1.18, "headR": 32, "bodyR": 33},
+{"name": "Szandi", "type": "sandy", "shirt": "#efefed", "sleeve": "#efefed", "pants": "#ededf0", "skin": "#b98758", "hair": "#815337", "height": 0.89, "spread": 1.03, "headR": 34, "bodyR": 27},
+{"name": "Bart Simpson", "type": "bart", "shirt": "#ec7944", "sleeve": "#ec7944", "pants": "#568ebd", "skin": "#f5d157", "hair": "#f5d157", "height": 0.74, "spread": 1, "headR": 30, "bodyR": 24},
+{"name": "Lisa Simpson", "type": "lisa", "shirt": "#e9714f", "sleeve": "#e9714f", "pants": "#e9714f", "skin": "#f5d157", "hair": "#f5d157", "height": 0.72, "spread": 0.96, "headR": 32, "bodyR": 24},
+{"name": "Marge Simpson", "type": "marge", "shirt": "#a4cf7a", "sleeve": "#a4cf7a", "pants": "#a4cf7a", "skin": "#f5d157", "hair": "#447bb4", "height": 0.96, "spread": 1, "headR": 44, "bodyR": 25},
+{"name": "Rick Sanchez", "type": "rick", "shirt": "#e9ece9", "sleeve": "#e9ece9", "pants": "#88775c", "skin": "#e1c8b5", "hair": "#9bd8e8", "height": 1.02, "spread": 1, "headR": 34, "bodyR": 24},
+{"name": "Morty Smith", "type": "morty", "shirt": "#f0d85b", "sleeve": "#f0d85b", "pants": "#6495bb", "skin": "#f1c9a4", "hair": "#86633c", "height": 0.79, "spread": 1, "headR": 28, "bodyR": 24},
+{"name": "Finn", "type": "finn", "shirt": "#65c9eb", "sleeve": "#65c9eb", "pants": "#5ba1d5", "skin": "#f2cdb1", "hair": "#f8f8ef", "height": 0.86, "spread": 1.02, "headR": 30, "bodyR": 25},
+{"name": "Jake", "type": "jake", "shirt": "#eeb64c", "sleeve": "#eeb64c", "pants": "#eeb64c", "skin": "#eeb64c", "hair": "#eeb64c", "height": 0.72, "spread": 1.15, "headR": 32, "bodyR": 31},
+{"name": "Shrek", "type": "shrek", "shirt": "#e6debd", "sleeve": "#e6debd", "pants": "#796452", "skin": "#9bbb60", "hair": "#9bbb60", "height": 1.03, "spread": 1.22, "headR": 34, "bodyR": 36}
 ];
 // Each tool is drawn and hit-tested with the SAME rounded segment geometry.
 const tools = [
@@ -223,12 +244,22 @@ const tools = [
   {name:'Játék kalapács',power:1.55,turn:7,follow:16,length:150,parts:[[0,0,97,0,6],[99,-25,99,25,19]],colors:['#c99d62','#87b5ef']},
   {name:'Felfújható banán',power:.6,turn:23,follow:30,length:155,colors:['#ffe176']},
   {name:'Rugós bokszkesztyű',power:1.15,turn:15,follow:22,length:155,colors:['#a1b4d1','#fa7e99']},
-  {name:'Óriási szivacskéz',power:.4,turn:22,follow:31,length:155,colors:['#69d9c1']}
+  {name:'Óriási szivacskéz',power:.4,turn:22,follow:31,length:155,colors:['#69d9c1']},
+{"name": "Gumicsirke", "power": 0.5, "turn": 24, "follow": 30, "length": 143, "parts": [[0, 0, 43, 0, 6], [43, 0, 87, 0, 19], [96, -4, 116, -7, 10]], "colors": ["#e7af47", "#ffcd70", "#e95648"], "sound": 670},
+{"name": "Serpenyő", "power": 1.25, "turn": 10, "follow": 21, "length": 150, "parts": [[0, 0, 71, 0, 7], [106, 0, 106, 0, 31]], "colors": ["#714d38", "#677b8c"], "sound": 155},
+{"name": "Seprű", "power": 0.62, "turn": 19, "follow": 26, "length": 166, "parts": [[0, 0, 109, 0, 5], [119, -22, 119, 22, 13]], "colors": ["#b99564", "#ead08b"], "sound": 330},
+{"name": "Óriási villáskulcs", "power": 1.3, "turn": 9, "follow": 18, "length": 158, "parts": [[0, 0, 100, 0, 9], [105, -18, 128, -18, 10], [105, 18, 128, 18, 10], [98, -18, 98, 18, 10]], "colors": ["#8298ab", "#afc7d5", "#afc7d5", "#8298ab"], "sound": 120},
+{"name": "WC-pumpa", "power": 0.7, "turn": 17, "follow": 24, "length": 154, "parts": [[0, 0, 107, 0, 6], [118, -20, 118, 20, 15]], "colors": ["#cfaa78", "#df6862"], "sound": 420},
+{"name": "Rocksztár gitár", "power": 1.05, "turn": 12, "follow": 22, "length": 168, "parts": [[0, 0, 88, 0, 7], [110, -12, 110, 12, 21], [131, 0, 131, 0, 24]], "colors": ["#bb915e", "#a35ede", "#bc78ee"], "sound": 190},
+{"name": "Pisztoly", "power": 0.72, "turn": 22, "follow": 30, "length": 124, "parts": [[0, 5, 7, 30, 9], [0, 0, 36, 0, 13], [36, -3, 102, -3, 9]], "colors": ["#424d5e", "#718397", "#b7c2cc"], "sound": 120, "ranged": true, "interval": 0.38, "bulletSpeed": 1800, "bulletRadius": 2.5, "muzzle": [113, -3], "impactSpeed": 1550},
+{"name": "Sörétes puska", "power": 1.3, "turn": 10, "follow": 18, "length": 174, "parts": [[0, 12, 28, 0, 11], [24, 0, 76, 0, 11], [65, -5, 155, -5, 6], [57, 7, 99, 7, 8]], "colors": ["#8e6544", "#7d8792", "#b9c3c9", "#aa7a4d"], "sound": 85, "ranged": true, "interval": 0.88, "bulletSpeed": 2000, "bulletRadius": 7, "muzzle": [166, -5], "impactSpeed": 1300},
+{"name": "Gépfegyver", "power": 0.42, "turn": 14, "follow": 23, "length": 178, "parts": [[0, 6, 26, 0, 11], [20, 0, 99, 0, 13], [59, 10, 67, 33, 9], [96, -4, 163, -4, 6]], "colors": ["#48535f", "#8293a1", "#424a57", "#b5c4cb"], "sound": 145, "ranged": true, "interval": 0.16, "bulletSpeed": 2300, "bulletRadius": 2, "muzzle": [172, -4], "impactSpeed": 1000}
 ];
 const bonePairs = [[0,1],[1,2],[1,11],[1,12],[11,12],[11,3],[3,4],[12,5],[5,6],[2,7],[7,8],[2,9],[9,10]];
 const baseBodyParts = [[0,0,25,'fej'],[1,2,24,'törzs'],[11,12,10,'törzs'],[11,3,10,'kar'],[3,4,9,'kar'],[12,5,10,'kar'],[5,6,9,'kar'],[2,7,12,'láb'],[7,8,11,'láb'],[2,9,12,'láb'],[9,10,11,'láb']];
 let bodyParts=baseBodyParts.map(p=>[...p]);
 let person=null, particles=[], labels=[], trails=[];
+let projectiles=[],fireCooldown=0,muzzleFlash=0,gunArmed=false;
 let selectedCharacter=0, selectedTool=0;
 let held=false, down=false, swingHit=false, quietTime=0, inputId=null;
 let hits=0, score=0, combo=1, lastHit=-100, best=0, maxCombo=1;
@@ -352,7 +383,7 @@ const achievementDefs=[
   {id:'first',name:'Első találat',hint:'Találd el a figurát.',test:()=>progress.totalHits>=1},
   {id:'combo5',name:'Ötös kombó',hint:'Érd el az 5× szorzót.',test:()=>maxCombo>=5},
   {id:'hits50',name:'Ötven találat',hint:'Összesen 50 figuratalálat.',test:()=>progress.totalHits>=50},
-  {id:'tools6',name:'Eszköztáros',hint:'Vedd fel mind a 6 eszközt.',test:()=>progress.tools.length===6},
+  {id:'tools6',name:'Eszköztáros',hint:'Próbálj ki 6 különböző eszközt.',test:()=>progress.tools.length>=6},
   {id:'maps3',name:'Világutazó',hint:'Játssz mind a 3 pályán.',test:()=>progress.maps.length===3},
   {id:'cones3',name:'Bójaborogató',hint:'Dönts fel összesen 3 bóját.',test:()=>progress.totalCones>=3},
   {id:'perfect',name:'Mesterlövész',hint:'Teljesítsd mind a 6 feladatot.',test:()=>perfectRound},
@@ -373,18 +404,18 @@ function loadProgress(){
     if(data&&typeof data==='object'&&!Array.isArray(data)){
       p.guestWallet=economy.normalizeWallet(data.guestWallet||{stars:data.stars,owned:data.owned,equipped:{...data.equipped,character:'character-'+(data.avatar||0),tool:'tool-'+(data.selectedTool||0)}});
       for(const key of ['stars','totalHits','totalCones'])if(Number.isFinite(data[key]))p[key]=clamp(Math.floor(data[key]),0,1e9);
-      for(const [key,max]of [['tools',6],['maps',3]])if(Array.isArray(data[key]))p[key]=[...new Set(data[key].filter(v=>Number.isInteger(v)&&v>=0&&v<max))];
+      for(const [key,max]of [['tools',tools.length],['maps',3]])if(Array.isArray(data[key]))p[key]=[...new Set(data[key].filter(v=>Number.isInteger(v)&&v>=0&&v<max))];
       if(Array.isArray(data.owned))p.owned=[...new Set(data.owned.filter(id=>cosmeticDefs.some(c=>c.id===id)))];
       if(Array.isArray(data.rewardedAchievements))p.rewardedAchievements=[...new Set(data.rewardedAchievements.filter(id=>economy.achievements.some(a=>a.id===id)))];
       else if(!data.guestWallet&&Array.isArray(data.achievements))p.rewardedAchievements=data.achievements.filter(id=>economy.achievements.some(a=>a.id===id));
       if(Array.isArray(data.achievements))p.achievements=[...new Set(data.achievements.filter(id=>achievementDefs.some(c=>c.id===id)))];
       for(const category of ['shirt','pattern','particle']){const id=data.equipped?.[category];if(p.owned.includes(id)&&cosmeticDefs.some(c=>c.id===id&&c.category===category))p.equipped[category]=id;}
       if(data.records&&typeof data.records==='object')for(const [key,value]of Object.entries(data.records)){
-        if(!Number.isFinite(value)||value<0)continue;
-        if(/^(score|tasks5):[0-2]:[0-5]$/.test(key))p.records[key]=clamp(Math.floor(value),0,1e9);
-        else if(/^(challenge|target|cones|accuracy|combo|tasks):[0-2]:[0-5]$/.test(key))p.legacyRecords[key]=clamp(Math.floor(value),0,1e9);
+        if(!Number.isFinite(value)||value<0||!economy.product("tool-"+key.split(":").at(-1)))continue;
+        if(/^(score|tasks5):[0-2]:\d+$/.test(key))p.records[key]=clamp(Math.floor(value),0,1e9);
+        else if(/^(challenge|target|cones|accuracy|combo|tasks):[0-2]:\d+$/.test(key))p.legacyRecords[key]=clamp(Math.floor(value),0,1e9);
       }
-      if(data.legacyRecords&&typeof data.legacyRecords==='object')for(const [key,value]of Object.entries(data.legacyRecords))if(/^(challenge|target|cones|accuracy|combo|tasks):[0-2]:[0-5]$/.test(key)&&Number.isFinite(value)&&value>=0)p.legacyRecords[key]=Math.floor(value);
+      if(data.legacyRecords&&typeof data.legacyRecords==='object')for(const [key,value]of Object.entries(data.legacyRecords))if(/^(challenge|target|cones|accuracy|combo|tasks):[0-2]:\d+$/.test(key)&&Number.isFinite(value)&&value>=0&&economy.product("tool-"+key.split(":").at(-1)))p.legacyRecords[key]=Math.floor(value);
       if(Number.isFinite(data.volume))p.volume=clamp(data.volume,0,1);
       if([.75,1,1.35].includes(data.sensitivity))p.sensitivity=data.sensitivity;
       if(Number.isFinite(data.gravity))p.gravity=clamp(Math.round(data.gravity/5)*5,20,180);
@@ -451,7 +482,7 @@ function applyEquipment(){
   if(competition.active&&!competition.ending)return;
   const w=wallet(),tool=economy.product(w.equipped.tool).index,character=economy.product(w.equipped.character).index;
   if(earning.ready&&(tool!==selectedTool||character!==selectedCharacter)){recordEarningCommand('equipment',{tool,character});applyEarningEquipment({tool,character});}
-  if(selectedTool!==tool){release(true);dropGrab();handMode=false;held=false;selectedTool=tool;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];}
+  if(selectedTool!==tool){release(true);dropGrab();handMode=false;held=false;selectedTool=tool;projectiles=[];fireCooldown=muzzleFlash=0;gunArmed=false;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];}
   if(selectedCharacter!==character){release(true);dropGrab();selectedCharacter=character;bodyParts=characterParts();messageBag=[];const existed=!!person;person=null;if(existed)callPerson();}
   if(accountMode==='guest'){progress.avatar=selectedCharacter;progress.equipped={...w.equipped};progress.owned=w.owned.slice();progress.stars=w.stars;saveProgress();}
   setPressed('characters','character',selectedCharacter);setPressed('tools','tool',selectedTool);updateHint();renderRewards();
@@ -726,6 +757,7 @@ const characterMessages={
  Homer:['A fánkomat valaki tartsa meg!','Ezt a munkahelyi képzést nem szeretem.','Lehetne inkább a kanapéra esni?','A hasam szerint ebédszünet jön.','A biztonsági oktatáson nem ezt mondták.','A fánk is kör alakú, mégsem üt ekkorát.'],
  SpongyaBob:['A szivacs puha, a lendület kevésbé!','Én mosogatni jöttem, nem repülni.','A nadrágom továbbra is négyszögletes.','A buborékjaim most csillagok lettek.','Ez nem a megszokott víznyomás.','A spatulám ehhez képest szelíd eszköz.']
 };
+Object.assign(characterMessages,{"Peter Griffin": ["A kanapém ennél puhábban fogad!", "Ezt a családi programot ki szervezte?!"], "Lois Griffin": ["Peter, ez megint a te ötleted volt?", "A házirendben nincs benne a repülés."], "Stewie Griffin": ["A zseniális tervembe ez nem fért bele!", "A gravitációval még lesz egy beszélgetésem."], "Brian Griffin": ["Erről írok egy nagyon szomorú könyvet.", "A kutyasétáltatásnak nem így kellene kinéznie!"], "Meg Griffin": ["Még a padló is engem választott.", "A sapkámat legalább hagyd békén!"], "Chris Griffin": ["A házi feladat könnyebb volt ennél.", "Lehetne inkább rajzolni?"], "Glenn Quagmire": ["Az állam külön érkezett meg!", "Ez a buli túl lendületes lett."], "Cleveland Brown": ["A nyugodt műszakot mikor kapcsoljátok be?", "Ennél a zuhanyzás is kevésbé csúszós."], "Csillag Patrik": ["A csillagokat ismerem. Rokonság.", "A kövem alatt nem volt ilyen erős a gravitáció.", "Ez itt a műszak? Én a büfét kerestem!"], "Tunyacsáp": ["A klarinétom szerint ez borzalmas ritmus.", "A nyugalomhoz ragaszkodnék. Vízszintesen."], "Rák úr": ["Ez a találat levonható az adóból?", "A kártérítés csak csillagban fizethető!"], "Szandi": ["A sisak jó ötlet volt!", "Texasban ezt csapatépítésnek hívják?"], "Bart Simpson": ["A deszkám is szebben landol!", "A táblára százszor írom: nem tesztelem az ütőt."], "Lisa Simpson": ["A fizikai kísérletből én inkább kimaradnék.", "A szaxofon ennél kellemesebben szól."], "Marge Simpson": ["Ettől a hajam is még magasabb lett!", "Ez a házimunka túlságosan lendületes."], "Rick Sanchez": ["A portálom valahogy rossz munkahelyre hozott.", "Ennek a dimenziónak béna a munkavédelme."], "Morty Smith": ["Rick, ez nem tűnik biztonságosnak!", "Azt mondtad, csak egy rövid műszak lesz!"], "Finn": ["Ez egy nagyon furcsa küldetés!", "Jake, a padló új ellenfél lett!"], "Jake": ["Nyúlnék még, de a fizika siet.", "A kaland ma elég laposra sikerült."], "Shrek": ["A mocsaramban puhább a talaj!", "Ezért mondtam, hogy hagyjatok pihenni!"]});
 let messageBag=[],lastMessage='',nextMessageAt=0;
 function randomMessage(part,force){
   if(time<nextMessageAt)return;
@@ -905,7 +937,7 @@ function dropGrab(){
 }
 function clearReplay(){replay.active=false;replay.cursor=0;replayBuffer=[];lastClip=[];replayAnchor=-Infinity;recordAccumulator=0;$('replayBar').hidden=true;updateReplayUI();}
 function renderSnapshot(){
-  return{time,selectedMap,selectedTool,selectedCharacter,person:person?{...person,nodes:person.nodes.map(n=>({...n})),bones:person.bones.map(b=>({...b}))}:null,
+  return{time,selectedMap,selectedTool,selectedCharacter,projectiles:projectiles.map(b=>({...b})),muzzleFlash,person:person?{...person,nodes:person.nodes.map(n=>({...n})),bones:person.bones.map(b=>({...b}))}:null,
     objects:objects.map(o=>({...o})),tramps:tramps.map(t=>({...t})),bat:{...bat},particles:particles.map(p=>({...p})),labels:labels.map(p=>({...p})),trails:trails.map(t=>({...t})),dust:dust.map(p=>({...p})),bubble:bubble?{...bubble}:null,
     impactCompression,bananaFlex,shake,slowTime,hitStop,handMode,held,down,grab:grab?{...grab}:null,target:{...target},mode,challengeState,missionIndex,missionDefs:missionDefs.map(g=>({...g})),missionTargetId,matCompression};
 }
@@ -929,9 +961,9 @@ function beginReplay(){
 }
 function stopReplay(){if(!replay.active)return;replay.active=false;lastFrame=null;updateReplayUI();updateHint();renderRewards();}
 function drawReplay(){
-  const live={...renderSnapshot(),person,objects,tramps,particles,labels,trails,dust,bubble,grab,target,missionDefs},shot=lastClip[Math.floor(replay.cursor)]||lastClip[lastClip.length-1];
+  const live={...renderSnapshot(),person,objects,tramps,projectiles,particles,labels,trails,dust,bubble,grab,target,missionDefs},shot=lastClip[Math.floor(replay.cursor)]||lastClip[lastClip.length-1];
   if(!shot)return;
-  function apply(s){time=s.time;selectedMap=s.selectedMap;selectedTool=s.selectedTool;selectedCharacter=s.selectedCharacter;person=s.person;objects=s.objects;tramps=s.tramps;Object.assign(bat,s.bat);particles=s.particles;labels=s.labels;trails=s.trails;dust=s.dust;bubble=s.bubble;impactCompression=s.impactCompression;bananaFlex=s.bananaFlex;shake=s.shake;slowTime=s.slowTime;hitStop=s.hitStop;handMode=s.handMode;held=s.held;down=s.down;grab=s.grab;target=s.target;mode=s.mode;challengeState=s.challengeState;missionIndex=s.missionIndex;missionDefs=s.missionDefs;missionTargetId=s.missionTargetId;matCompression=s.matCompression;}
+  function apply(s){projectiles=s.projectiles||[];muzzleFlash=s.muzzleFlash||0;time=s.time;selectedMap=s.selectedMap;selectedTool=s.selectedTool;selectedCharacter=s.selectedCharacter;person=s.person;objects=s.objects;tramps=s.tramps;Object.assign(bat,s.bat);particles=s.particles;labels=s.labels;trails=s.trails;dust=s.dust;bubble=s.bubble;impactCompression=s.impactCompression;bananaFlex=s.bananaFlex;shake=s.shake;slowTime=s.slowTime;hitStop=s.hitStop;handMode=s.handMode;held=s.held;down=s.down;grab=s.grab;target=s.target;mode=s.mode;challengeState=s.challengeState;missionIndex=s.missionIndex;missionDefs=s.missionDefs;missionTargetId=s.missionTargetId;matCompression=s.matCompression;}
   // Draw-only playback. No physics, scoring, sounds, mission events or storage writes.
   apply(shot);try{draw();}finally{apply(live);}updateReplayUI();
 }
@@ -996,6 +1028,7 @@ function updateHUD(){
 }
 function updateHint(){
   let text=!person?'Hívj be egy figurát!':!held?'Kattints az eszközre!':'Tartsd nyomva, és lendíts oda-vissza! Nem kell kattintgatni.';
+  if(held&&tools[selectedTool].ranged)text='Célozz a kurzorral, és tartsd nyomva a klikket a tüzeléshez!';
   if(person&&!['idle','dust'].includes(person.mode)&&!held)text=['walk','arrival'].includes(person.mode)?'A figura érkezik…':'Kattints az eszközre!';
   if(mode!=='free'&&challengeState==='ready'&&held)text=['walk','arrival'].includes(person?.mode)?'A figura érkezik…':'Készen állsz! Nyomd meg az Indítás gombot!';
   if(mode==='tasks'&&challengeState==='running')text='A feladatot a játéktér alatt látod.';
@@ -1017,7 +1050,7 @@ function updateHint(){
   if(competition.active&&!competition.ending){
     for(const id of ['stand','objectsReset','replayButton','sensitivity','autoGetup','gravity'])$(id).disabled=true;
     for(const b of document.querySelectorAll('#maps button, #characters button, #tools button'))b.disabled=true;
-    $('instruction').textContent=(competition.ticket.kind==='practice'?'CSILLAGGYŰJTÉS':'VERSENYKÖR')+' · Tartsd nyomva, és lendíts oda-vissza!';
+    $('instruction').textContent=(competition.ticket.kind==='practice'?'CSILLAGGYŰJTÉS':'VERSENYKÖR')+(tools[selectedTool].ranged?' · Célozz és tartsd nyomva a klikket!':' · Tartsd nyomva, és lendíts oda-vissza!');
   }
   document.body?.classList.toggle('watching',replay.active);updateEditorUI();updateReplayUI();updateShopLocks();
 }
@@ -1034,7 +1067,7 @@ function release(cancel=false) {
 }
 function resetSession(){
   stopReplay();editorActive=false;editorSelection=editorDrag=null;dropGrab();handMode=false;$('handTool').classList.remove('active');$('handTool').setAttribute('aria-pressed','false');
-  release(true);person=null;particles=[];labels=[];trails=[];bubble=null;dust=[];matCompression=0;
+  release(true);projectiles=[];fireCooldown=muzzleFlash=0;gunArmed=false;person=null;particles=[];labels=[];trails=[];bubble=null;dust=[];matCompression=0;
   missionDefs=makeMissionRound();
   hits=score=objectHits=coneCount=attempts=misses=connectedSwings=bodySwings=strongest=sessionStars=0;resetStarRound();
   combo=maxCombo=1;streak=bestStreak=0;lastHit=-100;missionIndex=missionValue=missionStreak=missionsDone=0;
@@ -1253,8 +1286,153 @@ function impact(u,v,contact,velocity,name) {
   randomMessage(name,force);
   if(mode==='tasks')missionEvent('body',{u,v,force:Math.round(force*100)});creditHitStars('body');checkAchievements();saveProgress();renderRewards();updateHUD();updateHint();playSound(force);burst(contact.x,contact.y,force);markReplayHit();
 }
+// Firearms share the pickup/equipment flow but each completed bullet is one attempt.
+// No RNG in projectile physics: UI and server replay remain identical.
+function updateGun(dt){
+  const tool=tools[selectedTool],travel=Math.hypot(target.x-previousTarget.x,target.y-previousTarget.y);
+  if(down&&travel>8)gunArmed=true;
+  previousTarget={...target};
+  const offset=tool.length+48,side=target.x<W/2?1:-1;
+  const desired={x:clamp(target.x+side*offset,30,W-30),y:clamp(target.y+52,35,H-45)};
+  const f=1-Math.exp(-tool.follow*progress.sensitivity*dt);
+  bat.x+=(desired.x-bat.x)*f;bat.y+=(desired.y-bat.y)*f;
+  const aim=Math.atan2(target.y-bat.y,target.x-bat.x);
+  bat.angle+=angleDifference(aim,bat.angle)*(1-Math.exp(-tool.turn*progress.sensitivity*dt));constrainToolPose(bat);
+  fireCooldown=Math.max(0,fireCooldown-dt);muzzleFlash=Math.max(0,muzzleFlash-dt);
+  if(down&&gunArmed&&fireCooldown<=0&&playing()&&(mode==='free'||challengeState==='running'))fireProjectile();
+}
+function fireProjectile(){
+  const tool=tools[selectedTool];if(!tool.ranged||projectiles.length>=24)return;
+  const muzzle=transform(bat,...tool.muzzle);
+  // Fire down the visible barrel; the crosshair is a desired aim point, never a teleporting hit.
+  const vx=Math.cos(bat.angle)*tool.bulletSpeed,vy=Math.sin(bat.angle)*tool.bulletSpeed;
+  projectiles.push({x:muzzle.x,y:muzzle.y,px:muzzle.x,py:muzzle.y,vx,vy,age:0,tool:selectedTool,r:tool.bulletRadius});
+  fireCooldown=tool.interval;muzzleFlash=.065;
+  if(!progress.reduced)shake=Math.max(shake,selectedTool===13?2.2:.7);
+  playSound(.25);
+}
+function resolveProjectile(b,candidate){
+  const previous={swing,swingHit,quietTime,selectedTool};
+  try{
+    selectedTool=b.tool;swingHit=false;swing={eligible:true,peak:Math.hypot(b.vx,b.vy),hit:false,body:false,origin:{x:b.px,y:b.py}};
+    const k=(tools[b.tool].impactSpeed||Math.hypot(b.vx,b.vy))/Math.hypot(b.vx,b.vy),velocity={x:b.vx*k,y:b.vy*k};
+    if(candidate){if(candidate.object)hitObject(candidate.object,candidate.contact,velocity);else impact(candidate.u,candidate.v,candidate.contact,velocity,candidate.name);}
+    finishSwing();
+  }finally{({swing,swingHit,quietTime,selectedTool}=previous);}
+}
+function updateProjectiles(dt){
+  const live=[];
+  for(const b of projectiles){
+    b.px=b.x;b.py=b.y;const end={x:b.x+b.vx*dt,y:b.y+b.vy*dt};b.age+=dt;
+    const distance=Math.hypot(end.x-b.x,end.y-b.y),steps=Math.max(1,Math.ceil(distance/2));let contact=null;
+    // Swept circles at <=2px spacing cover even very fast shots and small hands.
+    for(let i=0;i<=steps&&!contact;i++){
+      const p={x:lerp(b.x,end.x,i/steps),y:lerp(b.y,end.y,i/steps)},candidates=[];
+      if(person&&person.safeTime<=0&&!['walk','arrival'].includes(person.mode))for(const[u,v,r,name]of bodyParts){
+        const q=nearest(p,person.nodes[u],person.nodes[v]),d=Math.hypot(q.x-p.x,q.y-p.y);
+        if(d<=r+b.r)candidates.push({u,v,name,contact:{x:p.x,y:p.y,distance:d},depth:d-r});
+      }
+      for(const object of objects){const c=circleObject(p.x,p.y,b.r,object);if(c)candidates.push({object,contact:c,depth:-c.depth});}
+      if(candidates.length){candidates.sort((a,b)=>a.depth-b.depth);contact=candidates[0];b.x=p.x;b.y=p.y;}
+    }
+    if(contact){resolveProjectile(b,contact);continue;}
+    b.x=end.x;b.y=end.y;
+    if(b.age>1.3||b.x<-12||b.x>W+12||b.y<-12||b.y>FLOOR+2){resolveProjectile(b,null);continue;}
+    live.push(b);
+  }
+  projectiles=live;
+}
+function drawProjectiles(){
+  for(const b of projectiles){line({x:b.px,y:b.py},b,'#ffdf86',b.r*2);ellipse(b.x,b.y,b.r,b.r,'#fff4d5');}
+  if(held&&tools[selectedTool].ranged){
+    ctx.strokeStyle=down?'#ffe197':'#d4dfed';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(target.x,target.y,9,0,TAU);ctx.stroke();
+    for(const [dx,dy]of [[-1,0],[1,0],[0,-1],[0,1]])line({x:target.x+dx*12,y:target.y+dy*12},{x:target.x+dx*17,y:target.y+dy*17},'#ffe197',1.5);
+    if(muzzleFlash>0&&!progress.reduced){const p=transform(bat,...tools[selectedTool].muzzle);star(p.x,p.y,12,'#ffde85',bat.angle);}
+  }
+}
+function drawExtraToolDetails(i){
+  if(i===6){ellipse(109,-8,3,3,'#232c3c');line({x:55,y:6},{x:60,y:6},'#d76c44',3);line({x:78,y:7},{x:83,y:7},'#d76c44',3);ellipse(89,-3,5,4,'#e55349');}
+  else if(i===7){ellipse(106,0,24,24,'#314754');ellipse(105,-3,18,18,'#546e7e');line({x:90,y:-15},{x:111,y:-19},'#bacbd1',3);}
+  else if(i===8){for(let y=-24;y<=24;y+=6)line({x:115,y},{x:132,y:y*.85},'#a58a48',2);line({x:108,y:-25},{x:108,y:25},'#ecaa60',4);}
+  else if(i===9){line({x:33,y:-3},{x:79,y:-3},'#dae8ee',3);ellipse(18,0,4,4,'#324759');}
+  else if(i===10){line({x:112,y:-24},{x:112,y:24},'#ffa399',3);line({x:118,y:-12},{x:118,y:12},'#a33e42',2);}
+  else if(i===11){ellipse(115,0,10,10,'#283445');for(let y=-3;y<=3;y+=2)line({x:13,y},{x:125,y},'#eadbd1',.8);ellipse(143,-6,4,4,'#f2bd75');}
+  else if(tools[i].ranged){
+    line({x:31,y:-6},{x:i===12?98:149,y:-6},'#dfe6ea',2);
+    line({x:20,y:9},{x:33,y:14},'#293641',3);
+    for(let x=35;x<68;x+=7)line({x,y:-9},{x,y:0},'#43515e',1.5);
+    const[mx,my]=tools[i].muzzle;ellipse(mx-8,my,2,4,'#1a2637');
+    if(i===14)for(let x=104;x<145;x+=9)line({x,y:-8},{x,y:0},'#455766',2);
+  }
+}
+function hairPolygon(points,color){ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();}
+function drawExpandedHead(s){
+  const t=s.type;
+  // Unique silhouettes, not just recoloured generic heads.
+  if(t==='stewie'){ellipse(0,0,37,24,'#243142');ellipse(0,0,35,22,s.skin);for(let x=-26;x<=24;x+=10)line({x,y:-18},{x:x+4,y:-21},'#6c4b32',1.4);}
+  else if(t==='patrick'){hairPolygon([[-27,18],[-22,-2],[-7,-38],[7,-38],[25,18]],'#253043');hairPolygon([[-24,16],[-20,-1],[-6,-35],[6,-35],[22,16]],s.skin);}
+  else if(t==='brian'||t==='jake'){
+    ellipse(0,0,29,29,'#223044');ellipse(0,0,27,27,s.skin);
+    fillCapsule(-24,-15,-24,6,t==='brian'?7:6,s.skin);fillCapsule(24,-15,24,6,t==='brian'?7:6,s.skin);
+    if(t==='brian'){ellipse(14,11,17,11,s.skin);ellipse(28,7,7,6,'#29303a');}
+    else{ellipse(-10,10,11,11,'#d59832');ellipse(10,10,11,11,'#d59832');ellipse(0,7,8,6,'#34303a');}
+  }else if(t==='squidward'){
+    ellipse(0,-9,30,21,'#233e49');ellipse(0,-9,28,19,s.skin);ellipse(0,13,19,18,s.skin);
+  }else if(t==='krabs'){
+    ellipse(0,8,27,19,s.skin);fillCapsule(-14,0,-17,-26,6,s.skin);fillCapsule(14,0,17,-26,6,s.skin);
+    ellipse(-17,-28,8,12,'#faf6d7');ellipse(17,-28,8,12,'#faf6d7');ellipse(-16,-28,2,4,'#273243');ellipse(16,-28,2,4,'#273243');
+    line({x:-14,y:12},{x:14,y:12},'#65292e',2);return;
+  }else if(t==='shrek'){
+    fillCapsule(-23,-17,-32,-24,5,s.skin);fillCapsule(23,-17,32,-24,5,s.skin);ellipse(-33,-26,6,6,s.skin);ellipse(33,-26,6,6,s.skin);
+    ellipse(0,0,28,30,'#334531');ellipse(0,0,26,28,s.skin);ellipse(0,9,10,6,'#86a74d');
+  }else{
+    const rx=t==='quagmire'?26:25,ry=t==='peter'?30:26;
+    ellipse(-25,1,5,6,s.skin);ellipse(25,1,5,6,s.skin);ellipse(0,0,rx+1,ry+1,'#253143');ellipse(0,0,rx,ry,s.skin);
+    if(['lois','meg','chris','morty','cleveland','quagmire','peter'].includes(t)){
+      hairPolygon([[-24,-9],[-25,-24],[-11,-30],[13,-30],[25,-22],[24,-9],[15,-20],[-14,-20]],s.hair);
+      if(t==='lois'||t==='meg'){fillCapsule(-23,-13,-24,19,7,s.hair);fillCapsule(23,-13,24,19,7,s.hair);}
+      if(t==='chris')for(const x of [-20,20])fillCapsule(x,-17,x,18,7,s.hair);
+    }
+    if(t==='bart')hairPolygon([[-24,-14],[-24,-34],[-17,-27],[-13,-35],[-7,-27],[-1,-35],[5,-27],[11,-35],[17,-27],[24,-33],[24,-12]],s.skin);
+    if(t==='lisa'){ctx.save();ctx.rotate(Math.PI/10);star(0,-5,34,s.skin);ctx.restore();ellipse(0,3,22,20,s.skin);}
+    if(t==='marge'){fillCapsule(0,-22,0,-40,15,s.hair);for(const x of [-12,0,12])ellipse(x,-27,8,12,s.hair);}
+    if(t==='rick'){hairPolygon([[-26,-12],[-36,-23],[-19,-22],[-22,-37],[-8,-26],[0,-39],[9,-26],[23,-36],[22,-21],[36,-21],[25,-10]],s.hair);line({x:-18,y:-12},{x:18,y:-12},s.hair,4);}
+    if(t==='finn'){ellipse(0,-4,29,28,'#f7f7ef');fillCapsule(-20,-23,-20,-31,7,'#f7f7ef');fillCapsule(20,-23,20,-31,7,'#f7f7ef');ellipse(0,2,19,18,s.skin);}
+  }
+  if(t==='quagmire')ellipse(0,17,20,11,s.skin);
+  cartoonEyes(t);
+  if(t==='peter'||t==='meg'){for(const x of [-10,10]){ctx.strokeStyle='#34404b';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,-3,10,0,TAU);ctx.stroke();}line({x:-1,y:-3},{x:1,y:-3},'#34404b',2);}
+  if(t==='peter'){ellipse(-5,23,7,5,s.skin);ellipse(5,23,7,5,s.skin);line({x:0,y:19},{x:0,y:26},'#b58064',1.5);}
+  if(t==='meg'){fillCapsule(-18,-24,18,-24,8,'#e77cae');line({x:-23,y:-20},{x:23,y:-20},'#f2a0c7',4);}
+  if(t==='chris'){fillCapsule(-18,-24,18,-24,8,'#34393f');line({x:-24,y:-20},{x:29,y:-20},'#434c55',5);}
+  if(t==='cleveland'){fillCapsule(-12,10,12,10,4,'#352b27');}
+  if(t==='quagmire'){line({x:-8,y:15},{x:13,y:15},'#9f6756',2);}
+  if(t==='squidward'){fillCapsule(0,-3,0,20,8,'#78b9b4');line({x:-16,y:-5},{x:-3,y:-5},'#426a68',2);line({x:3,y:-5},{x:16,y:-5},'#426a68',2);}
+  if(t==='sandy'){ellipse(-21,-18,7,8,s.skin);ellipse(21,-18,7,8,s.skin);ctx.strokeStyle='#cbe8f3bb';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,32,0,TAU);ctx.stroke();ellipse(-18,-21,4,7,'#ffffff55');star(23,-23,8,'#ee88b8');}
+  if(t==='lisa')for(let i=0;i<7;i++){const a=i*Math.PI/6;ellipse(Math.cos(a)*16,21+Math.sin(a)*3,2.7,2.7,'#fff9e8');}
+  if(t==='rick')fillCapsule(4,15,8,20,2,'#96c79d');
+}
+function drawExpandedOutfit(s,length){
+  const t=s.type,top=-length/2,bottom=length/2;
+  if(t==='peter'||t==='quagmire'||t==='lois'||t==='cleveland'){
+    line({x:0,y:top+5},{x:0,y:bottom},'#00000030',1.5);for(const y of [-12,2,15])ellipse(4,y,1.8,1.8,'#394653');
+    hairPolygon([[-15,top+2],[-4,top+16],[0,top+3],[4,top+16],[15,top+2]],'#ffffff88');
+    if(t==='quagmire')for(const[x,y]of [[-14,-12],[13,4],[-11,18]])star(x,y,5,'#f5cf86');
+  }
+  if(t==='peter'){line({x:-23,y:bottom-2},{x:23,y:bottom-2},'#593e2d',4);ctx.fillStyle='#e6b759';ctx.fillRect(-4,bottom-5,8,6);}
+  if(t==='stewie'){line({x:-13,y:top},{x:-13,y:bottom},'#d7464b',6);line({x:13,y:top},{x:13,y:bottom},'#d7464b',6);ellipse(-13,5,3,3,'#f8d665');ellipse(13,5,3,3,'#f8d665');}
+  if(t==='brian'){line({x:-19,y:top+5},{x:19,y:top+5},'#d45452',6);ellipse(0,top+10,4,4,'#f4c461');}
+  if(t==='patrick'){ctx.fillStyle=s.pants;ctx.fillRect(-30,bottom-16,60,22);for(const[x,y]of [[-18,bottom-5],[12,bottom-2]])star(x,y,8,'#9c72be');ellipse(0,7,2,2,'#bd748d');}
+  if(t==='krabs'){line({x:-26,y:bottom-2},{x:26,y:bottom-2},'#3f3854',7);ctx.fillStyle='#f2d25e';ctx.fillRect(-6,bottom-7,12,10);}
+  if(t==='sandy'){line({x:-22,y:9},{x:22,y:9},'#d27d76',3);star(-11,-13,5,'#efd367');ctx.fillStyle='#929fc0';ctx.fillRect(7,-18,12,9);}
+  if(t==='rick'){line({x:-14,y:top},{x:-9,y:bottom+6},'#ffffff',8);line({x:14,y:top},{x:9,y:bottom+6},'#ffffff',8);line({x:-7,y:top+13},{x:7,y:top+13},'#91caca',13);}
+  if(t==='finn'){line({x:-20,y:top+3},{x:-19,y:bottom},'#72b667',6);line({x:20,y:top+3},{x:19,y:bottom},'#72b667',6);}
+  if(t==='shrek'){line({x:-23,y:top+3},{x:-20,y:bottom},'#745b3e',12);line({x:23,y:top+3},{x:20,y:bottom},'#745b3e',12);for(let y=-18;y<20;y+=8)line({x:-5,y},{x:5,y:y+4},'#765b3b',1.4);}
+}
+
 function updateTool(dt) {
   if(handMode||!held||hitStop>0)return;
+  if(tools[selectedTool].ranged){updateGun(dt);return;}
   const old={...bat},tool=tools[selectedTool],inputTravel=Math.hypot(target.x-previousTarget.x,target.y-previousTarget.y),gap=Math.hypot(target.x-bat.x,target.y-bat.y);
   heldMotion(target.x-previousTarget.x,target.y-previousTarget.y,dt);
   previousTarget={...target};const dx=target.x-bat.x,dy=target.y-bat.y,follow=1-Math.exp(-tool.follow*progress.sensitivity*dt);
@@ -1272,7 +1450,7 @@ function playSound(force) {
   if(muted||!audio||audio.state!=='running'||progress.volume===0)return;
   const t=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();
   const types=['triangle','sine','square','sine','sawtooth','triangle'],frequencies=[250,420,130,690,185,360];
-  osc.type=types[selectedTool];osc.frequency.setValueAtTime(frequencies[selectedTool]+force*120,t);
+  osc.type=types[selectedTool]|| (tools[selectedTool].ranged?"square":"triangle");osc.frequency.setValueAtTime((frequencies[selectedTool]||tools[selectedTool].sound||240)+force*120,t);
   if(selectedTool===3)osc.frequency.exponentialRampToValueAtTime(1000,t+.06);
   osc.frequency.exponentialRampToValueAtTime(selectedTool===1?120:65,t+.15);
   gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime((selectedTool===2?.08:.19)*progress.volume,t+.005);gain.gain.exponentialRampToValueAtTime(.0001,t+.18);
@@ -1293,6 +1471,7 @@ canvas.addEventListener('pointerdown',e=>{
   if(handMode){recordEarningCommand('grab',p);if(grabPerson(p)){inputId=e.pointerId;canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';}e.preventDefault();return;}
   unlockAudio();
   recordEarningCommand("down",p);
+  gunArmed=held;
   if(!held){
     if(!overTool(p))return;
     held=true;bat.x=p.x;bat.y=p.y;constrainToolPose(bat);target={...p};previousTarget={...p};trails=[];
@@ -1364,7 +1543,7 @@ $('tools').addEventListener('click',e=>{
   const index=Number(b.dataset.tool);if(!owns('tool-'+index)){showShop('tool');notify('Vásárold meg az eszközt a boltban.');return;}
   if(accountMode==='account'){shopAction('equip','tool-'+index);return;}wallet().equipped.tool='tool-'+index;selectedTool=index;saveProgress();setPressed('tools','tool',selectedTool);
   if(mode!=='free'){setMode(mode);return;}
-  release(true);held=false;swingHit=false;trails=[];Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};updateHUD();updateHint();
+  release(true);projectiles=[];fireCooldown=muzzleFlash=0;gunArmed=false;held=false;swingHit=false;trails=[];Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};updateHUD();updateHint();
 });
 function line(a,b,color,width) {
   ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
@@ -1438,6 +1617,7 @@ function cartoonEyes(type){
 }
 function drawCartoonHead(style){
   const type=style.type;
+  if(selectedCharacter>=9){drawExpandedHead(style);return;}
   if(type==='sponge'){
     ctx.fillStyle='#f8dc50';ctx.strokeStyle='#29343b';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-31,-29,62,61,7);ctx.fill();ctx.stroke();
     for(const[x,y,r]of [[-24,-20,4],[24,-18,5],[-24,15,3],[22,22,4],[0,-25,3],[-21,27,2]])ellipse(x,y,r,r*.7,'#bfa739');
@@ -1477,6 +1657,7 @@ function drawCartoonPerson(){
   for(const[shoulder,elbow,hand]of [[12,5,6],[11,3,4]]){
     line(n[shoulder],n[elbow],'#162333',21);line(n[elbow],n[hand],'#162333',18);line(n[shoulder],n[elbow],style.sleeve,16);line(n[elbow],n[hand],kid?style.sleeve:style.skin,12);
     ellipse(n[hand].x,n[hand].y,8,8,style.mitten||style.skin);
+    if(style.type==='krabs'){const p=n[hand];fillCapsule(p.x-7,p.y-6,p.x-8,p.y-15,5,style.skin);fillCapsule(p.x+7,p.y-6,p.x+8,p.y-15,5,style.skin);}
   }
   const bodyAngle=Math.atan2(n[2].y-n[1].y,n[2].x-n[1].x)-Math.PI/2,length=Math.hypot(n[2].x-n[1].x,n[2].y-n[1].y);
   line(n[1],n[2],'#152332',style.bodyR*2+3);line(n[1],n[2],style.shirt,style.bodyR*2);
@@ -1488,6 +1669,7 @@ function drawCartoonPerson(){
     ctx.fillStyle='#f7f5eb';ctx.fillRect(-31,length/2-15,62,12);ctx.fillStyle='#987042';ctx.fillRect(-31,length/2-3,62,18);
     ctx.fillStyle='#d04c51';ctx.beginPath();ctx.moveTo(0,length/2-14);ctx.lineTo(5,length/2-9);ctx.lineTo(2,length/2+4);ctx.lineTo(-4,length/2+1);ctx.closePath();ctx.fill();
   }
+  if(selectedCharacter>=9)drawExpandedOutfit(style,length);
   ctx.restore();line(n[1],n[0],style.skin,12);
   ctx.save();ctx.translate(n[0].x,n[0].y);ctx.rotate(Math.atan2(n[1].y-n[0].y,n[1].x-n[0].x)-Math.PI/2);drawCartoonHead(style);ctx.restore();
   if(person.hurt>.25)for(let i=0;i<3;i++){const a=time*5+i*TAU/3;star(n[0].x+Math.cos(a)*(style.headR+12),n[0].y-style.headR-16+Math.sin(a)*8,6,'#ffe89b',a);}
@@ -1620,7 +1802,7 @@ function drawTool(pose,toolIndex=selectedTool,alpha=1){
   // Shaft first; cuffs and fist afterward so the rod cannot cover the glove.
   parts.forEach(([x1,y1,x2,y2,r],i)=>{
     fillCapsule(x1,y1,x2,y2,r+1.2,'#142237');
-    const color=toolIndex<3?tool.colors[i]:toolIndex===3?'#ffe176':toolIndex===4?i<2?'#9cb1ce':i===2?'#8d335c':'#f878a0':'#70deca';
+    const color=toolIndex<3?tool.colors[i]:toolIndex===3?'#ffe176':toolIndex===4?i<2?'#9cb1ce':i===2?'#8d335c':'#f878a0':toolIndex===5?'#70deca':tool.colors[i]||tool.colors[0];
     const g=ctx.createLinearGradient(x1,y1-r,x2+.1,y2+r);g.addColorStop(0,toolIndex===4&&i>=3?'#ffb0ca':toolIndex===0&&i>0?'#ffe4ad':color);g.addColorStop(.5,color);g.addColorStop(1,toolIndex===4&&i>=3?'#bd3b69':color);
     fillCapsule(x1,y1,x2,y2,r,g);
   });
@@ -1639,6 +1821,7 @@ function drawTool(pose,toolIndex=selectedTool,alpha=1){
   }else if(toolIndex===2){line({x:93,y:-30},{x:93,y:29},'#c4dcfa',4);ctx.fillStyle='#34557c';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.save();ctx.translate(99,0);ctx.rotate(Math.PI/2);ctx.fillText('BONK',0,4);ctx.restore();}
   else if(toolIndex===3){line({x:-2,y:-3},{x:3,y:3},'#736036',5);line({x:117,y:-26+bananaFlex*13},{x:122,y:-23+bananaFlex*13},'#736036',4);ctx.strokeStyle='#bea04e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(28,2);ctx.quadraticCurveTo(78,-29+bananaFlex*10,112,-27+bananaFlex*13);ctx.stroke();}
   else if(toolIndex===5){ctx.strokeStyle='#279984';ctx.lineWidth=2;ctx.beginPath();ctx.arc(88,0,11,.7,4);ctx.stroke();}
+  else if(toolIndex>=6)drawExtraToolDetails(toolIndex);
   else{line({x:60,y:-4},{x:108-impactCompression*(toolIndex===1?9:0),y:-4},toolIndex===1?'#f4bee4':'#ffdf9b',2);ctx.fillStyle=toolIndex===1?'#89456c':'#755027';ctx.font='800 8px system-ui';ctx.textAlign='center';ctx.fillText(toolIndex===1?'SOFT':'BONK',90,4);}
   const pattern=cosmetic('pattern');
   if(pattern==='stripes')for(let i=0;i<5;i++)line({x:55+i*10,y:-3},{x:60+i*10,y:4},'#ffffff65',3);
@@ -1659,7 +1842,7 @@ function draw(){
   ctx.fillStyle='#6d809b';ctx.textAlign='left';ctx.font='700 9px system-ui';ctx.fillText(stage.name.toUpperCase(),26,H-27);ctx.textAlign='right';ctx.fillText(mode==='tasks'?'FELADAT '+Math.min(missionIndex+1,missionDefs.length)+' / '+missionDefs.length:'VIGYÁZAT, RAJZFILMFIZIKA!',W-26,H-27);
   for(const o of objects)drawObject(o);
   if(!person){ctx.textAlign='center';ctx.fillStyle='#a1b3cc';ctx.font='600 17px system-ui';ctx.fillText('A színpad készen áll.',500,240);ctx.font='13px system-ui';ctx.fillStyle='#6f83a2';ctx.fillText('Hívj be egy figurát, vagy játssz a tárgyakkal.',500,266);}
-  drawPerson();drawTarget();drawMissionProps();drawBubble();
+  drawPerson();drawProjectiles();drawTarget();drawMissionProps();drawBubble();
   for(const p of particles)drawParticle(p);
   for(const p of labels){ctx.save();ctx.globalAlpha=clamp(1-p.age,0,1);ctx.translate(p.x,p.y-p.age*65);ctx.rotate(-.12);ctx.textAlign='center';ctx.font='italic 900 31px system-ui';ctx.strokeStyle='#0b1324';ctx.lineWidth=6;ctx.strokeText(p.text,0,0);ctx.fillStyle=p.color;ctx.fillText(p.text,0,0);ctx.restore();}
   if(!held&&!handMode){ellipse(827,379,88,45,stage.accent+'08');ctx.textAlign='center';ctx.fillStyle=stage.accent;ctx.font='700 11px system-ui';ctx.fillText('VEDD FEL ↓',842,310+Math.sin(time*3)*3);}
@@ -1673,7 +1856,7 @@ function draw(){
 function simulate(dt){
   time+=dt;hitStop=Math.max(0,hitStop-dt);if((combo>1||streak>0)&&time-lastHit>1.8){combo=1;streak=0;updateHUD();}
   slowTime=Math.max(0,slowTime-dt);impactCompression=Math.max(0,impactCompression-dt*7);bananaFlex=Math.max(0,bananaFlex-dt*5);
-  updateTool(dt);if(!playing())return;economy.advance(starMeter,dt,combo);
+  updateTool(dt);if(!playing())return;updateProjectiles(dt);economy.advance(starMeter,dt,combo);
   const oldMode=person?.mode;worldAccumulator+=dt*(hitStop>0?0:slowTime>0?.3:1);
   while(worldAccumulator>=STEP){worldStep(STEP);worldAccumulator-=STEP;}
   if(oldMode!==person?.mode)updateHint();
@@ -1728,7 +1911,7 @@ function prepareEarningGame(ticket){
   }finally{earning.applying=false;}
 }
 function earningSnapshot(){
-  return {time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,bat:{...bat},
+  return {projectiles,fireCooldown,muzzleFlash,gunArmed,time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,bat:{...bat},
     impactCompression,bananaFlex,slowTime,hitStop,held,down,swingHit,quietTime,previousTarget,target,
     hits,score,combo,lastHit,best,maxCombo,mode,challengeState,remaining,paused,autoPaused,worldAccumulator,
     freeGravity,readyAnnounced,swing,holdDirection,holdTurn,holdPath,lastRearmTime,handMode,grab,customLayout,
@@ -1738,11 +1921,12 @@ function earningSnapshot(){
     perfectRound,newRecordRound,starMeter,progress,earningBadges:[...earning.badges]};
 }
 function restoreEarningSnapshot(s){
-  ({time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,impactCompression,bananaFlex,slowTime,hitStop,
+  ({projectiles,fireCooldown,muzzleFlash,gunArmed,time,selectedMap,selectedTool,selectedCharacter,person,objects,tramps,sceneId,impactCompression,bananaFlex,slowTime,hitStop,
     held,down,swingHit,quietTime,previousTarget,target,hits,score,combo,lastHit,best,maxCombo,mode,challengeState,remaining,paused,autoPaused,worldAccumulator,
     freeGravity,readyAnnounced,swing,holdDirection,holdTurn,holdPath,lastRearmTime,handMode,grab,customLayout,missionSeed,missionDefs,
     missionIndex,missionValue,missionStreak,missionsDone,pendingMission,missionLastHit,missionTargetId,objectHits,coneCount,attempts,misses,
     connectedSwings,bodySwings,strongest,sessionStars,streak,bestStreak,perfectRound,newRecordRound,starMeter,progress}=s);
+  projectiles=s.projectiles||[];fireCooldown=s.fireCooldown||0;muzzleFlash=s.muzzleFlash||0;gunArmed=!!s.gunArmed;
   Object.assign(bat,s.bat);bodyParts=characterParts();missionSeen=new Set(s.missionSeen);rewardedMissions=new Set(s.rewardedMissions);tippedCones=new Set(s.tippedCones);
   earning.badges=new Set(s.earningBadges);particles=[];labels=[];trails=[];dust=[];bubble=null;editorActive=false;replay.active=false;
 }
@@ -1751,7 +1935,7 @@ function applyEarningEquipment(c){
   try{
     const existed=!!person;release(true);dropGrab();handMode=false;held=false;
     if(selectedCharacter!==c.character){selectedCharacter=c.character;bodyParts=characterParts();person=null;if(existed)callPerson();}
-    selectedTool=c.tool;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];
+    selectedTool=c.tool;projectiles=[];fireCooldown=muzzleFlash=0;gunArmed=false;Object.assign(bat,REST);target={x:bat.x,y:bat.y};previousTarget={...target};trails=[];
   }finally{earning.applying=before;}
 }
 function applyEarningLayout(data){
@@ -1770,6 +1954,7 @@ function applyEarningCommand(name,value){
     if(name==='move'){target={...value};return;}
     if(name==='down'){
       if(handMode||!playing())return;
+      gunArmed=held;
       if(!held){if(!overTool(value))return;held=true;bat.x=value.x;bat.y=value.y;constrainToolPose(bat);target={...value};previousTarget={...value};trails=[];if(!progress.tools.includes(selectedTool))progress.tools.push(selectedTool);checkAchievements();}
       finishSwing();swing={eligible:false,peak:0,hit:false,body:false,origin:{...value}};target={...value};down=true;swingHit=false;quietTime=0;resetHeldStroke();return;
     }

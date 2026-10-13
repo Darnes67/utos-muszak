@@ -16,9 +16,9 @@ const context=vm.createContext({UTOS_ECONOMY:economy,document:{getElementById:ge
 vm.runInContext(source,context,{timeout:3000});const run=s=>vm.runInContext(s,context,{timeout:3000});
 (async()=>{
  assert.equal(run('wallet().stars'),500);assert.equal(run('selectedCharacter'),0);assert.equal(run('equipped("shirt")'),'shirt-blue');
- assert(await run('purchase("tool-1")'));assert.equal(run('wallet().stars'),350);assert(run('owns("tool-1")'));assert.equal(run('selectedTool'),0);
- assert(await run('purchase("tool-1")'));assert.equal(run('selectedTool'),1);assert.equal(run('wallet().stars'),350);
- assert.equal(await run('purchase("tool-2")'),false);assert.equal(run('wallet().stars'),350);assert(!run('owns("tool-2")'));
+ assert(await run('purchase("tool-1")'));assert.equal(run('wallet().stars'),500-economy.product("tool-1").price);assert(run('owns("tool-1")'));assert.equal(run('selectedTool'),0);
+ assert(await run('purchase("tool-1")'));assert.equal(run('selectedTool'),1);assert.equal(run('wallet().stars'),500-economy.product("tool-1").price);
+ assert.equal(await run('purchase("tool-2")'),false);assert.equal(run('wallet().stars'),500-economy.product("tool-1").price);assert(!run('owns("tool-2")'));
  run('selectCharacter(3)');assert.equal(run('selectedCharacter'),0);assert.equal(get('shopPanel').open,true);
  const ctxBefore=run('ctx'),bodyBefore=run('person'),characterBefore=run('selectedCharacter');
  for(const item of economy.products){context.testItem=item;context.testCanvas=node();run('drawShopPreview(testItem,testCanvas)');}
@@ -26,7 +26,7 @@ vm.runInContext(source,context,{timeout:3000});const run=s=>vm.runInContext(s,co
  assert(drawCalls>500);assert.strictEqual(run('ctx'),ctxBefore);assert.strictEqual(run('person'),bodyBefore);assert.equal(run('selectedCharacter'),characterBefore);
  run('showShop("particle")');assert(get('shop').innerHTML.includes('particle-orbit'));assert(get('shop').innerHTML.includes('Nagy előnézet'));
  const balance=run('wallet().stars');run('callPerson();beginGetup();resetSession();setMode("free");');assert.equal(run('wallet().stars'),balance);assert.equal(frames,1);
- assert.equal(JSON.parse(saved.get('utos-muszak-v5')).guestWallet.stars,350);
+ assert.equal(JSON.parse(saved.get('utos-muszak-v5')).guestWallet.stars,500-economy.product("tool-1").price);
  saved.set('utos-muszak-v5','invalid json');assert.equal(run('loadProgress().guestWallet.stars'),0);
  const getItem=context.localStorage.getItem;context.localStorage.getItem=()=>{throw Error('blocked storage')};assert.equal(run('loadProgress().guestWallet.equipped.tool'),'tool-0');context.localStorage.getItem=getItem;
 

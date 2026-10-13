@@ -33,7 +33,7 @@ function migrateLegacy(p,ids,equipped){
 }
 function practiceDefinition(input,p){
  const map=input.map,tool=input.tool,character=input.character,w=ensureWallet(p);
- if(!Number.isInteger(map)||map<0||map>2||!Number.isInteger(tool)||tool<0||tool>5||!Number.isInteger(character)||character<0||character>8)throw new HttpError(400,'Hibás felszerelés.');
+ if(!Number.isInteger(map)||map<0||map>2||!Number.isInteger(tool)||!economy.product("tool-"+tool)||!Number.isInteger(character)||!economy.product("character-"+character))throw new HttpError(400,'Hibás felszerelés.');
  if(!w.owned.includes('tool-'+tool)||!w.owned.includes('character-'+character))throw new HttpError(403,'A csillaggyűjtéshez saját felszerelést válassz.');
  return {kind:'practice',board:null,map,tool,character,seed:740};
 }
