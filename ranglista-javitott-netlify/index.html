@@ -1647,12 +1647,12 @@ function drawCartoonHead(style){
 }
 function drawCartoonPerson(){
   const n=person.nodes,style={...characterProfile()},custom=cosmetic('shirt');if(custom)style.shirt=style.sleeve=custom;
-  const kid=['cartman','kenny','stan','kyle'].includes(style.type),sponge=style.type==='sponge';
+  const kid=['cartman','kenny','stan','kyle'].includes(style.type),sponge=style.type==='sponge',bare=['patrick','jake','brian','squidward'].includes(style.type),legColor=style.type==='patrick'?style.skin:style.pants;
   ellipse(clamp(n[2].x,0,W),FLOOR+5,style.bodyR+28,9,'#0005');
   for(const[knee,foot]of [[9,10],[7,8]]){
-    line(n[2],n[knee],'#142234',23);line(n[knee],n[foot],'#142234',21);line(n[2],n[knee],style.pants,17);line(n[knee],n[foot],sponge?'#f2db59':style.pants,15);
+    line(n[2],n[knee],'#142234',23);line(n[knee],n[foot],'#142234',21);line(n[2],n[knee],legColor,17);line(n[knee],n[foot],sponge?'#f2db59':legColor,15);
     const f=n[foot];if(sponge){line({x:f.x,y:f.y-17},f,'#eef1ee',9);line({x:f.x-5,y:f.y-13},{x:f.x+5,y:f.y-13},'#d96b70',2);}
-    line({x:f.x-8,y:f.y},{x:f.x+12,y:f.y},'#233044',14);
+    line({x:f.x-8,y:f.y},{x:f.x+12,y:f.y},bare?style.skin:'#233044',14);
   }
   for(const[shoulder,elbow,hand]of [[12,5,6],[11,3,4]]){
     line(n[shoulder],n[elbow],'#162333',21);line(n[elbow],n[hand],'#162333',18);line(n[shoulder],n[elbow],style.sleeve,16);line(n[elbow],n[hand],kid?style.sleeve:style.skin,12);
