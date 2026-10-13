@@ -1976,6 +1976,7 @@ function impactLabelPosition(contact){
   for(const[x,y]of options){const p={x:clamp(x,115,W-115),y:clamp(y,105,FLOOR-70)},box={left:p.x-110,right:p.x+110,top:p.y-35,bottom:p.y+25};let value=Math.hypot(p.x-contact.x,p.y-contact.y)*.1;
     for(const[u,v,r]of bodyParts){const a=person.nodes[u],b=person.nodes[v];value+=overlapArea(box,{left:Math.min(a.x,b.x)-r-8,right:Math.max(a.x,b.x)+r+8,top:Math.min(a.y,b.y)-r-8,bottom:Math.max(a.y,b.y)+r+8});}
     value+=overlapArea(box,{left:contact.x-35,right:contact.x+35,top:contact.y-35,bottom:contact.y+35});
+    for(const recent of labels)if(recent.age<.8)value+=overlapArea(box,{left:recent.x-115,right:recent.x+115,top:recent.y-recent.age*65-38,bottom:recent.y-recent.age*65+28});
     if(value<cost){chosen=p;cost=value;}
   }return chosen;
 }
