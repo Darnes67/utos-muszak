@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node build.cjs",
-    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs && node tests/shop.cjs && node tests/shop-client.cjs && node tests/earnings.cjs && node tests/earnings-client.cjs && node tests/earnings-online.cjs && node tests/stability.cjs && node tests/expansion.cjs && node tests/polish.cjs"
+    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs && node tests/shop.cjs && node tests/shop-client.cjs && node tests/earnings.cjs && node tests/earnings-client.cjs && node tests/earnings-online.cjs && node tests/stability.cjs && node tests/expansion.cjs && node tests/polish.cjs && node tests/ads.cjs && node tests/ads-sdk.cjs && node tests/ads-client.cjs"
   },
   "engines": {
     "node": ">=22"

@@ -2,7 +2,7 @@
 const {randomUUID,createHash}=require('node:crypto');
 const {HttpError,profileKey}=require('./store.cjs');
 const {ENGINE_VERSION,verifyRound,checkEngine}=require('./engine.cjs');
-const shop=require('./shop.cjs'),rewards=require('./rewards.cjs'),earnings=require('./earnings.cjs');
+const shop=require('./shop.cjs'),rewards=require('./rewards.cjs'),earnings=require('./earnings.cjs'),ads=require('./ads.cjs');
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const expose=p=>p?{id:p.id,username:p.username,xp:p.xp,games:p.games,wallet:shop.publicWallet(p)}:null;
 const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
@@ -54,7 +54,7 @@ async function indexResult(store,profile,round,result){
     });
   }
 }
-function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000,probe=probeIdentity}){
+function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000,probe=probeIdentity,adConfig=ads.config()}){
  async function handle(req){
   let phase='request';
   try{
@@ -64,8 +64,9 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
-    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'polish-5',identity});}
+    if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'rewarded-ads-6',identity});}
     phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
+    if(route==='/ads/status'&&req.method==='GET')return reply({ads:ads.status(profile,adConfig,now())});
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){
       const kind=url.searchParams.get('kind')||'sprint',period=url.searchParams.get('period')||'week';if(!['all','week'].includes(period))throw new HttpError(400,'Ismeretlen időszak.');
@@ -74,10 +75,20 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       const rows=Object.values(board.rows).sort((a,b)=>b.points-a.points||a.created_at.localeCompare(b.created_at)||a.user_id.localeCompare(b.user_id)).map((r,i)=>({...r,place:i+1}));
       return reply({rows:rows.slice(0,50),mine:profile?rows.find(r=>r.user_id===profile.id)||null:null,label:kind==='daily'?def.board.slice(6):period==='week'?weekKey(date)+' óta (UTC)':'összesített'});
     }
-    if(!['/round/start','/round/finish','/round/cancel','/shop/buy','/shop/equip','/shop/legacy','/earnings/start','/earnings/claim'].includes(route)||req.method!=='POST')throw new HttpError(404,'Hiányzó API-végpont.');
+    if(!['/round/start','/round/finish','/round/cancel','/shop/buy','/shop/equip','/shop/legacy','/earnings/start','/earnings/claim','/ads/start','/ads/show','/ads/claim','/ads/cancel'].includes(route)||req.method!=='POST')throw new HttpError(404,'Hiányzó API-végpont.');
     if(!profile)throw new HttpError(401,'A versenyhez jelentkezz be!');
     const text=await req.text();if(Buffer.byteLength(text)>600000)throw new HttpError(413,'Túl nagy bemeneti napló.');
     let input;try{input=JSON.parse(text);}catch(_){throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input!=='object'||Array.isArray(input))throw new HttpError(400,'Hibás kérés.');
+    if(route.startsWith('/ads/')){
+      phase='ad-reward';let receipt,ticket;
+      const current=await store.mutate(profileKey(profile.id),profile,p=>{
+        if(route==='/ads/start')ticket=ads.publicTicket(ads.start(p,input,adConfig,now()));
+        if(route==='/ads/show')ticket=ads.publicTicket(ads.show(p,input,adConfig,now()));
+        if(route==='/ads/claim')receipt=ads.claim(p,input,adConfig,now());
+        if(route==='/ads/cancel')ads.cancel(p,input);
+        return p;
+      });return reply({ticket,receipt,ads:ads.status(current,adConfig,now()),user:expose(current)});
+    }
     if(route==='/earnings/start'){
       phase='earnings-start';let ticket;
       const current=await store.mutate(profileKey(profile.id),profile,p=>{ticket=earnings.publicTicket(earnings.start(p,input,now()));return p;});

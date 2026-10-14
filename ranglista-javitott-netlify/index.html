@@ -86,6 +86,8 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 .auth-modal{max-height:calc(100dvh - 32px);overflow-y:auto}.auth-modal button{margin-bottom:8px}.auth-fields input:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 .header-wallet{display:flex;align-items:center;gap:10px}.header-wallet strong{font-size:19px;color:var(--lime);white-space:nowrap}.shop-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.shop-heading h2{font-size:22px;letter-spacing:-.5px;margin:12px 0 5px}.shop-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.shop-message{font-size:12px;color:#c7eda8;min-height:20px;line-height:1.6}.shop-card{display:flex;flex-direction:column;padding:12px;background:linear-gradient(140deg,#1d2d45,#142036)}.shop-card canvas{aspect-ratio:280/170;border-radius:9px;margin-bottom:12px;width:100%}.shop-card h3{font-size:15px}.shop-card p{line-height:1.6;min-height:45px}.shop-card button{margin-top:auto}.shop-card .preview-button{margin-top:6px;background:transparent;color:#aabdd8;font-size:10px}.shop-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:9px;color:#9fb695}.shop-meta b{font-size:13px;color:#cdf5a2}.shop-locked::after{content:' 🔒';font-size:10px}.achievement-title{font-size:12px;margin:22px 0 8px;color:#9bb1ce}#shopPreview .modal{width:min(500px,94vw)}#shopPreviewCanvas{width:100%;aspect-ratio:420/260;border-radius:12px}@keyframes wallet-pop{50%{transform:scale(1.2);color:#fff3b6}}.wallet-pop{animation:wallet-pop .3s ease}.quiet .wallet-pop{animation:none}@media(max-width:720px){.header-wallet{flex-direction:column;gap:5px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-card p{min-height:65px}.shop-card button{padding:9px 5px;font-size:10px}.shop-heading h2{font-size:19px}}@media(max-width:420px){.shop-grid{grid-template-columns:1fr}}
 .character-grid,.tool-grid{max-height:340px;overflow:auto;overscroll-behavior:contain;padding-right:5px}.shop-grid{max-height:760px;overflow:auto;overscroll-behavior:contain} @media(max-width:650px){.character-grid,.tool-grid{max-height:260px}.shop-grid{max-height:650px}}
+
+.ad-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 0;padding:18px 22px;border:1px solid #8e79ff45;border-radius:18px;background:linear-gradient(115deg,#1d2240,#121d30);}.ad-panel h3{margin:4px 0;font-size:21px}.ad-panel p{margin:5px 0;color:#b6c4d8;max-width:650px;font-size:13px;line-height:1.55}.ad-actions{display:flex;flex-direction:column;gap:8px;min-width:220px}.ad-actions small{color:#c5c1f9}.ad-modal{border:1px solid #8e79ff80}.ad-modal button{margin-top:12px}#adOverlay{z-index:20}#adMessage{min-height:20px}@media(max-width:650px){.ad-panel{align-items:stretch;flex-direction:column;padding:16px}.ad-actions{min-width:0}.ad-panel h3{font-size:19px}}
 </style>
 </head>
 <body>
@@ -111,6 +113,8 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 <div class="panel tool-panel"><button id="handTool" aria-pressed="false">✋ Kéz · csak szabad játék</button><label>ESZKÖZ · ERŐ / FORDULÁS</label><div class="choices tool-grid" id="tools"><button data-tool="0" class="active" aria-pressed="true">Baseballütő<em>1× / gyors</em></button><button data-tool="1" aria-pressed="false">Szivacsütő<em>0,48× / nagyon gyors</em></button><button data-tool="2" aria-pressed="false">Játék kalapács<em>1,55× / lassú</em></button><button data-tool="3" aria-pressed="false">Banán<em>0,6× / rugalmas</em></button><button data-tool="4" aria-pressed="false">Rugós kesztyű<em>1,15× / közepes</em></button><button data-tool="5" aria-pressed="false">Szivacskéz<em>0,4× / gyors</em></button><button data-tool="6" aria-pressed="false">Gumicsirke<em>0.5× / lendítés</em></button><button data-tool="7" aria-pressed="false">Serpenyő<em>1.25× / lendítés</em></button><button data-tool="8" aria-pressed="false">Seprű<em>0.62× / lendítés</em></button><button data-tool="9" aria-pressed="false">Óriási villáskulcs<em>1.3× / lendítés</em></button><button data-tool="10" aria-pressed="false">WC-pumpa<em>0.7× / lendítés</em></button><button data-tool="11" aria-pressed="false">Rocksztár gitár<em>1.05× / lendítés</em></button><button data-tool="12" aria-pressed="false">Pisztoly<em>Tüzelés · 0.72× / lövés</em></button><button data-tool="13" aria-pressed="false">Sörétes puska<em>Tüzelés · 1.3× / lövés</em></button><button data-tool="14" aria-pressed="false">Gépfegyver<em>Tüzelés · 0.42× / automata</em></button></div></div>
 </div></details>
 <details class="loadout" id="editorPanel"><summary>Saját pálya szerkesztése <span id="editorCount">0 / 20 elem</span></summary><div class="editor-controls"><button id="editorToggle" class="active">✎ Szerkesztés indítása</button><span id="editorState"></span><div class="editor-row"><button data-add="box">＋ Doboz</button><button data-add="ball">＋ Labda</button><button data-add="cone">＋ Bója</button><button data-add="tramp">＋ Trambulin</button></div><div class="editor-row"><label>Forgatás <input type="range" id="editorRotation" min="-180" max="180" value="0" disabled></label><button id="editorDelete" disabled>⌫ Kijelölt törlése</button><button id="layoutSave">Saját elrendezés mentése</button><button id="layoutLoad">Betöltés</button><button id="layoutDefault">Alapértelmezett pálya</button></div><p class="rules">Kattints egy elemre, majd húzd a helyére. Szerkesztés közben áll a fizika. A mentés az aktuális pályához tartozik; kihívásban az eredeti elrendezés működik.</p></div></details>
+<section class="ad-panel" aria-label="Önkéntes reklámjutalom"><div><div class="eyebrow">EXTRA CSILLAGOK · ÖNKÉNTES</div><h3>Reklámért 300 ★</h3><p>Legfeljebb napi 3 jutalom, köztük 2 perc szünet. Csak sikeresen befejezett reklámért, a bejelentkezett fiókodra. A játék és az időzítő közben megáll; versenykör alatt nem indítható.</p><p id="adMessage" aria-live="polite">A reklámjutalom bekötésre vár.</p></div><div class="ad-actions"><small id="adRemaining">Napi maximum: 900 ★</small><button id="watchAd" class="active" disabled>Reklámjutalom · bekötésre vár</button><button id="retryAdClaim" hidden>↻ 300 ★ jóváírás újrapróbálása</button></div></section>
+<div id="adOverlay" class="tutorial-overlay" hidden><div class="modal ad-modal" role="dialog" aria-modal="true" aria-labelledby="adTitle"><div class="eyebrow">REKLÁMJUTALOM</div><h2 id="adTitle">300 ★ a reklám befejezéséért</h2><p id="adOverlayText" aria-live="polite">Reklám előkészítése…</p><p>Önkéntes. A korai bezárásért nem jár csillag. A játék és az időzítő az ablak bezárása után folytatódik.</p><button id="adConfirmShow" class="active" disabled>Megnézem a reklámot · 300 ★</button> <button id="adCancel">Mégsem · vissza a játékhoz</button></div></div>
 <details class="loadout" id="shopPanel"><summary>★ Műszakbolt <span id="wallet">★ 0 csillag</span></summary><div class="reward-section"><div class="shop-heading"><div><h2>Új cuccok. Saját stílus.</h2><p id="shopStorage" class="rules">Vendégbolt · helyi mentés</p></div><button id="earnStars" class="active" hidden>★ Hiteles csillaggyűjtés · 45 mp</button></div><p class="rules">Aktív figuratalálatokkal kb. 30–50 ★ / perc. A normál játék is ad csillagokat; fiókkal automatikusan mentjük. A tárgyak kevesebbet adnak. Az achievementek egyszeri bónuszt adnak. A pontszám külön számít. Fiókos jutalmat a szerver ellenőriz; a vendégcsillagok ebben a böngészőben maradnak.</p><p id="shopMessage" class="shop-message" aria-live="polite"></p><div id="shopTabs" class="shop-tabs"><button data-shop-tab="tool" class="active">Eszközök</button><button data-shop-tab="character">Skinek és ruhák</button><button data-shop-tab="pattern">Eszközminták</button><button data-shop-tab="particle">Találati effektek</button><button id="resetAppearance">Alapmegjelenés</button></div><div id="shop" class="shop-grid"></div></div></details>
 <details class="loadout" id="achievementsPanel"><summary>🏆 Achievementek <span id="achievementCount">0 / 8</span></summary><div class="reward-section"><p class="rules">Egyszeri jutalmak: 5–25 ★. Újrakezdés és újratöltés után sem járnak újra. Fiókkal a szerveren ellenőrzött teljesítések számítanak.</p><div id="achievements" class="achievement-grid"></div></div></details>
 <div id="shopPreview" class="tutorial-overlay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="shopPreviewTitle"><div class="eyebrow">PRÓBAFÜLKE</div><h2 id="shopPreviewTitle"></h2><canvas id="shopPreviewCanvas" width="420" height="260"></canvas><p id="shopPreviewText"></p><button id="shopPreviewRotate">↻ Forgatás</button> <button id="shopPreviewClose" class="active">Vissza a boltba</button></div></div>
@@ -128,6 +132,7 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 </main>
 <script type="module">
 import './economy.js';
+import './ads.js';
 import { login, signup, logout, getUser as getIdentityUser, handleAuthCallback, requestPasswordRecovery, updateUser, getAccessToken } from './auth.js';
 'use strict';
 const $ = id => document.getElementById(id);
@@ -449,7 +454,7 @@ function checkAchievements(){
 }
 function achievementIds(){return accountMode==='account'?(accountWallet?.achievements||[]):progress.achievements;}
 function updateShopLocks(){
-  const locked=competition.active&&!competition.ending;
+  const locked=(typeof rewardedAdBusy!=='undefined'&&rewardedAdBusy)||competition.active&&!competition.ending;
   for(const b of document.querySelectorAll('[data-tool], [data-character]')){
     const id=b.dataset.tool!==undefined?'tool-'+b.dataset.tool:'character-'+b.dataset.character;
     b.classList.toggle('shop-locked',!owns(id));b.title=owns(id)?'Feloldva':'A boltban vásárolható · '+economy.product(id).price+' ★';
@@ -458,7 +463,7 @@ function updateShopLocks(){
   }
 }
 function renderRewards(){
-  const w=wallet(),locked=replay.active||challengeState==='running'||competition.active&&!competition.ending||shopBusy||accountPending||accountMode==='loading';
+  const w=wallet(),locked=(typeof rewardedAdBusy!=='undefined'&&rewardedAdBusy)||replay.active||challengeState==='running'||competition.active&&!competition.ending||shopBusy||accountPending||accountMode==='loading';
   $('wallet').textContent='★ '+w.stars+' csillag';$('walletTop').textContent='★ '+w.stars;
   $('shopStorage').textContent=accountMode==='account'?'Fiókos bolt · szerverre mentve':accountMode==='loading'?'Fiók ellenőrzése…':'Vendégbolt · csak ezen a böngészőn';
   $('earnStars').hidden=accountMode!=='account';$('earnStars').disabled=shopBusy||accountPending||competition.active&&!competition.ending;
@@ -477,7 +482,7 @@ function renderRewards(){
   $('resetAppearance').disabled=locked;
   const badges=achievementIds();$('achievementCount').textContent=badges.length+' / '+achievementDefs.length;
   $('achievements').innerHTML=achievementDefs.map(a=>`<div class="achievement ${badges.includes(a.id)?'unlocked':''}">${badges.includes(a.id)?'✓':'○'} ${a.name}<b> · +${economy.achievements.find(d=>d.id===a.id).reward} ★</b><small>${a.hint} ${badges.includes(a.id)?'Jutalom már jóváírva.':'Egyszer teljesíthető.'}</small></div>`).join('');
-  updateShopLocks();renderEarningStatus();
+  updateShopLocks();renderEarningStatus();if(typeof renderRewardedAds==='function')renderRewardedAds();
 }
 function applyEquipment(){
   if(competition.active&&!competition.ending)return;
@@ -1019,7 +1024,7 @@ function fillCapsule(x1,y1,x2,y2,r,color){
   ctx.lineTo(0,r);ctx.arc(0,0,r,Math.PI/2,Math.PI*1.5);ctx.closePath();ctx.fill();ctx.restore();
 }
 
-function playing() { return !earning.booting&&!paused&&!editorActive&&!replay.active&&challengeState!=='ended'; }
+function playing() { return !(typeof rewardedAdBusy!=='undefined'&&rewardedAdBusy)&&!earning.booting&&!paused&&!editorActive&&!replay.active&&challengeState!=='ended'; }
 function updateHUD(){
   $('hits').textContent=hits;$('objectHits').textContent=objectHits;$('score').textContent=score;$('combo').textContent=combo+'×';
   best=progress.records[recordKey()]||0;$('best').textContent=best;$('bestLabel').textContent='REKORD · PÁLYA/ESZKÖZ';
@@ -1054,6 +1059,8 @@ function updateHint(){
     $('instruction').textContent=(competition.ticket.kind==='practice'?'CSILLAGGYŰJTÉS':'VERSENYKÖR')+(tools[selectedTool].ranged?' · Célozz és tartsd nyomva a klikket!':' · Tartsd nyomva, és lendíts oda-vissza!');
   }
   document.body?.classList.toggle('watching',replay.active);updateEditorUI();updateReplayUI();updateShopLocks();
+  if(typeof rewardedAdBusy!=='undefined'&&rewardedAdBusy)for(const id of ['invite','stand','start','objectsReset','finish','pause','reset','modeSelect','resume','editorToggle','replayButton'])$(id).disabled=true;
+  if(typeof rewardedAdBusy!=='undefined'&&rewardedAdBusy)for(const b of document.querySelectorAll('#maps button, #characters button, #tools button'))b.disabled=true;
 }
 function setPressed(container,attribute,value) {
   for(const button of document.querySelectorAll('#'+container+' button')) {
@@ -2080,6 +2087,7 @@ function frame(timestamp){
 }
 function runFrame(timestamp){
   if(renderFault&&paused)return;
+  if(typeof renderRewardedAds==='function')renderRewardedAds(true);
   if(typeof updateSubmissionStatus==='function')updateSubmissionStatus();
   if(typeof flushEarnings==='function'&&accountMode==='account'&&!earning.applying){
     if(earning.ready&&(earning.pending||earning.tick>=360||(paused||challengeState==='ended')&&earning.tick>0))flushEarnings();
@@ -2213,7 +2221,86 @@ function installEarningHooks(){
 }
 
 // ONLINE_CLIENT_BEGIN
+let rewardedAdBusy=false;
 let onlineUser=null,onlineReady=false,onlineBusy=false,boardBusy=false,boardKind='sprint',boardPeriod='week',pendingSubmission=null,authResume=false,recoveryMode=false;
+
+// Rewarded web ads: real GPT inventory only. No mock video or timer grants stars.
+const AD_PENDING_KEY='utos-rewarded-ad-pending-v1';
+const rewardedAdState={config:null,message:'A reklámjutalom bekötésre vár.',ticket:null,accountId:null,pending:null,claiming:false,shown:false,granted:false,wasPaused:false,wasAutoPaused:false,lastRender:0,attempt:0};
+const rewardedAdController=globalThis.UTOS_ADS?.create();
+function restoreAdClaim(){
+  try{const p=JSON.parse(sessionStorage.getItem(AD_PENDING_KEY)||'null');rewardedAdState.pending=p?.userId===onlineUser?.id&&p?.ticketId&&p?.token?p:null;}catch(_){rewardedAdState.pending=null;}
+}
+function keepAdClaim(){try{if(rewardedAdState.pending)sessionStorage.setItem(AD_PENDING_KEY,JSON.stringify(rewardedAdState.pending));else sessionStorage.removeItem(AD_PENDING_KEY);}catch(_){} }
+function renderRewardedAds(throttled=false){
+  const a=rewardedAdState,now=Date.now();if(throttled&&now-a.lastRender<1000)return;a.lastRender=now;
+  const c=a.config,cooling=c?.availableAt>now,blocked=rewardedAdBusy||onlineBusy||competition.active||challengeState==='running'||editorActive||replay.active;
+  $('adRemaining').textContent=c?'Ma még '+c.remaining+' / 3 reklám · '+(c.remaining*300)+' ★':'Napi maximum: 900 ★';
+  $('watchAd').disabled=blocked||!c?.configured||!rewardedAdController||c.remaining===0||cooling||!!a.pending;
+  $('watchAd').textContent=rewardedAdBusy?'Reklám folyamatban…':!c?.configured?'Reklámjutalom · bekötésre vár':!onlineUser?'Bejelentkezés a 300 ★ jutalomhoz':c.remaining===0?'Mai jutalmak elfogytak':cooling?'Új reklám '+Math.ceil((c.availableAt-now)/1000)+' mp múlva':'▶ Reklám megtekintése → 300 ★';
+  $('adMessage').textContent=a.message||c?.reason||'A jutalom a fiókodra kerül. Nincs ranglistabónusz.';
+  $('retryAdClaim').hidden=!a.pending;$('retryAdClaim').disabled=a.claiming||!onlineUser||competition.active||rewardedAdBusy&&!a.granted;
+}
+async function loadRewardedStatus(){
+  restoreAdClaim();try{const userId=onlineUser?.id;const response=await api('/ads/status');if(userId!==onlineUser?.id)return;rewardedAdState.config=response.ads;if(!response.ads.configured)rewardedAdState.message=response.ads.reason;else if(!rewardedAdState.pending)rewardedAdState.message='Önkéntes reklám · befejezés után 300 ★ a fiókodra.';}
+  catch(_){rewardedAdState.message='A reklámjutalom jelenleg nem érhető el. A játék továbbra is használható.';}
+  renderRewardedAds();
+}
+function finishRewardedAd(error){
+  const a=rewardedAdState;if(!rewardedAdBusy)return;
+  if(error)a.message=error.message;
+  else if(!a.granted)a.message='Reklám megszakítva · nem kaptál csillagot.';
+  const t=a.ticket;if(t&&!a.granted)api('/ads/cancel',{ticketId:t.id,token:t.token}).catch(()=>{});
+  rewardedAdBusy=false;$('adOverlay').hidden=true;a.ticket=null;a.shown=false;
+  togglePause(a.wasPaused||document.hidden,a.wasAutoPaused||document.hidden);renderAccount();renderRewardedAds();
+  // Keep an actual SDK grant pending when a network response is lost; no new ad is needed.
+  if(!a.pending)api('/ads/status').then(r=>{a.config=r.ads;renderRewardedAds();}).catch(()=>{});
+}
+async function watchRewardedAd(){
+  const a=rewardedAdState;if(rewardedAdBusy||onlineBusy||competition.active||challengeState==='running'||editorActive||replay.active||a.pending)return;
+  if(!a.config?.configured||!rewardedAdController){a.message=a.config?.reason||'A reklámszolgáltató még nincs bekötve.';renderRewardedAds();return;}
+  if(!onlineUser){openAuth();$('authError').textContent='A reklám 300 ★ jutalmához jelentkezz be!';return;}
+  a.wasPaused=paused;a.wasAutoPaused=autoPaused;a.accountId=onlineUser.id;a.granted=false;a.shown=false;a.ticket=null;
+  const attempt=++a.attempt;rewardedAdBusy=true;togglePause(true);renderAccount();renderRewardedAds();
+  $('adOverlay').hidden=false;$('adConfirmShow').disabled=true;$('adOverlayText').textContent='Reklám előkészítése és hozzájárulás ellenőrzése…';
+  try{
+    if(earningInFlight)try{await earningInFlight;}catch(_){}
+    await flushEarnings(true);if(earning.pending)throw Error('Előbb mentsd a függő játékjutalmat.');
+    if(!rewardedAdBusy||attempt!==a.attempt)return;
+    const r=await api('/ads/start',{requestId:transactionId()});
+    if(!rewardedAdBusy||attempt!==a.attempt){api('/ads/cancel',{ticketId:r.ticket.id,token:r.ticket.token}).catch(()=>{});return;}
+    a.ticket=r.ticket;a.config=r.ads;
+    await rewardedAdController.prepare(a.config,{
+      onReady(){if(attempt!==a.attempt)return;$('adConfirmShow').disabled=false;$('adOverlayText').textContent='A reklám készen áll. Ha megnézed és megszerzed a szolgáltató jutalmát, 300 ★ jár.';},
+      onGrant(payload){if(attempt!==a.attempt||onlineUser?.id!==a.accountId)return;a.granted=true;a.pending={userId:a.accountId,ticketId:a.ticket.id,token:a.ticket.token,event:'rewardedSlotGranted',providerReward:payload};keepAdClaim();a.message='A reklám befejeződött · 300 ★ jóváírása…';claimRewardedAd();},
+      onClose(){if(attempt===a.attempt)finishRewardedAd();},onError(error){if(attempt===a.attempt)finishRewardedAd(error);}
+    });
+  }catch(error){if(attempt===a.attempt)finishRewardedAd(error);}
+}
+async function showRewardedAd(){
+  const a=rewardedAdState;if(!rewardedAdBusy||!a.ticket||a.shown||$('adConfirmShow').disabled)return;
+  const attempt=a.attempt;$('adConfirmShow').disabled=true;
+  try{const r=await api('/ads/show',{ticketId:a.ticket.id,token:a.ticket.token});if(!rewardedAdBusy||attempt!==a.attempt)return;a.config=r.ads;a.shown=true;
+    // Only GPT's reward event, not this button or elapsed time, can trigger a claim.
+    if(rewardedAdController.show())$('adOverlay').hidden=true;
+  }catch(error){if(attempt===a.attempt){rewardedAdController.cancel();finishRewardedAd(error);a.message=error.message;renderRewardedAds();}}
+}
+function cancelRewardedAd(){rewardedAdState.attempt++;rewardedAdController?.cancel();finishRewardedAd();}
+async function claimRewardedAd(){
+  const a=rewardedAdState,p=a.pending;if(!p||a.claiming||p.userId!==onlineUser?.id||competition.active)return;
+  a.claiming=true;renderRewardedAds();
+  try{const r=await api('/ads/claim',p);if(p.userId!==onlineUser?.id||a.pending!==p)return;
+    if(r.receipt?.stars!==300)throw Error('A szerver nem igazolta vissza a 300 ★ jutalmat.');
+    acceptAccount(r.user);a.config=r.ads;a.pending=null;keepAdClaim();a.message='✓ 300 ★ jóváírva · Egyenleg: '+wallet().stars+' ★';notify('★ Reklámjutalom: +300 ★');
+    if(!progress.reduced){$('walletTop').classList.remove('wallet-pop');void $('walletTop').offsetWidth;$('walletTop').classList.add('wallet-pop');}
+  }catch(error){
+    if([404,410].includes(error.status)){a.pending=null;a.message='A korábbi reklámjegy lejárt vagy nem található. Új reklámot indíthatsz.';}
+    else a.message='A 300 ★ még nincs visszaigazolva: '+error.message+' Használd a jóváírás újrapróbálását.';
+    keepAdClaim();
+  }
+  finally{a.claiming=false;renderRewardedAds();}
+}
+
 const EARNING_KEY='utos-earning-session-v1';
 let earningRequest=false,earningRetryAt=0,earningInFlight=null;
 function earningConfig(){return {mode,map:selectedMap,tool:selectedTool,character:selectedCharacter,sensitivity:progress.sensitivity,autoGetup:progress.autoGetup,gravity:freeGravity,invite:!!person,ready:!!person,held,pose:{x:bat.x,y:bat.y,angle:Math.atan2(Math.sin(bat.angle),Math.cos(bat.angle))}};}
@@ -2221,7 +2308,7 @@ function saveEarnings(){
   try{if(earning.ready&&earning.id)sessionStorage.setItem(EARNING_KEY,JSON.stringify({userId:onlineUser?.id,id:earning.id,seq:earning.seq,pending:earning.pending,tail:{ticks:earning.tick,events:earning.events}}));else sessionStorage.removeItem(EARNING_KEY);}catch(_){}
 }
 async function startEarnings(){
-  if(!onlineUser||earning.ready||earningRequest||competition.active||competitionArming||!['off','ready'].includes(challengeState)||editorActive||replay.active||down||grab||customLayout)return;
+  if(rewardedAdBusy||!onlineUser||earning.ready||earningRequest||competition.active||competitionArming||!['off','ready'].includes(challengeState)||editorActive||replay.active||down||grab||customLayout)return;
   earningRequest=true;earning.starting=true;const accountId=onlineUser.id,token=++earning.startToken;
   $('shopMessage').textContent='Csillagjutalmak bekapcsolása… A játék közben használható.';
   try{
@@ -2341,13 +2428,14 @@ function renderAccount(){
   accountPending=onlineBusy;renderRewards();
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
   $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
-  $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=onlineBusy||competition.active&&!competition.ending;
+  $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=rewardedAdBusy||onlineBusy||competition.active&&!competition.ending;
   $('retryPending').hidden=!pendingSubmission;$('retryPending').disabled=submissionBusy;
   if(pendingSubmission&&!submissionBusy)$('onlineNotice').textContent='Van egy mentésre váró korábbi köröd. A Beküldés újrapróbálása gombbal mentheted.';
   $('onlineStatus').textContent=onlineReady?'Közös ranglista · online · csillagjutalmak 2':'Az online kapcsolat nem elérhető';
-  for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=onlineBusy||competition.active&&!competition.ending;
+  for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=rewardedAdBusy||onlineBusy||competition.active&&!competition.ending;
 }
 function openAuth(){
+  if(rewardedAdBusy)return;
   if(competition.active&&!competition.ending){notify('Előbb fejezd be vagy hagyd el a versenykört.');return;}
   authResume=playing()&&!paused;if(authResume)togglePause(true);$('authOverlay').hidden=false;$('authError').textContent='';$('authEmail').focus();
 }
@@ -2363,14 +2451,14 @@ async function submitAuth(kind){
       await signup($('authEmail').value.trim(),$('authPassword').value,{username,full_name:username});
       if(!await getIdentityUser()){$('authPassword').value='';$('authError').textContent='Regisztráció elküldve! Erősítsd meg az e-mail-címed a kapott levélben, majd jelentkezz be.';return;}
     }else await login($('authEmail').value.trim(),$('authPassword').value);
-    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();await startEarnings();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');restoreSubmission();await loadLeaderboard();
+    const result=await api('/me');if(!result.user)throw Error('A bejelentkezést a ranglista nem ismerte fel. Jelentkezz be újra!');acceptAccount(result.user);onlineReady=true;await migrateOldCosmetics();closeAuth();renderAccount();await startEarnings();notify(kind==='register'?'Fiók létrehozva!':'Sikeres bejelentkezés!');loadRewardedStatus();restoreSubmission();await loadLeaderboard();
   }catch(error){$('authError').textContent=authMessage(error);}
   finally{onlineBusy=false;$('loginSubmit').disabled=$('registerSubmit').disabled=false;renderAccount();}
 }
 async function logoutOnline(){
-  if(onlineBusy||competition.active&&!competition.ending)return;
+  if(rewardedAdBusy||onlineBusy||competition.active&&!competition.ending)return;
   onlineBusy=true;renderAccount();
-  try{await stopEarnings();await logout();setRecoveryMode(false);onlineUser=null;accountWallet=null;accountMode='guest';applyEquipment();pendingSubmission=null;keepSubmission();renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');}catch(error){notify(authMessage(error));}
+  try{await stopEarnings();await logout();setRecoveryMode(false);onlineUser=null;accountWallet=null;accountMode='guest';applyEquipment();pendingSubmission=null;keepSubmission();renderAccount();await loadLeaderboard();notify('Kijelentkeztél.');loadRewardedStatus();}catch(error){notify(authMessage(error));}
   finally{onlineBusy=false;renderAccount();}
 }
 function authMessage(error){
@@ -2404,7 +2492,7 @@ async function saveRecoveredPassword(){
   finally{onlineBusy=false;$('resetPasswordSubmit').disabled=false;}
 }
 async function startCompetitive(kind){
-  if(onlineBusy||competition.active&&!competition.ending)return;
+  if(rewardedAdBusy||onlineBusy||competition.active&&!competition.ending)return;
   if(!onlineUser){openAuth();$('authError').textContent='A közös ranglistához jelentkezz be!';return;}
   const generation=gameGeneration,previousRoundId=competition.ending?competition.ticket?.id:shownRoundId;
   onlineBusy=true;renderAccount();$('resultOverlay').hidden=true;$('hitInfo').textContent='Új versenykör előkészítése…';
@@ -2477,15 +2565,17 @@ async function initOnline(){
     const callback=await handleAuthCallback();
     if(callback?.type==='recovery'){openAuth();setRecoveryMode(true);$('authError').textContent='Adj meg egy új, legalább 10 karakteres jelszót.';$('authPassword').focus();}
     else if(callback?.type==='confirmation')notify('Az e-mail-címed megerősítve. Sikeres bejelentkezés!');
-    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();restoreSubmission();if(pendingSubmission)sendCompetitiveResult();else await startEarnings();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();await loadLeaderboard();
+    const result=await api('/me');if(result.user){acceptAccount(result.user);await migrateOldCosmetics();restoreSubmission();if(pendingSubmission)sendCompetitiveResult();else await startEarnings();}else{accountMode='guest';accountWallet=null;applyEquipment();}onlineReady=true;renderAccount();loadRewardedStatus();await loadLeaderboard();
   }
-  catch(error){onlineReady=false;if(accountMode==='loading'){accountMode='guest';accountWallet=null;onlineUser=null;applyEquipment();}$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();}
+  catch(error){onlineReady=false;if(accountMode==='loading'){accountMode='guest';accountWallet=null;onlineUser=null;applyEquipment();}$('onlineNotice').textContent=error.message;$('boardMessage').textContent=error.message;renderAccount();loadRewardedStatus();}
 }
 $('authOpen').addEventListener('click',openAuth);$('authClose').addEventListener('click',closeAuth);
 $('loginSubmit').addEventListener('click',()=>submitAuth('login'));$('registerSubmit').addEventListener('click',()=>submitAuth('register'));
 $('recoverySubmit').addEventListener('click',recoverPassword);$('resetPasswordSubmit').addEventListener('click',saveRecoveredPassword);
 $('authForm').addEventListener('submit',e=>{e.preventDefault();submitAuth('login');});$('logout').addEventListener('click',logoutOnline);
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&!$('authOverlay').hidden)closeAuth();});
+$('watchAd').addEventListener('click',watchRewardedAd);$('adConfirmShow').addEventListener('click',showRewardedAd);$('adCancel').addEventListener('click',cancelRewardedAd);$('retryAdClaim').addEventListener('click',claimRewardedAd);
+window.addEventListener('keydown',e=>{if(e.code==='Escape'&&rewardedAdBusy&&!rewardedAdState.shown)cancelRewardedAd();});
 $('competitivePanel').addEventListener('click',e=>{const b=e.target.closest('button[data-competitive]');if(b)startCompetitive(b.dataset.competitive);});
 $('boardKind').addEventListener('change',e=>{boardKind=e.target.value;loadLeaderboard();});$('boardPeriod').addEventListener('change',e=>{boardPeriod=e.target.value;loadLeaderboard();});$('boardRefresh').addEventListener('click',loadLeaderboard);
 $('submitAgain').addEventListener('click',()=>sendCompetitiveResult());
