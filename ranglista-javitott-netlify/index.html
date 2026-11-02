@@ -89,13 +89,14 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 .character-grid,.tool-grid{max-height:340px;overflow:auto;overscroll-behavior:contain;padding-right:5px}.shop-grid{max-height:760px;overflow:auto;overscroll-behavior:contain} @media(max-width:650px){.character-grid,.tool-grid{max-height:260px}.shop-grid{max-height:650px}}
 
 .ad-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 0;padding:18px 22px;border:1px solid #8e79ff45;border-radius:18px;background:linear-gradient(115deg,#1d2240,#121d30);}.ad-panel h3{margin:4px 0;font-size:21px}.ad-panel p{margin:5px 0;color:#b6c4d8;max-width:650px;font-size:13px;line-height:1.55}.ad-actions{display:flex;flex-direction:column;gap:8px;min-width:220px}.ad-actions small{color:#c5c1f9}.ad-modal{border:1px solid #8e79ff80}.ad-modal button{margin-top:12px}#adOverlay{z-index:20}#adMessage{min-height:20px}@media(max-width:650px){.ad-panel{align-items:stretch;flex-direction:column;padding:16px}.ad-actions{min-width:0}.ad-panel h3{font-size:19px}}
+#authOpen,#logout,#authOverlay{display:none!important}
 </style>
 </head>
 <body>
 <main>
 <header><div><div class="eyebrow">RONGYBABA JÁTSZÓTÉR / VERSENYMŰSZAK</div><h1>Ütős <span>műszak.</span></h1><p class="subtitle">A fizika komoly. A többi egészen kevésbé.</p></div><div class="header-wallet"><strong id="walletTop">★ 0</strong><button id="shopOpen">★ Bolt</button></div></header>
 <section class="online-panel" id="competitivePanel" aria-label="Online verseny">
-<div class="account-row"><div><div class="eyebrow">KÖZÖS RANGLISTA</div><strong id="accountName">Vendég</strong><small id="accountDetails">A szabad játékhoz nem kell fiók.</small></div><div><span class="online-tag" id="onlineStatus">Kapcsolódás…</span> <button id="authOpen">Bejelentkezés / Regisztráció</button><button id="logout" hidden>Kijelentkezés</button></div></div>
+<div class="account-row"><div><div class="eyebrow">KÖZÖS RANGLISTA</div><strong id="accountName">Vendég</strong><small id="accountDetails">Vendégként minden játékmód elérhető. Fiók és mentés: a Bánki Webtárban.</small></div><div><span class="online-tag" id="onlineStatus">Kapcsolódás…</span> <button id="authOpen">Bejelentkezés / Regisztráció</button><button id="logout" hidden>Kijelentkezés</button></div></div>
 <div class="competitive-grid"><article class="competitive-card"><h3>⚡ Pontverseny</h3><p>45 másodperc. Alex, labor és baseballütő. Gyűjts több pontot, mint a többiek!</p><button class="active" data-competitive="sprint">Versenykör indítása</button></article><article class="competitive-card"><h3>🔥 Kombókupa</h3><p>Mira és szivacsütő. A hosszú, megszakítás nélküli figuratalálat-sorozat a legértékesebb.</p><button data-competitive="combo">Kombókupa indítása</button></article><article class="competitive-card"><h3>★ Napi kihívás</h3><p>Naponta új összeállítás. Mindenki ugyanazon a pályán, ugyanazzal az eszközzel versenyez.</p><button data-competitive="daily">Mai kihívás indítása</button></article></div><p class="online-note" id="onlineNotice">A pontszám a kör végén szerveroldali ellenőrzéssel kerül a ranglistára. A szünet alatt az időzítő is megáll; egy kör legfeljebb 8 percig küldhető be.</p><button id="retryPending" hidden>↻ Korábbi kör beküldése</button></section>
 <div class="topbar"><div class="mode-control"><select id="modeSelect" aria-label="Játékmód"><option value="free">∞ Szabad játék</option><option value="score">◷ Pontvadászat · 45 mp</option><option value="tasks">◎ Feladatkihívás</option></select><button id="start" class="active" hidden>▶ Indítás</button><button id="finish">✓ Kör lezárása</button></div><div class="clock" id="clock"></div></div>
 <p id="modeRules" class="rules"></p>
@@ -128,7 +129,7 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 </div></details>
 <div id="toasts" aria-live="polite"></div>
 <div class="tutorial-overlay" id="tutorialOverlay" hidden><div class="modal"><div class="eyebrow">EGY PERC ALATT MENNI FOG</div><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><p id="tutorialStep"></p><button id="tutorialNext" class="active">Tovább →</button> <button id="tutorialSkip">Kihagyás</button></div></div>
-<div id="authOverlay" hidden><div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="eyebrow">JÁTÉKOSFIÓK</div><h2 id="authTitle">Itt kezdődik a műszakod.</h2><p class="online-note">Belépéshez e-mail-cím és jelszó szükséges. Regisztrációhoz válassz 3–18 karakteres játékosnevet (betűk, számok, _). A jelszó legalább 10 karakter.</p><form id="authForm" novalidate><div class="auth-fields"><label>E-mail-cím<input id="authEmail" name="email" type="email" autocomplete="email" maxlength="254" required></label><label>Játékosnév (csak regisztrációhoz)<input id="authUsername" name="username" autocomplete="nickname" minlength="3" maxlength="18" pattern="[A-Za-z0-9_]{3,18}"></label><label>Jelszó<input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required></label></div><p class="online-error" id="authError" aria-live="polite"></p><button id="loginSubmit" type="button" class="active">Bejelentkezés</button> <button id="registerSubmit" type="button">Regisztráció</button> <button id="recoverySubmit" type="button">Elfelejtett jelszó</button> <button id="resetPasswordSubmit" type="button" class="active" hidden>Új jelszó mentése</button> <button id="authClose" type="button">Bezárás</button></form><p class="online-note">A regisztrációt szükség esetén e-mailben kell megerősíteni. Csak a játékosnév és a versenyeredmény nyilvános; az e-mail-címed nem. Foglalt névnél egyedi utótagot kapsz. A szabad játékhoz nem kell fiók.</p></div></div>
+<div id="authOverlay" hidden><div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="eyebrow">JÁTÉKOSFIÓK</div><h2 id="authTitle">Itt kezdődik a műszakod.</h2><p class="online-note">Belépéshez e-mail-cím és jelszó szükséges. Regisztrációhoz válassz 3–18 karakteres játékosnevet (betűk, számok, _). A jelszó legalább 10 karakter.</p><form id="authForm" novalidate><div class="auth-fields"><label>E-mail-cím<input id="authEmail" name="email" type="email" autocomplete="email" maxlength="254" required></label><label>Játékosnév (csak regisztrációhoz)<input id="authUsername" name="username" autocomplete="nickname" minlength="3" maxlength="18" pattern="[A-Za-z0-9_]{3,18}"></label><label>Jelszó<input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required></label></div><p class="online-error" id="authError" aria-live="polite"></p><button id="loginSubmit" type="button" class="active">Bejelentkezés</button> <button id="registerSubmit" type="button">Regisztráció</button> <button id="recoverySubmit" type="button">Elfelejtett jelszó</button> <button id="resetPasswordSubmit" type="button" class="active" hidden>Új jelszó mentése</button> <button id="authClose" type="button">Bezárás</button></form><p class="online-note">A regisztrációt szükség esetén e-mailben kell megerősíteni. Csak a játékosnév és a versenyeredmény nyilvános; az e-mail-címed nem. Foglalt névnél egyedi utótagot kapsz. Vendégként minden játékmód elérhető. Fiók és mentés: a Bánki Webtárban.</p></div></div>
 <footer><span>RAJZFILM · VÁLASZTHATÓ VÉRHATÁS</span><span>CANVAS / FIZIKA / KÁOSZ</span></footer>
 </main>
 <script type="module">
@@ -2423,12 +2424,12 @@ async function accountShopAction(action,itemId,category){
   try{id=id||sessionStorage.getItem(key);}catch(_){}if(!id){id=transactionId();try{sessionStorage.setItem(key,id);}catch(_){}}
   shopRequestIds.set(key,id);const response=await api('/shop/'+action,{itemId,category,transactionId:id});acceptAccount(response.user,action==='equip');shopRequestIds.delete(key);try{sessionStorage.removeItem(key);}catch(_){}
 }
-async function cancelOnlineRound(roundId){try{await api('/round/cancel',{roundId});}catch(error){$('shopMessage').textContent='A kör lezárása nem sikerült: '+error.message;}}
+async function cancelOnlineRound(roundId){if(roundId==='guest')return;try{await api('/round/cancel',{roundId});}catch(error){$('shopMessage').textContent='A kör lezárása nem sikerült: '+error.message;}}
 function rankName(xp){return xp>=8000?'Műszaklegenda':xp>=3000?'Bonk mester':xp>=1000?'Ütőspecialista':xp>=300?'Lendületes':'Újonc';}
 function renderAccount(){
   accountPending=onlineBusy;renderRewards();
   $('accountName').textContent=onlineUser?onlineUser.username:'Vendég';
-  $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'A szabad játékhoz nem kell fiók.';
+  $('accountDetails').textContent=onlineUser?rankName(onlineUser.xp)+' · '+onlineUser.xp+' XP · '+onlineUser.games+' hitelesített kör':'Vendégként minden játékmód elérhető. Fiók és mentés: a Bánki Webtárban.';
   $('authOpen').hidden=!!onlineUser;$('logout').hidden=!onlineUser;$('logout').disabled=rewardedAdBusy||onlineBusy||competition.active&&!competition.ending;
   $('retryPending').hidden=!pendingSubmission;$('retryPending').disabled=submissionBusy;
   if(pendingSubmission&&!submissionBusy)$('onlineNotice').textContent='Van egy mentésre váró korábbi köröd. A Beküldés újrapróbálása gombbal mentheted.';
@@ -2436,6 +2437,11 @@ function renderAccount(){
   for(const b of document.querySelectorAll('[data-competitive]'))b.disabled=rewardedAdBusy||onlineBusy||competition.active&&!competition.ending;
 }
 function openAuth(){
+  if(typeof window!=='undefined'&&window.parent){
+    authResume=playing()&&!paused;if(authResume)togglePause(true);
+    if(window.parent!==window)window.parent.postMessage({type:'webtar:auth-open'},location.origin);
+    else location.assign('/?account=1#utos');return;
+  }
   if(rewardedAdBusy)return;
   if(competition.active&&!competition.ending){notify('Előbb fejezd be vagy hagyd el a versenykört.');return;}
   authResume=playing()&&!paused;if(authResume)togglePause(true);$('authOverlay').hidden=false;$('authError').textContent='';$('authEmail').focus();
@@ -2494,7 +2500,10 @@ async function saveRecoveredPassword(){
 }
 async function startCompetitive(kind){
   if(rewardedAdBusy||onlineBusy||competition.active&&!competition.ending)return;
-  if(!onlineUser){openAuth();$('authError').textContent='A közös ranglistához jelentkezz be!';return;}
+  if(!onlineUser){
+    const daily=new Date().getUTCDate(),guestTicket={id:'guest',guest:true,kind,map:kind==='daily'?daily%3:0,tool:kind==='combo'?1:0,character:kind==='combo'?1:0,seed:740};
+    prepareCompetitiveRound(guestTicket);$('modeRules').textContent=competitiveDefs[kind].name+' · 45 mp · vendégkör, helyi eredménnyel. A közös ranglistához jelentkezz be a Webtárban.';$('tutorialOverlay').hidden=true;$('onlineNotice').textContent='Vendégkör · az eredmény helyi. Ranglistás mentéshez a Webtárban jelentkezz be.';canvas.scrollIntoView?.({block:'center'});return;
+  }
   const generation=gameGeneration,previousRoundId=competition.ending?competition.ticket?.id:shownRoundId;
   onlineBusy=true;renderAccount();$('resultOverlay').hidden=true;$('hitInfo').textContent='Új versenykör előkészítése…';
   try{
@@ -2509,6 +2518,8 @@ async function startCompetitive(kind){
   finally{onlineBusy=false;renderAccount();}
 }
 async function onCompetitionFinished(metrics){
+  if(competition.ticket?.guest){$('resultOnline').textContent='Vendégkör befejezve · a ranglistás mentéshez a Webtárban jelentkezz be.';$('submitAgain').hidden=true;return;}
+
   const submission={roundId:competition.ticket.id,events:competition.events.map(e=>e.slice()),ticks:competition.tick,kind:competition.ticket.kind,savedAt:Date.now()};
   submissionQueue=submissionQueue.filter(s=>s.roundId!==submission.roundId);submissionQueue.push(submission);submissionQueue=submissionQueue.slice(-8);
   pendingSubmission=submission;keepSubmission();await sendCompetitiveResult();
@@ -2563,6 +2574,7 @@ async function initOnline(){
   if(typeof fetch!=='function'){accountMode='guest';renderRewards();return;}
   if(typeof location!=='undefined'&&location.protocol==='file:'){accountMode='guest';renderRewards();$('onlineNotice').textContent='Offline játék. Az online funkciókat a Netlifyon közzétett oldalon használhatod.';renderAccount();return;}
   try{
+    if(typeof window!=='undefined'&&window.parent===window&&['access_token','confirmation_token','recovery_token','invite_token','email_change_token'].some(k=>new URLSearchParams(location.hash.slice(1)).has(k))){location.replace('/'+location.search+location.hash);return;}
     const callback=await handleAuthCallback();
     if(callback?.type==='recovery'){openAuth();setRecoveryMode(true);$('authError').textContent='Adj meg egy új, legalább 10 karakteres jelszót.';$('authPassword').focus();}
     else if(callback?.type==='confirmation')notify('Az e-mail-címed megerősítve. Sikeres bejelentkezés!');
@@ -2585,6 +2597,20 @@ $('earnStars').textContent='★ Mentés újrapróbálása';
 $('earnStars').addEventListener('click',()=>earning.ready?flushEarnings(true):startEarnings());
 window.addEventListener('pagehide',()=>{saveEarnings();});
 window.addEventListener('online',()=>{if(onlineUser){if(earning.ready)flushEarnings(true);else startEarnings();}});
+
+// The portal owns account UI; the same Identity IDs and original storage are retained.
+if(typeof window!=='undefined')window.addEventListener('message',async event=>{
+  if(event.origin!==location.origin||event.source!==window.parent)return;
+  if(event.data?.type==='webtar:auth-opened'&&!authResume){authResume=playing()&&!paused;if(authResume)togglePause(true);}
+  if(event.data?.type==='webtar:prepare-account'){
+    let error='';try{if(rewardedAdBusy||onlineBusy||competition.active&&!competition.ending)throw Error('Előbb fejezd be az aktív kört vagy reklámot.');keepSubmission();await stopEarnings();}catch(e){error=e.message;}
+    window.parent.postMessage({type:'webtar:account-prepared',id:event.data.id,error},location.origin);
+  }
+  if(event.data?.type==='webtar:account-changed'){
+    keepSubmission();onlineUser=null;accountWallet=null;pendingSubmission=null;accountMode='loading';earning.ready=false;await initOnline.call(null);
+  }
+  if(event.data?.type==='webtar:auth-complete'&&authResume)closeAuth();
+});
 initOnline();
 // ONLINE_CLIENT_END
 
