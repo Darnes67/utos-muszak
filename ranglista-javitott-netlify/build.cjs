@@ -8,4 +8,8 @@ fs.writeFileSync('server/game-source.cjs','module.exports='+JSON.stringify(code)
 fs.writeFileSync('server/economy-source.cjs','module.exports='+JSON.stringify(fs.readFileSync('economy.js','utf8'))+';\n');
 fs.mkdirSync('dist',{recursive:true});
 for(const file of ['index.html','auth.js','economy.js','ads.js'])fs.copyFileSync(file,'dist/'+file);
-console.log('HTML, auth and bundled verification engine built.');
+// Preserve index.html as the original game source used by server verification.
+fs.copyFileSync('index.html','dist/utosmuszak.html');
+fs.copyFileSync('portal.html','dist/index.html');
+for(const dir of ['games','assets'])fs.cpSync(dir,'dist/'+dir,{recursive:true});
+console.log('Webtar, games, auth and bundled verification engine built.');
