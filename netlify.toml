@@ -1,3 +1,4 @@
+# Publish player-count widgets and presence tracking.
 [build]
 base = "ranglista-javitott-netlify"
 command = "npm run build"
