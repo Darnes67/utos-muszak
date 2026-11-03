@@ -2,7 +2,7 @@
 const {randomUUID,createHash}=require('node:crypto');
 const {HttpError,profileKey}=require('./store.cjs');
 const {ENGINE_VERSION,verifyRound,checkEngine}=require('./engine.cjs');
-const casino=require('./casino.cjs');
+const casino=require('./casino.cjs'),frontwars=require('./frontwars.cjs');
 const shop=require('./shop.cjs'),rewards=require('./rewards.cjs'),earnings=require('./earnings.cjs'),ads=require('./ads.cjs');
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const expose=p=>p?{id:p.id,username:p.username,xp:p.xp,games:p.games,wallet:shop.publicWallet(p)}:null;
@@ -71,6 +71,8 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
     if(route==='/ads/status'&&req.method==='GET')return reply({ads:ads.status(profile,adConfig,now())});
     if(route==='/casino/state'&&req.method==='GET')return reply(await casino.state(store,profile));
     if(route==='/casino/play'&&req.method==='POST'){const text=await req.text();if(Buffer.byteLength(text)>4096)throw new HttpError(413,'Túl nagy kérés.');let input;try{input=JSON.parse(text);}catch(_){throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input!=='object'||Array.isArray(input))throw new HttpError(400,'Hibás kérés.');return reply(await casino.play(store,profile,input,now()));}
+    if(route==='/frontwars/state'&&req.method==='GET')return reply(await frontwars.state(store,profile,now()));
+    if(route==='/frontwars/action'&&req.method==='POST'){const text=await req.text();if(Buffer.byteLength(text)>8192)throw new HttpError(413,'Túl nagy parti-kérés.');let input;try{input=JSON.parse(text);}catch(_){throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input!=='object'||Array.isArray(input))throw new HttpError(400,'Hibás kérés.');return reply(await frontwars.action(store,profile,input,now()));}
     if(route==='/me'&&req.method==='GET')return reply({user:expose(profile),engine:ENGINE_VERSION});
     if(route==='/leaderboard'&&req.method==='GET'){
       const kind=url.searchParams.get('kind')||'sprint',period=url.searchParams.get('period')||'week';if(!['all','week'].includes(period))throw new HttpError(400,'Ismeretlen időszak.');

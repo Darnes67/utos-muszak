@@ -1,0 +1,19 @@
+BÁNKI WEBTÁR – FRONTWARS PARTY BRIDGE 1.0
+
+1. Csomagold ki a ZIP-et egy mappába, és tartsd meg a mappát.
+2. Chrome: chrome://extensions   |   Edge: edge://extensions
+3. Kapcsold be a Fejlesztői módot, majd válaszd a Kicsomagolt bővítmény betöltése gombot.
+4. Válaszd azt a mappát, amelyikben a manifest.json van.
+5. Nyisd meg vagy frissítsd: https://bankiwebtar.netlify.app/frontwars.html
+
+A parti minden játékosának külön telepítenie kell a kiegészítőt.
+A Webtár-fiókodban jelentkezz be, adj meg egy Frontwars-nevet, majd lépj be egy partiba.
+A beágyazott Frontwarsban zárd be az oktatót / felugró ablakot, és maradj a főmenüben.
+Jelöld a készenlétet. A vezető indíthatja a közös FFA-keresést.
+Maradjon nyitva az oldal. A kiegészítő csak az aktuális, egyező FFA-lobbyt próbálja megnyitni.
+A Frontwars nem foglal nekünk helyeket: ha megtelik vagy elindul a lobby, a belépés meghiúsulhat.
+
+A kiegészítő csak a frontwars.io oldalon fut. Nem olvas jelszót vagy cookie-t, nincs háttérszervere,
+és nem játszik helyetted a csatában. Kizárólag a bankiwebtar.netlify.app alól megnyitott Frontwars-keretben
+fogad parancsot: a nyilvános lobbykártyát olvassa, kitölti a kért játékosnevet és megnyomja a belépést.
+Eltávolítás: a böngésző Bővítmények oldalán az Eltávolítás gombbal.

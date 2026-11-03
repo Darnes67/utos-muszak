@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Bánki Webtár · Frontwars Party Bridge",
+  "version": "1.0.0",
+  "description": "A Bánki Webtár partija összeköti a Frontwars névmezőjét, nyilvános lobbykártyáját és a közös FFA-belépést.",
+  "content_scripts": [{
+    "matches": ["https://frontwars.io/*"],
+    "js": ["dom.js", "bridge.js"],
+    "all_frames": true,
+    "run_at": "document_idle"
+  }]
+}
