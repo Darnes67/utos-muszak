@@ -11,7 +11,7 @@ async function state(store,profile){if(!profile)return{state:null};const p=await
 async function play(store,profile,input,now){
  if(!profile)throw new HttpError(401,'Ranglistás játékhoz jelentkezz be a Bánki Webtárba.');
  if(typeof input.requestId!=='string'||!/^[A-Za-z0-9_-]{16,80}$/.test(input.requestId))throw new HttpError(400,'Érvénytelen kérésazonosító.');
- const signature=JSON.stringify([input.game,input.action,input.choice??null]);let result;
+ const signature=JSON.stringify([input.game,input.action,input.choice??null,input.stake??null]);let result;
  const p=await store.mutate(profileKey(profile.id),profile,p=>{
   const s=ensure(p),duplicate=s.receipts.find(r=>r.id===input.requestId);
   if(duplicate){if(duplicate.signature!==signature)throw new HttpError(409,'Ezt a kérésazonosítót már más művelethez használtad.');result=duplicate.result;return p;}
