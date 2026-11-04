@@ -2,6 +2,8 @@
 const {randomUUID,createHash}=require('node:crypto');
 const {HttpError,profileKey}=require('./store.cjs');
 const {ENGINE_VERSION,verifyRound,checkEngine}=require('./engine.cjs');
+const tesi=require('./tesi.cjs');
+const legacyAuth=require('./legacy-auth.cjs');
 const casino=require('./casino.cjs'),frontwars=require('./frontwars.cjs'),siteStats=require('./site-stats.cjs');
 const shop=require('./shop.cjs'),rewards=require('./rewards.cjs'),earnings=require('./earnings.cjs'),ads=require('./ads.cjs');
 const digest=value=>createHash('sha256').update(value).digest('hex');
@@ -36,6 +38,7 @@ async function identityUser(req){
   if(typeof user.id!=='string'||!/^[a-f0-9-]{36}$/i.test(user.id))throw new HttpError(401,'Érvénytelen játékosfiók.');return user;
 }
 async function ensureProfile(store,user){
+  user=legacyAuth.profileIdentity(user);
   const key=profileKey(user.id),found=await store.get(key);if(found){if(found.wallet?.version===1&&found.rewards?.version===1&&Number.isSafeInteger(found.wallet.revision))return found;return store.mutate(key,found,p=>{shop.ensureWallet(p);rewards.award(p);return p;});}
   const requested=user.user_metadata?.username||user.user_metadata?.full_name||'',base=/^[A-Za-z0-9_]{3,18}$/.test(requested)?requested:'Jatekos_'+digest(user.id).slice(0,6);
   let username;
@@ -55,7 +58,7 @@ async function indexResult(store,profile,round,result){
     });
   }
 }
-function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000,probe=probeIdentity,adConfig=ads.config(),listIdentityUsers=async()=>{throw Error("Identity admin unavailable");}}){
+function createAPI({store,createIdentityUser,updateIdentityUser,listIdentityUsersLegacy,legacyFetch,authenticate=identityUser,verify=verifyRound,now=()=>Date.now(),requestTimeout=35000,probe=probeIdentity,adConfig=ads.config(),listIdentityUsers=async()=>{throw Error("Identity admin unavailable");}}){
  async function handle(req){
   let phase='request';
   try{
@@ -65,10 +68,17 @@ function createAPI({store,authenticate=identityUser,verify=verifyRound,now=()=>D
       if(req.headers.get('X-Utos-Request')!=='1'||!req.headers.get('content-type')?.startsWith('application/json'))throw new HttpError(403,'Érvénytelen kérésforrás.');
       if(req.headers.get('origin')&&req.headers.get('origin')!==url.origin)throw new HttpError(403,'A kérés másik oldalról érkezett.');
     }
+    if(route==='/legacy-login'&&req.method==='POST'){
+      phase='legacy-login';const raw=await req.text();if(Buffer.byteLength(raw)>4096)throw new HttpError(413,'Túl nagy bejelentkezési kérés.');let input;try{input=JSON.parse(raw);}catch{throw new HttpError(400,'Hibás bejelentkezési kérés.');}
+      return reply(await legacyAuth.migrate(input,{createUser:createIdentityUser,listUsers:listIdentityUsersLegacy||listIdentityUsers,updateUser:updateIdentityUser,currentUser:()=>authenticate(req),fetchImpl:legacyFetch}));
+    }
     if(route==='/health'&&req.method==='GET'){phase='engine';checkEngine();phase='storage';await store.get('health-check');phase='identity-probe';const identity=await probe(req);return reply({ok:true,engine:ENGINE_VERSION,release:'rewarded-ads-6',identity});}
     if(route==='/site-stats'){if(req.method==='GET')return reply(await siteStats.stats(store,{listUsers:listIdentityUsers,now:now()}));const text=await req.text();if(Buffer.byteLength(text)>512)throw new HttpError(413,'Túl nagy kérés.');let input;try{input=JSON.parse(text);}catch{throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input.visitorId!=='string')throw new HttpError(400,'Hiányzó látogatóazonosító.');let user=null;try{user=await authenticate(req);}catch(e){if(e.status!==401)throw e;}return reply(await siteStats.stats(store,{visitorId:input.visitorId,userId:user?.id,listUsers:listIdentityUsers,now:now()}));}
+    if(route==='/tesi/leaderboard'&&req.method==='GET')return reply({rows:await tesi.leaderboard(store,url.searchParams.get('sort')||'earned')});
     if(route==='/casino/leaderboard'&&req.method==='GET')return reply({rows:await casino.leaderboard(store)});
     phase='identity';const identity=await authenticate(req);phase='profile';const profile=identity?await ensureProfile(store,identity):null;
+    if(route==='/tesi/state'&&req.method==='GET')return reply(await tesi.state(store,profile,now()));
+    if(route==='/tesi/action'&&req.method==='POST'){const text=await req.text();if(Buffer.byteLength(text)>8192)throw new HttpError(413,'Túl nagy edzésnapló.');let input;try{input=JSON.parse(text);}catch{throw new HttpError(400,'Hibás edzésnapló.');}return reply(await tesi.action(store,profile,input,now()));}
     if(route==='/ads/status'&&req.method==='GET')return reply({ads:ads.status(profile,adConfig,now())});
     if(route==='/casino/state'&&req.method==='GET')return reply(await casino.state(store,profile));
     if(route==='/casino/play'&&req.method==='POST'){const text=await req.text();if(Buffer.byteLength(text)>4096)throw new HttpError(413,'Túl nagy kérés.');let input;try{input=JSON.parse(text);}catch(_){throw new HttpError(400,'Hibás kérés.');}if(!input||typeof input!=='object'||Array.isArray(input))throw new HttpError(400,'Hibás kérés.');return reply(await casino.play(store,profile,input,now()));}

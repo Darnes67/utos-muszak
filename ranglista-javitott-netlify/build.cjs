@@ -7,7 +7,7 @@ const code=script[1].replace(/^import [^\n]*;\s*$/gm,'').replace(/\/\/ ONLINE_CL
 fs.writeFileSync('server/game-source.cjs','module.exports='+JSON.stringify(code)+';\n');
 fs.writeFileSync('server/economy-source.cjs','module.exports='+JSON.stringify(fs.readFileSync('economy.js','utf8'))+';\n');
 fs.mkdirSync('dist',{recursive:true});
-for(const file of ['index.html','auth.js','economy.js','ads.js','webtar-account.js','casino-core.js','frontwars.html','frontwars.css','frontwars.js','site-stats.js'])fs.copyFileSync(file,'dist/'+file);
+for(const file of ['index.html','auth.js','legacy-login.js','economy.js','ads.js','webtar-account.js','casino-core.js','frontwars.html','frontwars.css','frontwars.js','site-stats.js'])fs.copyFileSync(file,'dist/'+file);
 // Preserve index.html as the original game source used by server verification.
 fs.copyFileSync('index.html','dist/utosmuszak.html');
 fs.copyFileSync('portal.html','dist/index.html');

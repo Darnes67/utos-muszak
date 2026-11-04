@@ -1,0 +1,33 @@
+'use strict';
+const assert=require('node:assert/strict'),{randomUUID}=require('node:crypto'),fs=require('node:fs'),vm=require('node:vm');
+const {ScoreStore}=require('../server/store.cjs'),T=require('../server/tesi.cjs'),{createAPI}=require('../server/api.cjs');
+class Blobs{constructor(){this.rows=new Map();this.n=0;this.conflicts=0;this.failBoard=false;}async get(k){return structuredClone(this.rows.get(k)?.data??null);}async getWithMetadata(k){return structuredClone(this.rows.get(k)??null);}async setJSON(k,data,o){if(this.failBoard&&k==='tesi/board/all')throw Error('board unavailable');const old=this.rows.get(k);if(o.onlyIfNew&&old||o.onlyIfMatch&&old?.etag!==o.onlyIfMatch){this.conflicts++;return{modified:false};}this.rows.set(k,{data:structuredClone(data),etag:String(++this.n)});return{modified:true};}}
+const A={id:'11111111-1111-4111-8111-111111111111',username:'Alex'},B={id:'22222222-2222-4222-8222-222222222222',username:'Barni'};
+const input=(revision,actions=[])=>({revision,requestId:randomUUID(),actions});
+(async()=>{
+ const blobs=new Blobs(),store=new ScoreStore(blobs);let now=Date.parse('2026-11-04T12:00:00Z');
+ await assert.rejects(T.action(store,null,input(0),now),e=>e.status===401);
+ await assert.rejects(T.action(store,A,{...input(0),coins:999999},now),e=>e.status===400);
+ await assert.rejects(T.action(store,A,input(0,[{type:'train',count:999}]),now),e=>e.status===400);
+ assert.equal(await store.get('tesi/player/'+A.id),null,'failed action must not persist');
+ const first=input(0,[{type:'train',count:40}]);const a=await T.action(store,A,first,now);assert.equal(a.state.reps,1,'rapid clicks cannot bypass server token allowance');assert.equal(a.state.earned,1);
+ const replay=await T.action(store,A,first,now+60000);assert.deepEqual(replay.state,a.state,'same request must not grant delayed duplicate rewards');
+ const race=await Promise.allSettled([T.action(store,A,input(1,[{type:'daily'}]),now),T.action(store,A,input(1,[{type:'daily'}]),now)]);assert.equal(race.filter(r=>r.status==='fulfilled').length,1);assert.equal(race.find(r=>r.status==='rejected').reason.status,409);assert(blobs.conflicts>0);
+ let current=await T.state(store,A,now);assert.equal(current.state.earned,151);current=await T.action(store,A,input(current.revision,[{type:'daily'},{type:'buy',key:'auto',max:false}]),now);assert.equal(current.state.levels.auto,1);assert.equal(current.state.earned,226,'daily does not repeat, achievement is credited once');
+ const before=current.state.reps;now+=10000;current=await T.action(store,A,input(current.revision),now);assert.equal(current.state.reps-before,2,'auto progression uses server elapsed time');
+ const b=await T.action(store,B,input(0,[{type:'daily'}]),now);assert.equal(b.state.reps,0);assert.equal((await T.state(store,A,now)).state.reps,current.state.reps,'accounts remain isolated');
+ // Failed indexing must be repairable without replaying the economy mutation.
+ const repair=input(current.revision,[{type:'train',count:1}]);blobs.failBoard=true;await assert.rejects(T.action(store,A,repair,now));const saved=await T.state(store,A,now);blobs.failBoard=false;const repaired=await T.action(store,A,repair,now);assert.deepEqual(repaired.state,saved.state);assert.equal(repaired.revision,saved.revision);
+ const board=await T.leaderboard(store,'reps');assert.equal(board[0].user_id,A.id);assert.equal(board.length,2);assert.equal('revision' in board[0],false);await assert.rejects(T.leaderboard(store,'password'),e=>e.status===400);
+ const offline=T.fresh(now);offline.state.levels.auto=1;offline.state.levels.students=2;T.settle(offline,now+1000*60*60*24*5);assert(offline.state.reps<=Math.ceil(7200*2/5*.35),'offline time capped at two hours');const reps=offline.state.reps;T.settle(offline,now+1000*60*60*24*5);assert.equal(offline.state.reps,reps,'same timestamp cannot mint auto repetitions');
+ const api=createAPI({store,authenticate:async req=>req.headers.get('test-user')==='a'?{id:A.id,user_metadata:{username:A.username}}:null,now:()=>now});
+ const call=async(path,body,auth)=>{const headers=auth?{'test-user':'a'}:{};if(body)Object.assign(headers,{'content-type':'application/json','X-Utos-Request':'1',origin:'https://game.test'});const res=await api(new Request('https://game.test/api'+path,{method:body?'POST':'GET',headers,body:body?JSON.stringify(body):undefined}));return{status:res.status,data:await res.json()};};
+ assert.equal((await call('/tesi/leaderboard')).status,200);assert.equal((await call('/tesi/state')).status,401);assert.equal((await call('/tesi/action',input(0))).status,401);assert.equal((await call('/tesi/state',undefined,true)).status,200);
+ // A repeated current-account notification during a pending join must not cancel it;
+ // an actual account switch must cancel the old join without adopting its state.
+ const elements=new Map(),listeners=new Map(),make=()=>({hidden:false,disabled:false,textContent:'',value:'earned',append(){},replaceChildren(){},classList:{toggle(){}}});const el=id=>{if(!elements.has(id))elements.set(id,make());return elements.get(id);};let resolveState,applied=0,online=false;const account={user:{id:A.id,username:A.username}};
+ const context=vm.createContext({account,api:async path=>path.startsWith('/tesi/leaderboard')?{rows:[]}:path==='/tesi/state'?new Promise(r=>resolveState=r):{state:a.state,revision:0},openAccount(){},document:{createElement:make,querySelector:()=>make(),getElementById:el,head:{append(){}},hidden:false,addEventListener(){}},window:{TesiGame:{setOnline(v){online=v;},applyState(){applied++;},playTrainingAnimation(){}},addEventListener:(k,f)=>listeners.set(k,f)},localStorage:{getItem:()=>null,setItem(){}},location:{origin:'https://game.test'},parent:{},setInterval(){},Date,crypto:{randomUUID},console});
+ vm.runInContext(fs.readFileSync(require.resolve('../games/tesi-online.js'),'utf8').replace(/^import[^\n]+\n/,''),context);
+ const client=vm.runInContext('({join,stop,flush})',context);let joining=client.join();listeners.get('webtar-account')();resolveState({state:a.state,revision:0});await joining;assert.equal(online,true);assert(applied>0);client.stop();const count=applied;joining=client.join();account.user={id:B.id,username:B.username};listeners.get('webtar-account')();resolveState({state:a.state,revision:0});await joining;assert.equal(online,false);assert.equal(applied,count,'late response from previous account must be ignored');
+ console.log('PASS Tesi online: server timing, spoof rejection, CAS race, idempotency, partial-write repair, offline cap, account isolation, public/API routes, pending-join account changes.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

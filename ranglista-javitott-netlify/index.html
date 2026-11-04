@@ -133,9 +133,10 @@ summary span { float:right; color:#a8c78a; font-size:10px; font-weight:500; }
 <footer><span>RAJZFILM · VÁLASZTHATÓ VÉRHATÁS</span><span>CANVAS / FIZIKA / KÁOSZ</span></footer>
 </main>
 <script type="module">
+import { login } from './legacy-login.js';
 import './economy.js';
 import './ads.js';
-import { login, signup, logout, getUser as getIdentityUser, handleAuthCallback, requestPasswordRecovery, updateUser, getAccessToken } from './auth.js';
+import { signup, logout, getUser as getIdentityUser, handleAuthCallback, requestPasswordRecovery, updateUser, getAccessToken } from './auth.js';
 'use strict';
 const $ = id => document.getElementById(id);
 const canvas = $('game'); let ctx = canvas.getContext('2d');
@@ -2449,6 +2450,7 @@ function openAuth(){
 function closeAuth(){ $('authOverlay').hidden=true;$('authPassword').value='';if(authResume&&challengeState!=='ended')togglePause(false);authResume=false; }
 async function submitAuth(kind){
   if(recoveryMode){await saveRecoveredPassword();return;}
+  $('authPassword').minLength=kind==='login'?1:10;
   if(!$('authEmail').reportValidity()||!$('authPassword').reportValidity())return;
   const username=$('authUsername').value.trim();
   if(kind==='register'&&!/^[A-Za-z0-9_]{3,18}$/.test(username)){$('authError').textContent='A játékosnév 3–18 karakter: betűk, számok és _.';return;}
@@ -2490,6 +2492,7 @@ async function recoverPassword(){
   finally{onlineBusy=false;$('recoverySubmit').disabled=false;}
 }
 async function saveRecoveredPassword(){
+  $('authPassword').minLength=10;
   if(onlineBusy||!$('authPassword').reportValidity())return;
   onlineBusy=true;$('resetPasswordSubmit').disabled=true;
   try{
