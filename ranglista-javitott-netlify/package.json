@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node build.cjs",
-    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs && node tests/shop.cjs && node tests/shop-client.cjs && node tests/earnings.cjs && node tests/earnings-client.cjs && node tests/earnings-online.cjs && node tests/stability.cjs && node tests/expansion.cjs && node tests/polish.cjs && node tests/ads.cjs && node tests/ads-sdk.cjs && node tests/ads-client.cjs && node tests/casino.cjs && node --experimental-vm-modules tests/webtar-account.cjs && node --experimental-vm-modules tests/auth-persistence.cjs && node tests/frontwars.cjs && node tests/frontwars-bridge.cjs && node tests/site-stats.cjs && node tests/tesi.cjs && node tests/tesi-ui.cjs && node tests/tesi-online.cjs && node tests/legacy-auth.cjs && node --experimental-vm-modules tests/legacy-login-client.cjs",
+    "test": "node build.cjs && node tests/ranglista.cjs && node tests/client.cjs && node tests/bundle.cjs && node tests/engine.cjs && node tests/shop.cjs && node tests/shop-client.cjs && node tests/earnings.cjs && node tests/earnings-client.cjs && node tests/earnings-online.cjs && node tests/stability.cjs && node tests/expansion.cjs && node tests/polish.cjs && node tests/ads.cjs && node tests/ads-sdk.cjs && node tests/ads-client.cjs && node tests/casino.cjs && node --experimental-vm-modules tests/webtar-account.cjs && node --experimental-vm-modules tests/auth-persistence.cjs && node tests/frontwars.cjs && node tests/frontwars-bridge.cjs && node tests/site-stats.cjs && node tests/tesi.cjs && node tests/tesi-ui.cjs && node tests/tesi-online.cjs && node tests/legacy-auth.cjs && node --experimental-vm-modules tests/legacy-login-client.cjs && node --experimental-vm-modules tests/arena.cjs",
     "test:tesi": "node tests/tesi.cjs && node tests/tesi-ui.cjs && node tests/tesi-online.cjs",
-    "test:legacy": "node tests/legacy-auth.cjs && node --experimental-vm-modules tests/legacy-login-client.cjs && node --experimental-vm-modules tests/webtar-account.cjs && node --experimental-vm-modules tests/auth-persistence.cjs"
+    "test:legacy": "node tests/legacy-auth.cjs && node --experimental-vm-modules tests/legacy-login-client.cjs && node --experimental-vm-modules tests/webtar-account.cjs && node --experimental-vm-modules tests/auth-persistence.cjs",
+    "test:arena": "node --experimental-vm-modules tests/arena.cjs"
   },
   "engines": {
     "node": ">=22"

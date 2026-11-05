@@ -11,7 +11,7 @@ for(const file of ['index.html','auth.js','legacy-login.js','economy.js','ads.js
 // Preserve index.html as the original game source used by server verification.
 fs.copyFileSync('index.html','dist/utosmuszak.html');
 fs.copyFileSync('portal.html','dist/index.html');
-for(const dir of ['games','assets'])fs.cpSync(dir,'dist/'+dir,{recursive:true});
+for(const dir of ['games','assets','vendor'])fs.cpSync(dir,'dist/'+dir,{recursive:true});
 console.log('Webtar, games, auth and bundled verification engine built.');
 
 function addPresence(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const path=dir+'/'+entry.name;if(entry.isDirectory())addPresence(path);else if(entry.name.endsWith('.html')){const h=fs.readFileSync(path,'utf8');fs.writeFileSync(path,h.replace('</body>','<script src="/site-stats.js" defer></script></body>'));}}}addPresence('dist');
